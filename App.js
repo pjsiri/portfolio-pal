@@ -4,8 +4,8 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>King Yuhwan!</Text>
-      <Text>King Yuhwan!</Text>
+      <Text>Yas Queen Yuhwan!</Text>
+      <Text>Queen Yuhwan!</Text>
       <StatusBar style="auto" />
     </View>
   );

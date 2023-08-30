@@ -37,9 +37,9 @@ export default function App() {
         secureTextEntry
         style={styles.input}
       />
-     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-      <Button title="Forgot password" onPress={Login} />
-      <Button title="Login" onPress={Login} />
+    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+      <Button title="Forgot password" onPress={Login} /> 
+      <Button title="Login" onPress={Login} /> 
     </View>
       <StatusBar style="auto" />
     </View>

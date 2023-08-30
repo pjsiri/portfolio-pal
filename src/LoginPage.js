@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Text, View, TextInput, Button, Alert } from 'react-native';
+import { Image } from 'react-native';
 
 const LoginScreen = () => {
   const [user, setUser] = useState('');
@@ -21,6 +22,10 @@ const LoginScreen = () => {
 
   return (
     <View>
+      <Image
+        source={{ uri: 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png' }}
+        style={styles.bannerImage}
+      />
       <Text> Welcome Back!</Text>
       <Text> Please Login!</Text>
       <TextInput
@@ -52,6 +57,12 @@ const styles = {
     borderWidth: 1,
     marginVertical: 10,
     paddingHorizontal: 10,
+  },
+  bannerImage: {
+    width: 300, // Adjust the width as needed
+    height: 150, // Adjust the height as needed
+    resizeMode: 'contain', // Adjust the resizeMode as needed
+    marginBottom: 20, // Add some spacing between the image and the other content
   },
 };
 

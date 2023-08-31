@@ -7,6 +7,7 @@ const ForgotPassword = () => {
     const [VCode, setVCode] = useState('');
     const [Pass, setPass] = useState('');
     const [ConfirmPass, setConfirmPass] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
 
     const handleChangePassword = () => {
         if (Pass == ConfirmPass) {
@@ -42,12 +43,14 @@ const ForgotPassword = () => {
                 onChangeText={text => setPass(text)}
                 value={Pass}
                 style={styles.input}
+                secureTextEntry={!showPassword}
             />
             <TextInput
                 placeholder="Confirm Password"
                 onChangeText={text => setConfirmPass(text)}
                 value={ConfirmPass}
                 style={styles.input}
+                secureTextEntry={!showPassword}
             />
 
             <Button title="Change Password" onPress={handleChangePassword} />

@@ -52,7 +52,10 @@ const ForgotPassword = () => {
                 style={styles.input}
                 secureTextEntry={!showPassword}
             />
-
+            <Button
+                title={showPassword ? "Hide Password" : "Show Password"}
+                onPress={() => setShowPassword(!showPassword)}
+            />
             <Button title="Change Password" onPress={handleChangePassword} />
         </View>
     );

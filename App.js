@@ -2,7 +2,7 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import LoginScreen from './src/LoginPage.js';
-import HomePage from './src/HomePage.js';
+import HomePage from './src/home-page/HomePage.js';
 
 export default function App() {
   return (

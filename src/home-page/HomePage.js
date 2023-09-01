@@ -6,7 +6,7 @@ const HomePage = () => {
         <View style={styles.appContainer}>
           
           <View>
-            <Image style={styles.appLogo} source={require('../assets/app_logo.png')} />
+            <Image style={styles.appLogo} source={require('../../assets/app_logo.png')} />
           </View>
 
           <ScrollView>

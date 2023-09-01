@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, Image, TextInput } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, Image, SafeAreaView } from 'react-native';
+//import { TrendingStocks, NewestStocks } from './components';
 
 const HomePage = () => {
     return (
-        <View style={styles.appContainer}>
+        <SafeAreaView style={styles.appContainer}>
           
           <View>
             <Image style={styles.appLogo} source={require('../../assets/app_logo.png')} />
@@ -27,7 +28,7 @@ const HomePage = () => {
             </View>
           </ScrollView>
 
-        </View>
+        </SafeAreaView>
     )
 }
 

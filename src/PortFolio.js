@@ -1,0 +1,2 @@
+let originalTotalPrice; 
+let changedTotalPrice; 

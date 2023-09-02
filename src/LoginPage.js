@@ -21,13 +21,13 @@ const LoginScreen = () => {
   };
 
   return (
-    <View>
+    <View style={styles.container}>
       <Image
         source={{ uri: 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png' }}
         style={styles.bannerImage}
       />
-      <Text> Welcome Back!</Text>
-      <Text> Please Login!</Text>
+      <Text style={styles.title}>Welcome Back!</Text>
+      <Text style={styles.subtitle}>Please Login!</Text>
       <TextInput
         placeholder="Username"
         onChangeText={text => setUser(text)}
@@ -50,6 +50,18 @@ const LoginScreen = () => {
 };
 
 const styles = {
+  container: {
+    flex: 1,
+    alignItems: 'center', // Center horizontally
+    justifyContent: 'center', // Center vertically
+  },
+  title: {
+    fontSize: 24, // Adjust the font size as needed
+    marginBottom: 10, // Add spacing between the title and subtitle
+  },
+  subtitle: {
+    fontSize: 18, // Adjust the font size as needed
+  },
   input: {
     width: 200,
     height: 40,

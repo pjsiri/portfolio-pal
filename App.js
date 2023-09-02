@@ -2,12 +2,13 @@ import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import LoginScreen from './src/LoginPage.js';
+import RegisterScreen from './src/RegisterPage.js';
 import HomePage from './src/home-page/HomePage.js';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <HomePage />
+      <LoginScreen />
       <StatusBar style="auto" />
     </View>
   );

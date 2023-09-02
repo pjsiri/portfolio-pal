@@ -1,12 +1,12 @@
-import React from 'react'
-import { View, Text } from 'react-native'
+import React from "react";
+import { View, Text } from "react-native";
 
 const NewestStocks = () => {
-    return (
-        <View>
-            <Text>Newest Stocks</Text>
-        </View>
-    )
-}
+  return (
+    <View>
+      <Text>Newest Stocks</Text>
+    </View>
+  );
+};
 
-export default NewestStocks
+export default NewestStocks;

@@ -7,7 +7,9 @@ import {
   Image,
   SafeAreaView,
 } from "react-native";
-import { TrendingStocks, NewestStocks } from "./parts";
+
+import TrendingStocks from "./parts/TrendingStocks";
+import NewestStocks from "./parts/NewestStocks";
 
 const HomePage = () => {
   return (

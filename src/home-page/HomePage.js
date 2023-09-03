@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  ScrollView,
-  Image,
-  SafeAreaView,
-} from "react-native";
+import { Text, View, ScrollView, Image, SafeAreaView } from "react-native";
 import { Stack, useRouter } from "expo-router";
 
 import styles from "./HomePage.style";
@@ -26,20 +19,11 @@ const HomePage = () => {
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        <Text style={styles.title}>PortfolioPal</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.header}>PortfolioPal</Text>
 
-        <View style={styles.componentContainer}>
-          <Text style={styles.subtitle}>Trending Stocks</Text>
-          <View style={styles.trendingStocks}>
-            <TrendingStocks />
-          </View>
-        </View>
-
-        <View style={styles.componentContainer}>
-          <Text style={styles.subtitle}>Newest Stocks</Text>
-          <View style={styles.newestStocks}>
-            <NewestStocks />
-          </View>
+          <TrendingStocks />
+          <NewestStocks />
         </View>
       </ScrollView>
     </SafeAreaView>

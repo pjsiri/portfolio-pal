@@ -3,38 +3,17 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   appContainer: {
     flex: 1,
-    padding: 50,
-    paddingLeft: 20,
-    paddingRight: 20,
+    padding: 15,
+    paddingTop: 50,
     width: "100%",
-    backgroundColor: "grey",
+    backgroundColor: "lightgrey",
   },
 
-  componentContainer: {
-    //backgroundColor: 'black',
-  },
-
-  trendingStocks: {
-    height: 250,
-    backgroundColor: "white",
-  },
-
-  newestStocks: {
-    height: 600,
-    backgroundColor: "white",
-  },
-
-  title: {
+  header: {
     fontWeight: "bold",
     fontSize: 30,
     paddingTop: 20,
-    paddingBottom: 20,
-  },
-
-  subtitle: {
-    fontWeight: "bold",
-    fontSize: 20,
-    padding: 10,
+    paddingBottom: 30,
   },
 
   appLogo: {

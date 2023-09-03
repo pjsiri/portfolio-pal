@@ -1,79 +1,33 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, Image, SafeAreaView } from 'react-native';
-//import { TrendingStocks, NewestStocks } from './components';
+import React, { useState } from "react";
+import { Text, View, ScrollView, Image, SafeAreaView } from "react-native";
+import { Stack, useRouter } from "expo-router";
+
+import styles from "./HomePage.style";
+import TrendingStocks from "./parts/TrendingStocks";
+import NewestStocks from "./parts/NewestStocks";
 
 const HomePage = () => {
-    return (
-        <SafeAreaView style={styles.appContainer}>
-          
-          <View>
-            <Image style={styles.appLogo} source={require('../../assets/app_logo.png')} />
-          </View>
+  const router = useRouter();
 
-          <ScrollView>
-            <Text style={styles.title}>PortfolioPal</Text>
+  return (
+    <SafeAreaView style={styles.appContainer}>
+      <View>
+        <Image
+          style={styles.appLogo}
+          source={require("../../assets/app_logo.png")}
+        />
+      </View>
 
-            <View style={styles.componentContainer}>
-              <Text style={styles.subtitle}>Trending Stocks</Text>
-              <View style={styles.trendingStocks}>
-                
-              </View>
-            </View>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.header}>PortfolioPal</Text>
 
-            <View style={styles.componentContainer}>
-              <Text style={styles.subtitle}>Newest Stocks</Text>
-              <View style={styles.newestStocks}>
-                
-              </View>
-            </View>
-          </ScrollView>
+          <TrendingStocks />
+          <NewestStocks />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
-        </SafeAreaView>
-    )
-}
-
-const styles = StyleSheet.create({
-    appContainer: {
-      flex: 1,
-      padding: 50,
-      paddingLeft: 20,
-      paddingRight: 20,
-      width: '100%',
-      backgroundColor: 'grey',
-    },
-
-    componentContainer: {
-      //backgroundColor: 'black',
-    },
-
-    trendingStocks: {
-      height: 250,
-      backgroundColor: 'white',
-    },
-
-    newestStocks: {
-      height: 600,
-      backgroundColor: 'white',
-    },
-
-    title: {
-      fontWeight: 'bold',
-      fontSize: 30,
-      paddingTop: 20,
-      paddingBottom: 20,
-    },
-
-    subtitle: {
-      fontWeight: 'bold',
-      fontSize: 20,
-      padding: 10,
-    },
-
-    appLogo: {
-      width: 60,
-      height: 60,
-      
-    },
-  });
-
-export default HomePage
+export default HomePage;

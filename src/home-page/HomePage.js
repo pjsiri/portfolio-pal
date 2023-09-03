@@ -7,11 +7,15 @@ import {
   Image,
   SafeAreaView,
 } from "react-native";
+import { Stack, useRouter } from "expo-router";
 
+import styles from "./HomePage.style";
 import TrendingStocks from "./parts/TrendingStocks";
 import NewestStocks from "./parts/NewestStocks";
 
 const HomePage = () => {
+  const router = useRouter();
+
   return (
     <SafeAreaView style={styles.appContainer}>
       <View>
@@ -41,48 +45,5 @@ const HomePage = () => {
     </SafeAreaView>
   );
 };
-
-const styles = StyleSheet.create({
-  appContainer: {
-    flex: 1,
-    padding: 50,
-    paddingLeft: 20,
-    paddingRight: 20,
-    width: "100%",
-    backgroundColor: "grey",
-  },
-
-  componentContainer: {
-    //backgroundColor: 'black',
-  },
-
-  trendingStocks: {
-    height: 250,
-    backgroundColor: "white",
-  },
-
-  newestStocks: {
-    height: 600,
-    backgroundColor: "white",
-  },
-
-  title: {
-    fontWeight: "bold",
-    fontSize: 30,
-    paddingTop: 20,
-    paddingBottom: 20,
-  },
-
-  subtitle: {
-    fontWeight: "bold",
-    fontSize: 20,
-    padding: 10,
-  },
-
-  appLogo: {
-    width: 60,
-    height: 60,
-  },
-});
 
 export default HomePage;

@@ -8,7 +8,7 @@ import HomePage from "./src/home-page/HomePage.js";
 export default function App() {
   return (
     <View style={styles.container}>
-      <LoginScreen />
+      <HomePage />
       <StatusBar style="auto" />
     </View>
   );

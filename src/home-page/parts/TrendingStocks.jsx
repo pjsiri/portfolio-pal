@@ -10,11 +10,13 @@ import { useRouter } from "expo-router";
 
 import styles from "./Parts.style";
 import TrendingStockCard from "../cards/TrendingStockCard";
+import useFetch from "../../../hook/useFetch";
 
 const TrendingStocks = () => {
   const router = useRouter();
-  const isLoading = false;
-  const error = false;
+  const { data, isLoading, error } = useFetch("stocks", {});
+
+  console.log(data);
 
   return (
     <View style={styles.container}>

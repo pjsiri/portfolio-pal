@@ -1,13 +1,15 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, TouchableOpacity, Image } from "react-native";
 
 import styles from "./Cards.style";
 
-const TrendingStockCard = () => {
+const TrendingStockCard = ({ item, selectedStock, handleCardPress }) => {
   return (
-    <View>
-      <Text>TrendingStockCard</Text>
-    </View>
+    <TouchableOpacity onPress={() => handleCardPress(item)}>
+      <TouchableOpacity>
+        <Image />
+      </TouchableOpacity>
+    </TouchableOpacity>
   );
 };
 

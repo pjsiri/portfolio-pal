@@ -10,11 +10,17 @@ import { useRouter } from "expo-router";
 
 import styles from "./Parts.style";
 import TrendingStockCard from "../cards/TrendingStockCard";
+import useFetch from "../../../hook/useFetch";
 
 const TrendingStocks = () => {
   const router = useRouter();
-  const isLoading = false;
-  const error = false;
+  const { data, isLoading, error } = useFetch("market-trends", {
+    trend_type: "MOST_ACTIVE",
+    country: "us",
+    language: "en",
+  });
+
+  //console.log(data);
 
   return (
     <View style={styles.container}>
@@ -32,9 +38,9 @@ const TrendingStocks = () => {
           <Text>Something went wrong</Text>
         ) : (
           <FlatList
-            data={[1, 2, 3, 4]}
+            data={data.slice(0, 3)}
             renderItem={({ item }) => <TrendingStockCard item={item} />}
-            keyExtractor={(item) => item?.stock_id}
+            keyExtractor={(item) => item?.google_mid}
             contentContainerStyle={{ columnGap: 20 }}
             horizontal
           />

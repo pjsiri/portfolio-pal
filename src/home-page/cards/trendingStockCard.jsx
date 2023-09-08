@@ -1,13 +1,25 @@
 import React from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
+import { useRouter } from "expo-router";
 
 import styles from "./Cards.style";
+import getLogo from "../../../hook/getLogo";
 
 const TrendingStockCard = ({ item, selectedStock, handleCardPress }) => {
+  const router = useRouter();
+  const { data, isLoading, error } = getLogo(item.symbol);
+
   return (
-    <TouchableOpacity onPress={() => handleCardPress(item)}>
-      <TouchableOpacity>
-        <Image />
+    <TouchableOpacity
+      style={styles.container(selectedStock, item)}
+      onPress={() => handleCardPress(item)}
+    >
+      <TouchableOpacity style={styles.logoContainer(selectedStock, item)}>
+        <Image
+          source={{ uri: data }}
+          resizeMode="contain"
+          style={styles.logoImage}
+        />
       </TouchableOpacity>
     </TouchableOpacity>
   );

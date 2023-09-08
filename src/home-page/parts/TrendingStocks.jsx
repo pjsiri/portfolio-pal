@@ -20,7 +20,8 @@ const TrendingStocks = () => {
     language: "en",
   });
 
-  //console.log(data);
+  const [selectedStock, setSelectedStock] = useState();
+  const handleCardPress = (item) => {};
 
   return (
     <View style={styles.container}>
@@ -38,11 +39,18 @@ const TrendingStocks = () => {
           <Text>Something went wrong</Text>
         ) : (
           <FlatList
-            data={data.slice(0, 3)}
-            renderItem={({ item }) => <TrendingStockCard item={item} />}
+            data={data.slice(0, 2)}
+            renderItem={({ item }) => (
+              <TrendingStockCard
+                item={item}
+                selectedStock={selectedStock}
+                handleCardPress={handleCardPress}
+              />
+            )}
             keyExtractor={(item) => item?.google_mid}
             contentContainerStyle={{ columnGap: 20 }}
             horizontal
+            showsHorizontalScrollIndicator={false}
           />
         )}
       </View>

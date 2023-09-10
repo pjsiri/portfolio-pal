@@ -3,7 +3,8 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
   container: {
     marginBottom: 10,
-    backgroundColor: "white",
+    padding: 10,
+    //backgroundColor: "lightgrey",
   },
 
   header: {

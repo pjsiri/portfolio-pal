@@ -4,13 +4,14 @@ import { COLORS, FONT, SHADOWS, SIZES } from "../../../constants/theme";
 
 const styles = StyleSheet.create({
   container: (selectedJob, item) => ({
-    width: 250,
+    width: 280,
     padding: SIZES.xLarge,
+    marginBottom: SIZES.small,
     backgroundColor: selectedJob === item.google_mid ? COLORS.primary : "#FFF",
-    borderRadius: SIZES.medium,
+    borderRadius: SIZES.xLarge,
     justifyContent: "space-between",
     ...SHADOWS.medium,
-    shadowColor: COLORS.white,
+    //shadowColor: "black",
   }),
   logoContainer: (selectedJob, item) => ({
     width: 50,
@@ -21,21 +22,36 @@ const styles = StyleSheet.create({
     alignItems: "center",
   }),
   logoImage: {
-    width: "70%",
-    height: "70%",
+    width: "100%",
+    height: "100%",
   },
   companyName: {
-    fontSize: SIZES.medium,
-    fontFamily: FONT.regular,
-    color: "#B3AEC6",
+    fontSize: SIZES.large,
+    fontWeight: "bold",
+    //fontFamily: FONT.regular,
+    color: "#000",
     marginTop: SIZES.small / 1.5,
+  },
+  companySymbol: {
+    fontSize: SIZES.small + 2,
+    fontWeight: "500",
+    //fontFamily: FONT.regular,
+    color: "#000",
+    marginTop: SIZES.small / 1.5,
+  },
+  companyPrice: {
+    fontSize: SIZES.medium,
+    fontWeight: "bold",
+    //fontFamily: FONT.regular,
+    color: "#000",
+    textAlign: "right",
   },
   infoContainer: {
     marginTop: SIZES.large,
   },
   jobName: (selectedJob, item) => ({
     fontSize: SIZES.large,
-    fontFamily: FONT.medium,
+    //fontFamily: FONT.medium,
     color: selectedJob === item.google_mid ? COLORS.white : COLORS.primary,
   }),
   infoWrapper: {
@@ -46,12 +62,12 @@ const styles = StyleSheet.create({
   },
   publisher: (selectedJob, item) => ({
     fontSize: SIZES.medium - 2,
-    fontFamily: FONT.bold,
+    //fontFamily: FONT.bold,
     color: selectedJob === item.google_mid ? COLORS.white : COLORS.primary,
   }),
   location: {
     fontSize: SIZES.medium - 2,
-    fontFamily: FONT.regular,
+    //fontFamily: FONT.regular,
     color: "#B3AEC6",
   },
 });

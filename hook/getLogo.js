@@ -11,7 +11,7 @@ const getLogo = (query) => {
     url: "https://twelve-data1.p.rapidapi.com/logo",
     params: { symbol: query },
     headers: {
-      "X-RapidAPI-Key": "c3e9443811msh9092ec179039818p1c80adjsnde35f9d772e7",
+      "X-RapidAPI-Key": "8d926b198emshbca834b637a93c6p1fb9b2jsnb38e64fc6ca1",
       "X-RapidAPI-Host": "twelve-data1.p.rapidapi.com",
     },
   };

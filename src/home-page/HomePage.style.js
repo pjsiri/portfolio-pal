@@ -2,7 +2,9 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   headerContainer: {
-    paddingBottom: 15,
+    flexDirection: "row",
+    paddingVertical: 15,
+    justifyContent: "space-between",
   },
 
   appContainer: {
@@ -13,16 +15,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
   },
 
+  appName: {
+    textAlign: "center",
+    textAlignVertical: "center",
+    fontWeight: "bold",
+    fontSize: 25,
+  },
+
   header: {
+    //textAlign: "center",
     fontWeight: "bold",
     fontSize: 30,
     paddingTop: 20,
-    paddingBottom: 30,
+    paddingBottom: 20,
   },
 
   appLogo: {
     width: 60,
     height: 60,
+  },
+
+  modeIcon: {
+    width: 50,
+    height: 50,
   },
 });
 

@@ -12,42 +12,33 @@ const uriExists = async (uri) => {
   }
 };
 
-const StockCard = ({ item, handleNavigate }) => {
-  let stockSymbol = item.symbol;
-  let stockName = (item.name || "").split(" ");
-  //const [stockSymbol, setStockSymbol] = useState(init_stockSymbol);
-  //const [stockName, setStockName] = useState(init_stockName);
+const CryptoCard = ({ item, handleNavigate }) => {
+  let cryptoSymbol = (item.from_symbol || " ").toLowerCase();
+  let cryptoName = (item.from_currency_name || " ").split(" ");
+  //const [cryptoSymbol, setCryptoSymbol] = useState(init_cryptoSymbol);
+  //const [cryptoName, setCryptoName] = useState(init_cryptoName);
   const [imageUri, setImageUri] = useState(null);
 
-  if ((item.symbol || "").includes(":")) {
-    const splittedSymbol = item.symbol.split(":");
-    stockSymbol = splittedSymbol[0];
-    //setStockSymbol(splittedSymbol[0]);
-  }
-  if (stockName.length > 0) {
-    stockName = stockName[0];
-    //setStockName(stockName[0]);
+  if (cryptoName.length > 0) {
+    cryptoName = cryptoName[0].toLowerCase();
+    //setCryptoName(cryptoName[0].toLowerCase());
   }
 
   useEffect(() => {
     async function checkUris() {
-      const symbolUri = `https://api.twelvedata.com/logo/${stockSymbol}.com`;
-      const nameUri = `https://api.twelvedata.com/logo/${stockName}.com`;
+      const cryptoUri = `https://cryptologos.cc/logos/${cryptoName}-${cryptoSymbol}-logo.png?v=026`;
 
-      const symbolExists = await uriExists(symbolUri);
-      const nameExists = await uriExists(nameUri);
+      const symbolExists = await uriExists(cryptoUri);
 
       if (symbolExists) {
-        setImageUri(symbolUri);
-      } else if (nameExists) {
-        setImageUri(nameUri);
+        setImageUri(cryptoUri);
       } else {
         setImageUri(false);
       }
     }
 
     checkUris();
-  }, [stockSymbol, stockName]);
+  }, [cryptoSymbol, cryptoName]);
 
   return (
     <TouchableOpacity style={styles.container} onPress={handleNavigate}>
@@ -65,10 +56,10 @@ const StockCard = ({ item, handleNavigate }) => {
 
       <View style={styles.nameContainer}>
         <Text style={styles.stockName} numberOfLines={1}>
-          {item.name}
+          {item.from_currency_name}
         </Text>
         <Text style={styles.stockSymbol} numberOfLines={1}>
-          {stockSymbol}
+          {item.from_symbol}
         </Text>
       </View>
 
@@ -82,7 +73,7 @@ const StockCard = ({ item, handleNavigate }) => {
         </TouchableOpacity>
         <View style={styles.priceContainer}>
           <Text style={styles.stockPrice} numberOfLines={1}>
-            ${item.price}&nbsp;{item.currency}
+            ${item.exchange_rate}&nbsp;{item.to_symbol}
           </Text>
         </View>
       </View>
@@ -90,4 +81,4 @@ const StockCard = ({ item, handleNavigate }) => {
   );
 };
 
-export default StockCard;
+export default CryptoCard;

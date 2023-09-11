@@ -11,7 +11,7 @@ const useFetch = (endpoint, query) => {
     url: `https://real-time-finance-data.p.rapidapi.com/${endpoint}`,
     params: { ...query },
     headers: {
-      "X-RapidAPI-Key": "8d926b198emshbca834b637a93c6p1fb9b2jsnb38e64fc6ca1",
+      "X-RapidAPI-Key": "1c177026e7msh7d320f6283baf4bp12b532jsn7a0790fa7b5a",
       "X-RapidAPI-Host": "real-time-finance-data.p.rapidapi.com",
     },
   };
@@ -24,11 +24,10 @@ const useFetch = (endpoint, query) => {
 
       setData(response.data.data.trends);
       setIsLoading(false);
-      //console.log(response.data.data.trends);
     } catch (error) {
       setError(error);
-      alert("There is an error");
-      //console.error(error);
+      alert("There is an error!!!");
+      console.error(error);
     } finally {
       setIsLoading(false);
     }

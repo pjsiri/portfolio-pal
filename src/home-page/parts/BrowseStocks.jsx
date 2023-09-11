@@ -22,6 +22,7 @@ const BrowseStocks = () => {
     setTrendType((prevTrendType) =>
       prevTrendType === "MOST_ACTIVE" ? "CRYPTO" : "MOST_ACTIVE"
     );
+    setIsStocks(!isStocks);
   };
 
   useEffect(() => {
@@ -29,9 +30,8 @@ const BrowseStocks = () => {
   }, []);
 
   useEffect(() => {
-    setIsStocks(!isStocks);
     refetch();
-  }, [trendType]);
+  }, [isStocks]);
 
   return (
     <View style={styles.container}>

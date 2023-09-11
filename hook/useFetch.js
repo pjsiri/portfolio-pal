@@ -24,7 +24,6 @@ const useFetch = (endpoint, query) => {
 
       setData(response.data.data.trends);
       //console.log(data);
-      //
       setIsLoading(false);
     } catch (error) {
       setError(error);

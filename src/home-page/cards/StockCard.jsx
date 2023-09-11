@@ -15,18 +15,14 @@ const uriExists = async (uri) => {
 const StockCard = ({ item, handleNavigate }) => {
   let stockSymbol = item.symbol;
   let stockName = (item.name || "").split(" ");
-  //const [stockSymbol, setStockSymbol] = useState(init_stockSymbol);
-  //const [stockName, setStockName] = useState(init_stockName);
   const [imageUri, setImageUri] = useState(null);
 
   if ((item.symbol || "").includes(":")) {
     const splittedSymbol = item.symbol.split(":");
     stockSymbol = splittedSymbol[0];
-    //setStockSymbol(splittedSymbol[0]);
   }
   if (stockName.length > 0) {
     stockName = stockName[0];
-    //setStockName(stockName[0]);
   }
 
   useEffect(() => {

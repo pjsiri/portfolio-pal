@@ -13,15 +13,12 @@ const uriExists = async (uri) => {
 };
 
 const CryptoCard = ({ item, handleNavigate }) => {
-  let cryptoSymbol = (item.from_symbol || " ").toLowerCase();
-  let cryptoName = (item.from_currency_name || " ").split(" ");
-  //const [cryptoSymbol, setCryptoSymbol] = useState(init_cryptoSymbol);
-  //const [cryptoName, setCryptoName] = useState(init_cryptoName);
+  let cryptoSymbol = (item.from_symbol || "").toLowerCase();
+  let cryptoName = (item.from_currency_name || "").split(" ");
   const [imageUri, setImageUri] = useState(null);
 
   if (cryptoName.length > 0) {
     cryptoName = cryptoName[0].toLowerCase();
-    //setCryptoName(cryptoName[0].toLowerCase());
   }
 
   useEffect(() => {

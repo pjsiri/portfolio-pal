@@ -11,7 +11,7 @@ const HomePage = () => {
 
   return (
     <SafeAreaView style={styles.appContainer}>
-      <View>
+      <View style={styles.headerContainer}>
         <Image
           style={styles.appLogo}
           source={require("../../assets/app_logo.png")}
@@ -22,7 +22,6 @@ const HomePage = () => {
         <View style={{ flex: 1 }}>
           <Text style={styles.header}>PortfolioPal</Text>
 
-          <TrendingStocks />
           <NewestStocks />
         </View>
       </ScrollView>

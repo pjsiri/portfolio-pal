@@ -16,9 +16,9 @@ const NewestStocks = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Newest Stocks</Text>
+        <Text style={styles.headerTitle}>Browse stocks</Text>
         <TouchableOpacity>
-          <Text style={styles.headerBtn}>Expand</Text>
+          <Text style={styles.headerBtn}>Browse cryptos</Text>
         </TouchableOpacity>
       </View>
 
@@ -29,7 +29,7 @@ const NewestStocks = () => {
           <Text>Something went wrong</Text>
         ) : (
           data
-            ?.slice(0, 3)
+            ?.slice(0, 20)
             .map((item) => (
               <NewestStockCard
                 item={item}

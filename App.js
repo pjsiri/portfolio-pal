@@ -4,6 +4,7 @@ import { StyleSheet, View } from "react-native";
 import LoginScreen from "./src/LoginPage.js";
 import RegisterScreen from "./src/RegisterPage.js";
 import HomePage from "./src/home-page/HomePage.js";
+import ForgotPage from "./src/ForgotPage.js";
 
 export default function App() {
   return (

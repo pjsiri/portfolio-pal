@@ -3,72 +3,70 @@ import { StyleSheet } from "react-native";
 import { COLORS, FONT, SHADOWS, SIZES } from "../../../constants/theme";
 
 const styles = StyleSheet.create({
-  container: (selectedJob, item) => ({
-    width: 280,
-    padding: SIZES.xLarge,
-    marginBottom: SIZES.small,
-    backgroundColor: selectedJob === item.google_mid ? COLORS.primary : "#FFF",
-    borderRadius: SIZES.xLarge,
+  container: {
+    flex: 1,
+    marginBottom: 20,
     justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "row",
+    padding: SIZES.medium,
+    borderRadius: SIZES.large,
+    backgroundColor: "#FFF",
     ...SHADOWS.medium,
-    //shadowColor: "black",
-  }),
-  logoContainer: (selectedJob, item) => ({
+    shadowColor: "black",
+  },
+  logoContainer: {
     width: 50,
     height: 50,
-    backgroundColor: selectedJob === item.google_mid ? "#FFF" : COLORS.white,
+    backgroundColor: COLORS.white,
     borderRadius: SIZES.medium,
     justifyContent: "center",
     alignItems: "center",
-  }),
+  },
+  heartContainer: {
+    top: -5,
+    right: -5,
+    padding: 5,
+    flex: 1,
+    width: 30,
+    height: 30,
+    borderRadius: 50,
+    backgroundColor: "#F0F0F0",
+    alignSelf: "flex-end",
+  },
   logoImage: {
     width: "100%",
     height: "100%",
   },
-  companyName: {
-    fontSize: SIZES.large,
-    fontWeight: "bold",
-    //fontFamily: FONT.regular,
-    color: "#000",
-    marginTop: SIZES.small / 1.5,
+  heartImage: {
+    width: "100%",
+    height: "100%",
   },
-  companySymbol: {
-    fontSize: SIZES.small + 2,
-    fontWeight: "500",
-    //fontFamily: FONT.regular,
-    color: "#000",
-    marginTop: SIZES.small / 1.5,
+  nameContainer: {
+    flex: 3,
+    marginHorizontal: SIZES.medium,
   },
-  companyPrice: {
+  priceContainer: {
+    flex: 5,
+  },
+  priceOuterContainer: {
+    flex: 2,
+    justifyContent: "space-between",
+  },
+  stockName: {
     fontSize: SIZES.medium,
     fontWeight: "bold",
-    //fontFamily: FONT.regular,
-    color: "#000",
-    textAlign: "right",
+    color: "black",
   },
-  infoContainer: {
-    marginTop: SIZES.large,
+  stockSymbol: {
+    fontSize: SIZES.small + 2,
+    color: "black",
+    marginTop: 3,
   },
-  jobName: (selectedJob, item) => ({
-    fontSize: SIZES.large,
-    //fontFamily: FONT.medium,
-    color: selectedJob === item.google_mid ? COLORS.white : COLORS.primary,
-  }),
-  infoWrapper: {
-    flexDirection: "row",
-    marginTop: 5,
-    justifyContent: "flex-start",
-    alignItems: "center",
-  },
-  publisher: (selectedJob, item) => ({
-    fontSize: SIZES.medium - 2,
-    //fontFamily: FONT.bold,
-    color: selectedJob === item.google_mid ? COLORS.white : COLORS.primary,
-  }),
-  location: {
-    fontSize: SIZES.medium - 2,
-    //fontFamily: FONT.regular,
-    color: "#B3AEC6",
+  stockPrice: {
+    fontSize: SIZES.medium - 1,
+    fontWeight: "bold",
+    color: "black",
   },
 });
 

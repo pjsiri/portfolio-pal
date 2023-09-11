@@ -2,10 +2,10 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 
 import styles from "./Parts.style";
-import NewestStockCard from "../cards/NewestStockCard";
+import StockCard from "../cards/StockCard";
 import useFetch from "../../../hook/useFetch";
 
-const NewestStocks = () => {
+const BrowseStocks = () => {
   const router = useRouter();
   const { data, isLoading, error } = useFetch("market-trends", {
     trend_type: "MOST_ACTIVE",
@@ -16,9 +16,9 @@ const NewestStocks = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Newest Stocks</Text>
+        <Text style={styles.headerTitle}>Browse stocks</Text>
         <TouchableOpacity>
-          <Text style={styles.headerBtn}>Expand</Text>
+          <Text style={styles.headerBtn}>Browse cryptos</Text>
         </TouchableOpacity>
       </View>
 
@@ -29,9 +29,9 @@ const NewestStocks = () => {
           <Text>Something went wrong</Text>
         ) : (
           data
-            ?.slice(0, 3)
+            ?.slice(0, 20)
             .map((item) => (
-              <NewestStockCard
+              <StockCard
                 item={item}
                 key={`newest-stock-${item?.google_mid}`}
                 handleNavigate={() =>
@@ -45,4 +45,4 @@ const NewestStocks = () => {
   );
 };
 
-export default NewestStocks;
+export default BrowseStocks;

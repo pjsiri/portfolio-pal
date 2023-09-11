@@ -44,7 +44,7 @@ const SHADOWS = {
     },
     shadowOpacity: 0.25,
     shadowRadius: 5.84,
-    elevation: 6,
+    elevation: 8,
   },
 };
 

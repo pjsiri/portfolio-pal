@@ -1,81 +1,117 @@
-import React, { useState } from 'react';
-import { Text, View, TextInput, Button, Alert } from 'react-native';
-import { Image } from 'react-native';
+import React, { useState } from "react";
+import {
+  Text,
+  View,
+  TextInput,
+  Button,
+  Alert,
+  Image,
+  TouchableOpacity,
+} from "react-native";
 
 const LoginScreen = () => {
-  const [user, setUser] = useState('');
-  const [pass, setPass] = useState('');
+  const [user, setUser] = useState("");
+  const [pass, setPass] = useState("");
+  const [isDarkMode, setIsDarkMode] = useState(false); // State to track dark mode
 
   const handleLogin = () => {
     // Replace these with your preset username and password
-    const setUser = 'PortfolioPal';
-    const setPass = 'AIVestor';
+    const setUser = "PortfolioPal";
+    const setPass = "AIVestor";
 
     if (user === setUser && pass === setPass) {
       // Successful login
-      Alert.alert('Login Successful', 'Welcome back, PortfolioPal!');
+      Alert.alert("Login Successful", "Welcome back, PortfolioPal!");
     } else {
       // Failed login
-      Alert.alert('Login Failed', 'Invalid username or password.');
+      Alert.alert("Login Failed", "Invalid username or password.");
     }
+  };
+
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode); // Toggle dark mode state
+  };
+
+  const styles = {
+    container: {
+      flex: 1,
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "center",
+      backgroundColor: isDarkMode ? "black" : "white", // Use dark background for dark mode
+    },
+    title: {
+      fontSize: 24,
+      marginBottom: 10,
+      color: isDarkMode ? "white" : "black", // Use white text for dark mode
+    },
+    subtitle: {
+      fontSize: 18,
+      color: isDarkMode ? "white" : "black",
+    },
+    input: {
+      width: 200,
+      height: 40,
+      borderColor: "gray",
+      borderWidth: 1,
+      marginVertical: 10,
+      paddingHorizontal: 10,
+      backgroundColor: isDarkMode ? "gray" : "white", // Use gray background for input in dark mode
+      color: isDarkMode ? "white" : "black", // Use white text for input in dark mode
+    },
+    bannerImage: {
+      width: 300,
+      height: 150,
+      resizeMode: "contain",
+      marginBottom: 20,
+    },
+    darkModeButton: {
+      position: "absolute",
+      bottom: 10, // Adjust the position from the bottom
+      right: 10,
+      backgroundColor: isDarkMode ? "white" : "black",
+      padding: 5,
+      borderRadius: 20,
+    },
+    darkModeButtonText: {
+      color: isDarkMode ? "black" : "white",
+    },
   };
 
   return (
     <View style={styles.container}>
       <Image
-        source={{ uri: 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png' }}
+        source={{
+          uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png",
+        }}
         style={styles.bannerImage}
       />
       <Text style={styles.title}>Welcome Back!</Text>
       <Text style={styles.subtitle}>Please Login!</Text>
       <TextInput
         placeholder="Username"
-        onChangeText={text => setUser(text)}
+        onChangeText={(text) => setUser(text)}
         value={user}
         style={styles.input}
       />
       <TextInput
         placeholder="Password"
-        onChangeText={text => setPass(text)}
+        onChangeText={(text) => setPass(text)}
         value={pass}
         secureTextEntry
         style={styles.input}
       />
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <Button title="Forgot password" onPress={handleLogin} />
         <Button title="Login" onPress={handleLogin} />
       </View>
+      <TouchableOpacity style={styles.darkModeButton} onPress={toggleDarkMode}>
+        <Text style={styles.darkModeButtonText}>
+          {isDarkMode ? "Light Mode" : "Dark Mode"}
+        </Text>
+      </TouchableOpacity>
     </View>
   );
-};
-
-const styles = {
-  container: {
-    flex: 1,
-    alignItems: 'center', // Center horizontally
-    justifyContent: 'center', // Center vertically
-  },
-  title: {
-    fontSize: 24, // Adjust the font size as needed
-    marginBottom: 10, // Add spacing between the title and subtitle
-  },
-  subtitle: {
-    fontSize: 18, // Adjust the font size as needed
-  },
-  input: {
-    width: 200,
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginVertical: 10,
-    paddingHorizontal: 10,
-  },
-  bannerImage: {
-    width: 300, // Adjust the width as needed
-    height: 150, // Adjust the height as needed
-    resizeMode: 'contain', // Adjust the resizeMode as needed
-    marginBottom: 20, // Add some spacing between the image and the other content
-  },
 };
 
 export default LoginScreen;

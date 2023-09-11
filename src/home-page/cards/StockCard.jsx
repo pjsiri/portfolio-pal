@@ -12,7 +12,7 @@ const uriExists = async (uri) => {
   }
 };
 
-const NewestStockCard = ({ item, handleNavigate }) => {
+const StockCard = ({ item, handleNavigate }) => {
   let stockSymbol = item.symbol;
   let stockName = item.name.split(" ");
   const [imageUri, setImageUri] = useState(null);
@@ -86,4 +86,4 @@ const NewestStockCard = ({ item, handleNavigate }) => {
   );
 };
 
-export default NewestStockCard;
+export default StockCard;

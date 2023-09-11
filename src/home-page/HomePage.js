@@ -3,8 +3,7 @@ import { Text, View, ScrollView, Image, SafeAreaView } from "react-native";
 import { Stack, useRouter } from "expo-router";
 
 import styles from "./HomePage.style";
-import TrendingStocks from "./parts/TrendingStocks";
-import NewestStocks from "./parts/NewestStocks";
+import BrowseStocks from "./parts/BrowseStocks";
 
 const HomePage = () => {
   const router = useRouter();
@@ -22,7 +21,7 @@ const HomePage = () => {
         <View style={{ flex: 1 }}>
           <Text style={styles.header}>PortfolioPal</Text>
 
-          <NewestStocks />
+          <BrowseStocks />
         </View>
       </ScrollView>
     </SafeAreaView>

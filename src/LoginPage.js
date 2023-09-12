@@ -23,7 +23,7 @@ const LoginScreen = () => {
 
     if (user === setUser && pass === setPass) {
       // Successful login
-      navigation.navigate('Home');
+      navigation.navigate('HomeStack');
       Alert.alert("Login Successful", "Welcome back, PortfolioPal!");
     } else {
       // Failed login

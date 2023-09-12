@@ -15,6 +15,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
   },
 
+  darkModeContainer: {
+    backgroundColor: "#333333", // Set your dark mode background color here
+  },
+  
   appName: {
     textAlign: "center",
     textAlignVertical: "center",

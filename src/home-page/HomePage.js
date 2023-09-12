@@ -13,17 +13,22 @@ import styles from "./HomePage.style";
 import BrowseStocks from "./parts/BrowseStocks";
 
 const HomePage = () => {
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const router = useRouter();
 
+  const toggleDarkMode = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   return (
-    <SafeAreaView style={styles.appContainer}>
+    <SafeAreaView style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}>
       <View style={styles.headerContainer}>
         <Image
           style={styles.appLogo}
           source={require("../../assets/app_logo.png")}
         />
         <Text style={styles.appName}>PortfolioPal</Text>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={toggleDarkMode}>
           <Image
             style={styles.modeIcon}
             source={require("../../assets/dark-mode-icon.png")}

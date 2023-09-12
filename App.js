@@ -5,11 +5,12 @@ import LoginScreen from "./src/LoginPage.js";
 import RegisterScreen from "./src/RegisterPage.js";
 import HomePage from "./src/home-page/HomePage.js";
 import ForgotPage from "./src/ForgotPage.js";
+import SearchPage from "./src/search-page/SearchPage.js";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <HomePage />
+      <SearchPage />
       <StatusBar style="auto" />
     </View>
   );

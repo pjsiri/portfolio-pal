@@ -5,6 +5,7 @@ import LoginScreen from "./LoginPage.js";
 import RegisterScreen from "./RegisterPage.js";
 import HomePage from "./home-page/HomePage.js";
 import ForgotPage from "./ForgotPage.js";
+import PortfolioPage from "./PortFolio.js"
 
 const Stack = createStackNavigator();
 
@@ -15,6 +16,7 @@ const StackNavigator = () => {
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="Forgot" component={ForgotPage} />
       <Stack.Screen name="Home" component={HomePage} />
+      {/* <Stack.Screen name="Portfolio" component={PortfolioPage} /> */}
     </Stack.Navigator>
   );
 };

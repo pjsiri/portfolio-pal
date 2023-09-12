@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Text, View, TextInput, Button, Alert, Dimensions, StyleSheet } from 'react-native';
 import { Image } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
+import { StatusBar } from 'react-native';
 
 const portFolio = () => {
     let originalTotalPrice = 10;

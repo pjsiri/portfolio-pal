@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigation } from "@react-navigation/native";
 import {
   Text,
   View,
@@ -13,6 +14,7 @@ const LoginScreen = () => {
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false); // State to track dark mode
+  const navigation = useNavigation();
 
   const handleLogin = () => {
     // Replace these with your preset username and password
@@ -21,11 +23,17 @@ const LoginScreen = () => {
 
     if (user === setUser && pass === setPass) {
       // Successful login
+      navigation.navigate('HomeStack');
       Alert.alert("Login Successful", "Welcome back, PortfolioPal!");
     } else {
       // Failed login
       Alert.alert("Login Failed", "Invalid username or password.");
     }
+  };
+
+  const handleForgotPassword = () => {
+    // Navigate to the "Forgot" screen when the button is pressed
+    navigation.navigate("Forgot");
   };
 
   const toggleDarkMode = () => {
@@ -102,7 +110,7 @@ const LoginScreen = () => {
         style={styles.input}
       />
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Button title="Forgot password" onPress={handleLogin} />
+        <Button title="Forgot password" onPress={() => navigation.navigate("Forgot")} />
         <Button title="Login" onPress={handleLogin} />
       </View>
       <TouchableOpacity style={styles.darkModeButton} onPress={toggleDarkMode}>

@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Text, View, TextInput, Button, Alert, Dimensions, StyleSheet } from 'react-native';
 import { Image } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
+import { StatusBar } from 'react-native';
 
-const portFolio = () => {
+const PortFolio = () => {
     let originalTotalPrice = 10;
     let changedTotalPrice = 9.6;
 
@@ -105,4 +106,4 @@ const styles = StyleSheet.create({
 });
 
 
-export default portFolio;
+export default PortFolio;

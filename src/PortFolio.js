@@ -12,50 +12,53 @@ const PortFolio = () => {
     const screenHeight = Dimensions.get('window').height;
 
     const result = (originalTotalPrice, changedTotalPrice) => {
-        return changedTotalPrice - originalTotalPrice;
+        return (changedTotalPrice - originalTotalPrice);
     }
     const resultValue = result(originalTotalPrice, changedTotalPrice);
-    let moneyText = null;
-    if (resultValue > 0) {
-        moneyText = <Text style={styles.earnedMoney}>result: +{resultValue}</Text>;
-    } else {
-        moneyText = <Text style={styles.losesMoney}>result: {resultValue}</Text>;
-    }
+    let percentage = ((resultValue / originalTotalPrice) * 100).toFixed(2);
 
-    let percentage = (resultValue / originalTotalPrice) * 100;
+    let moneyText = null;
+    let percentageText = null;
+    if (resultValue > 0) {
+        moneyText = <Text style={styles.earnedMoney}>result: +{resultValue.toFixed(2)}</Text>;
+        percentageText = <Text style={styles.earnedMoney}>{percentage}%</Text>
+    } else {
+        moneyText = <Text style={styles.losesMoney}>result: {resultValue.toFixed(2)}</Text>;
+        percentageText = <Text style={styles.losesMoney}>{percentage}%</Text>
+    }
 
     const pieData = [
         {
-            name: 'Stock 1',
-            price: 215,
+            name: 'Apple',
+            price: 10324,
             color: 'rgba(131, 167, 234, 1)',
             legendFontColor: '#7F7F7F',
             legendFontSize: 15,
         },
         {
-            name: 'Stock 2',
-            price: 280,
+            name: 'Tesla',
+            price: 8220,
             color: 'orange',
             legendFontColor: '#7F7F7F',
             legendFontSize: 15,
         },
         {
-            name: 'Stock 3',
-            price: 52,
+            name: 'Alphabet',
+            price: 4435,
             color: 'red',
             legendFontColor: '#7F7F7F',
             legendFontSize: 15,
         },
         {
-            name: 'Stock 4',
-            price: 853,
+            name: 'Microsoft',
+            price: 4200,
             color: 'yellow',
             legendFontColor: '#7F7F7F',
             legendFontSize: 15,
         },
         {
-            name: 'Stock 5',
-            price: 11,
+            name: 'BNZ',
+            price: 2200,
             color: 'green',
             legendFontColor: '#7F7F7F',
             legendFontSize: 15,
@@ -81,10 +84,10 @@ const PortFolio = () => {
                 paddingLeft="15"
                 absolute
             />
-            <Text>Original money: {originalTotalPrice}</Text>
-            <Text>Changed money: {changedTotalPrice}</Text>
+            <Text>Original money: ${originalTotalPrice}</Text>
+            <Text>Changed money: ${changedTotalPrice}</Text>
             {moneyText}
-            <Text>{percentage}%</Text>
+            <Text>{percentageText}</Text>
             <StatusBar style="auto" />
         </View>
     );

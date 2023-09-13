@@ -12,17 +12,17 @@ const PortFolio = () => {
     const screenHeight = Dimensions.get('window').height;
 
     const result = (originalTotalPrice, changedTotalPrice) => {
-        return changedTotalPrice - originalTotalPrice;
+        return (changedTotalPrice - originalTotalPrice);
     }
     const resultValue = result(originalTotalPrice, changedTotalPrice);
     let moneyText = null;
     if (resultValue > 0) {
-        moneyText = <Text style={styles.earnedMoney}>result: +{resultValue}</Text>;
+        moneyText = <Text style={styles.earnedMoney}>result: +{resultValue.toFixed(2)}</Text>;
     } else {
-        moneyText = <Text style={styles.losesMoney}>result: {resultValue}</Text>;
+        moneyText = <Text style={styles.losesMoney}>result: {resultValue.toFixed(2)}</Text>;
     }
 
-    let percentage = (resultValue / originalTotalPrice) * 100;
+    let percentage = ((resultValue / originalTotalPrice) * 100).toFixed(2);
 
     const pieData = [
         {

@@ -1,16 +1,22 @@
 import React, { useState } from 'react';
 import { Text, View, TextInput, Button, Alert } from 'react-native';
 import { Image } from 'react-native';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 const RegisterScreen = () => {
   const [user, setUser] = useState('');
   const [pass, setPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
+  
+  // Get the navigation prop
+  const navigation = useNavigation();
 
   const handleRegister = () => {
     // Add your registration logic here
     if (user && pass && pass === confirmPass) {
       Alert.alert('Registration Successful', 'You have successfully registered!');
+      // Navigate back to the login screen
+      navigation.navigate('Login'); // Use the screen name of your Login screen
     } else {
       Alert.alert('Registration Failed', 'Please provide valid information.');
     }

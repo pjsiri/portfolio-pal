@@ -5,8 +5,11 @@ import { PieChart } from 'react-native-chart-kit';
 import { StatusBar } from 'react-native';
 
 const PortFolio = () => {
-    let originalTotalPrice = 10;
-    let changedTotalPrice = 9.6;
+    let randomOriginalTotalPrice = Math.floor(Math.random()*10000) +1;
+    let randomChangedTotalPrice = Math.floor(Math.random()*10000) +1;
+
+    let originalTotalPrice = randomOriginalTotalPrice;
+    let changedTotalPrice = randomChangedTotalPrice;
 
     const screenWidth = Dimensions.get('window').width;
     const screenHeight = Dimensions.get('window').height;

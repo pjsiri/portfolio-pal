@@ -52,6 +52,7 @@ const PortFolio = () => {
         totalSum += pieData[i].price;
     }
 
+    pieData.sort((a, b) => b.price - a.price);
 
     let randomOriginalTotalPrice = Math.floor(Math.random() * 30000) + 10000; //Original prices
 

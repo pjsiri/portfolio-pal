@@ -18,8 +18,8 @@ const LoginScreen = () => {
 
   const handleLogin = () => {
     // Replace these with your preset username and password
-    const setUser = "PortfolioPal";
-    const setPass = "AIVestor";
+    const setUser = "A";
+    const setPass = "b";
 
     if (user === setUser && pass === setPass) {
       // Successful login

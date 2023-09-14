@@ -5,11 +5,58 @@ import { PieChart } from 'react-native-chart-kit';
 import { StatusBar } from 'react-native';
 
 const PortFolio = () => {
-    let randomOriginalTotalPrice = Math.floor(Math.random()*10000) +1;
-    let randomChangedTotalPrice = Math.floor(Math.random()*10000) +1;
+
+    const pieData = [
+        {
+            name: 'Apple',
+            price: Math.floor(Math.random() * 10000) + 1,
+            color: 'rgba(131, 167, 234, 1)',
+            legendFontColor: '#7F7F7F',
+            legendFontSize: 15,
+        },
+        {
+            name: 'Tesla',
+            price: Math.floor(Math.random() * 10000) + 1,
+            color: 'orange',
+            legendFontColor: '#7F7F7F',
+            legendFontSize: 15,
+        },
+        {
+            name: 'Alphabet',
+            price: Math.floor(Math.random() * 10000) + 1,
+            color: 'red',
+            legendFontColor: '#7F7F7F',
+            legendFontSize: 15,
+        },
+        {
+            name: 'Microsoft',
+            price: Math.floor(Math.random() * 10000) + 1,
+            color: 'yellow',
+            legendFontColor: '#7F7F7F',
+            legendFontSize: 15,
+        },
+        {
+            name: 'BNZ',
+            price: Math.floor(Math.random() * 10000) + 1,
+            color: 'green',
+            legendFontColor: '#7F7F7F',
+            legendFontSize: 15,
+        },
+    ];
+
+    // Initialize a variable to store the total sum of prices
+    let totalSum = 0;
+
+    // Calculate to get the sum of prices from the pie chart
+    for (let i = 0; i < pieData.length; i++) {
+        totalSum += pieData[i].price;
+    }
+
+
+    let randomOriginalTotalPrice = Math.floor(Math.random() * 30000) + 10000; //Original prices
 
     let originalTotalPrice = randomOriginalTotalPrice;
-    let changedTotalPrice = randomChangedTotalPrice;
+    let changedTotalPrice = totalSum;
 
     const screenWidth = Dimensions.get('window').width;
     const screenHeight = Dimensions.get('window').height;
@@ -30,50 +77,11 @@ const PortFolio = () => {
         percentageText = <Text style={styles.losesMoney}>{percentage}%</Text>
     }
 
-    const pieData = [
-        {
-            name: 'Apple',
-            price: 10324,
-            color: 'rgba(131, 167, 234, 1)',
-            legendFontColor: '#7F7F7F',
-            legendFontSize: 15,
-        },
-        {
-            name: 'Tesla',
-            price: 8220,
-            color: 'orange',
-            legendFontColor: '#7F7F7F',
-            legendFontSize: 15,
-        },
-        {
-            name: 'Alphabet',
-            price: 4435,
-            color: 'red',
-            legendFontColor: '#7F7F7F',
-            legendFontSize: 15,
-        },
-        {
-            name: 'Microsoft',
-            price: 4200,
-            color: 'yellow',
-            legendFontColor: '#7F7F7F',
-            legendFontSize: 15,
-        },
-        {
-            name: 'BNZ',
-            price: 2200,
-            color: 'green',
-            legendFontColor: '#7F7F7F',
-            legendFontSize: 15,
-        },
-    ];
-
     const chartConfig = {
         backgroundGradientFrom: '#fff',
         backgroundGradientTo: '#fff',
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     };
-
 
     return (
         <View style={styles.container}>

@@ -4,6 +4,7 @@ import LoginScreen from "./LoginPage.js";
 import RegisterScreen from "./RegisterPage.js";
 import ForgotPage from "./ForgotPage.js";
 import BottomTabNavigator from './BottomTabNavigator.js';
+import Education from "./Education.js";
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,11 @@ const StackNavigator = () => {
         name="HomeStack"
         component={BottomTabNavigator}
         options={{ headerShown: false }} 
+      />
+      <Stack.Screen
+        name="Education"
+        component={Education}
+        options ={{ headerShown: false }}
       />
     </Stack.Navigator>
   );

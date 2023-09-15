@@ -101,7 +101,7 @@ const LoginScreen = () => {
       width: 330,
       height: 50,
       marginTop: 20,
-      marginBottom: 25,
+      marginBottom: 15,
     },
     loginButton: {
       width: "100%",
@@ -117,7 +117,6 @@ const LoginScreen = () => {
     },
     forgotPasswordButtonContainer: {
       width: 330,
-      marginBottom: 40,
       flexDirection: "row",
       justifyContent: "flex-end",
     },

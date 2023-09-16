@@ -3,6 +3,7 @@ import { Text, View, TextInput, Button, Alert, Dimensions, StyleSheet } from 're
 import { Image } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import { StatusBar } from 'react-native';
+import StockCard from './StockCard';
 
 const PortFolio = () => {
 
@@ -100,6 +101,16 @@ const PortFolio = () => {
             <Text>Changed money: ${changedTotalPrice}</Text>
             {moneyText}
             <Text>{percentageText}</Text>
+            <Text>Stocks list: </Text>
+            {/* Map through pieData and render StockCard for each stock */}
+            {pieData.map((stock, index) => (
+                <StockCard
+                    key={index} // Make sure to use a unique key for each StockCard
+                    name={stock.name}
+                    price={stock.price}
+                    color={stock.color}
+                />
+            ))}
             <StatusBar style="auto" />
         </View>
     );

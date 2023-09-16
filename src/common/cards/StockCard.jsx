@@ -12,30 +12,38 @@ const uriExists = async (uri) => {
   }
 };
 
-const CryptoCard = ({ item, handleNavigate }) => {
-  let cryptoSymbol = (item.from_symbol || "").toLowerCase();
-  let cryptoName = (item.from_currency_name || "").split(" ");
+const StockCard = ({ item, handleNavigate }) => {
+  let stockSymbol = item.symbol;
+  let stockName = (item.name || "").split(" ");
   const [imageUri, setImageUri] = useState(null);
 
-  if (cryptoName.length > 0) {
-    cryptoName = cryptoName[0].toLowerCase();
+  if ((item.symbol || "").includes(":")) {
+    const splittedSymbol = item.symbol.split(":");
+    stockSymbol = splittedSymbol[0];
+  }
+  if (stockName.length > 0) {
+    stockName = stockName[0];
   }
 
   useEffect(() => {
     async function checkUris() {
-      const cryptoUri = `https://cryptologos.cc/logos/${cryptoName}-${cryptoSymbol}-logo.png?v=026`;
+      const symbolUri = `https://api.twelvedata.com/logo/${stockSymbol}.com`;
+      const nameUri = `https://api.twelvedata.com/logo/${stockName}.com`;
 
-      const symbolExists = await uriExists(cryptoUri);
+      const symbolExists = await uriExists(symbolUri);
+      const nameExists = await uriExists(nameUri);
 
       if (symbolExists) {
-        setImageUri(cryptoUri);
+        setImageUri(symbolUri);
+      } else if (nameExists) {
+        setImageUri(nameUri);
       } else {
         setImageUri(false);
       }
     }
 
     checkUris();
-  }, [cryptoSymbol, cryptoName]);
+  }, [stockSymbol, stockName]);
 
   return (
     <TouchableOpacity style={styles.container} onPress={handleNavigate}>
@@ -53,10 +61,10 @@ const CryptoCard = ({ item, handleNavigate }) => {
 
       <View style={styles.nameContainer}>
         <Text style={styles.stockName} numberOfLines={1}>
-          {item.from_currency_name}
+          {item.name}
         </Text>
         <Text style={styles.stockSymbol} numberOfLines={1}>
-          {item.from_symbol}
+          {stockSymbol}
         </Text>
       </View>
 
@@ -70,7 +78,7 @@ const CryptoCard = ({ item, handleNavigate }) => {
         </TouchableOpacity>
         <View style={styles.priceContainer}>
           <Text style={styles.stockPrice} numberOfLines={1}>
-            ${item.exchange_rate}&nbsp;{item.to_symbol}
+            ${item.price.toFixed(2)}&nbsp;{item.currency}
           </Text>
         </View>
       </View>
@@ -78,4 +86,4 @@ const CryptoCard = ({ item, handleNavigate }) => {
   );
 };
 
-export default CryptoCard;
+export default StockCard;

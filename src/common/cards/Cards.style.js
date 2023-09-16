@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     flex: 5,
   },
   priceOuterContainer: {
-    flex: 2,
+    flex: 3,
     justifyContent: "space-between",
   },
   stockName: {

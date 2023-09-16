@@ -70,7 +70,7 @@ const CryptoCard = ({ item, handleNavigate }) => {
         </TouchableOpacity>
         <View style={styles.priceContainer}>
           <Text style={styles.stockPrice} numberOfLines={1}>
-            ${item.exchange_rate}&nbsp;{item.to_symbol}
+            ${item.exchange_rate.toFixed(2)}&nbsp;{item.to_symbol}
           </Text>
         </View>
       </View>

@@ -1,31 +1,49 @@
-import React, { useState } from "react";
-import { View, TextInput, Button } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  Image,
+  TextInput,
+  Button,
+  SafeAreaView,
+  TouchableOpacity,
+  ScrollView,
+} from "react-native";
+
+import styles from "./SearchPage.style";
+import SearchStocks from "./components/SearchStocks";
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
+  const [finalSearchQuery, setFinalSearchQuery] = useState("hi");
 
-  const handleSearch = () => {
-    // Add stuff here
-    console.log("Search query:", searchQuery);
+  const handleSearch = (searchQuery) => {
+    setFinalSearchQuery(searchQuery);
+    //console.log("Search query:", searchQuery);
   };
 
   return (
-    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <TextInput
-        style={{
-          height: 40,
-          borderColor: "gray",
-          borderWidth: 1,
-          marginBottom: 20,
-          width: 200,
-          paddingHorizontal: 10,
-        }}
-        placeholder="Search Stocks"
-        onChangeText={(text) => setSearchQuery(text)}
-        value={searchQuery}
-      />
-      <Button title="Search" onPress={handleSearch} />
-    </View>
+    <SafeAreaView style={styles.appContainer}>
+      <View style={styles.searchContainer}>
+        <Image
+          style={styles.searchIcon}
+          source={require("../../assets/search.png")}
+        />
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Search all investvents"
+          value={searchQuery}
+          onChangeText={(text) => setSearchQuery(text)}
+          onSubmitEditing={() => handleSearch(searchQuery)}
+        />
+      </View>
+
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={{ flex: 1 }}>
+          <SearchStocks inputQuery={finalSearchQuery} />
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

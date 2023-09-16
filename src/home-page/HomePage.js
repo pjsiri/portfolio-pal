@@ -7,21 +7,21 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import { Stack, useRouter } from "expo-router";
 
 import styles from "./HomePage.style";
-import BrowseStocks from "./parts/BrowseStocks";
+import BrowseStocks from "./components/BrowseStocks";
 
 const HomePage = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const router = useRouter();
 
   const toggleDarkMode = () => {
     setIsDarkMode(!isDarkMode);
   };
 
   return (
-    <SafeAreaView style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}>
+    <SafeAreaView
+      style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}
+    >
       <View style={styles.headerContainer}>
         <Image
           style={styles.appLogo}

@@ -11,7 +11,7 @@ const useFetch = (endpoint, query) => {
     url: `https://real-time-finance-data.p.rapidapi.com/${endpoint}`,
     params: { ...query },
     headers: {
-      "X-RapidAPI-Key": "84359832f9mshbe0264e34594161p1f0b86jsn4d30864046b4",
+      "X-RapidAPI-Key": "b03f4f8577msha1cafe311f4cc09p1d0ac4jsnfe2c94754653",
       "X-RapidAPI-Host": "real-time-finance-data.p.rapidapi.com",
     },
   };
@@ -21,8 +21,7 @@ const useFetch = (endpoint, query) => {
 
     try {
       const response = await axios.request(options);
-
-      setData(response.data.data.trends);
+      setData(response.data.data);
       setIsLoading(false);
     } catch (error) {
       setError(error);

@@ -2,19 +2,16 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
 
-import styles from "./Parts.style";
-import StockCard from "../cards/StockCard";
-import CryptoCard from "../cards/CryptoCard";
+import styles from "./Search.style";
+import StockCard from "../../common/cards/StockCard";
+import CryptoCard from "../../common/cards/CryptoCard";
 import useFetch from "../../../hook/useFetch";
 
-const BrowseStocks = () => {
+const SearchStocks = ({ inputQuery }) => {
   const router = useRouter();
-  const [trendType, setTrendType] = useState("MOST_ACTIVE");
   const [isStocks, setIsStocks] = useState(true);
-
-  const { data, isLoading, error, refetch } = useFetch("market-trends", {
-    trend_type: trendType,
-    country: "us",
+  const { data, isLoading, error, refetch } = useFetch("search", {
+    query: inputQuery,
     language: "en",
   });
 
@@ -31,7 +28,7 @@ const BrowseStocks = () => {
 
   useEffect(() => {
     refetch();
-  }, [isStocks]);
+  }, [isStocks, inputQuery]);
 
   return (
     <View style={styles.container}>
@@ -57,7 +54,7 @@ const BrowseStocks = () => {
         ) : error ? (
           <Text>Something went wrong</Text>
         ) : isStocks ? (
-          data
+          data?.stock
             ?.slice(0, 5)
             .map((item) => (
               <StockCard
@@ -69,7 +66,7 @@ const BrowseStocks = () => {
               />
             ))
         ) : (
-          data
+          data?.currency
             ?.slice(0, 5)
             .map((item) => (
               <CryptoCard
@@ -86,4 +83,4 @@ const BrowseStocks = () => {
   );
 };
 
-export default BrowseStocks;
+export default SearchStocks;

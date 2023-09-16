@@ -16,9 +16,6 @@ const SearchStocks = ({ inputQuery }) => {
   });
 
   const handleBrowseType = () => {
-    setTrendType((prevTrendType) =>
-      prevTrendType === "MOST_ACTIVE" ? "CRYPTO" : "MOST_ACTIVE"
-    );
     setIsStocks(!isStocks);
   };
 
@@ -54,17 +51,23 @@ const SearchStocks = ({ inputQuery }) => {
         ) : error ? (
           <Text>Something went wrong</Text>
         ) : isStocks ? (
-          data?.stock
-            ?.slice(0, 5)
-            .map((item) => (
-              <StockCard
-                item={item}
-                key={`browse-stock-${item?.google_mid}`}
-                handleNavigate={() =>
-                  router.push(`/browse-stocks${item?.google_mid}`)
-                }
-              />
-            ))
+          data?.stock?.length === 0 ? (
+            <Text>No stock data available</Text>
+          ) : (
+            data?.stock
+              ?.slice(0, 5)
+              .map((item) => (
+                <StockCard
+                  item={item}
+                  key={`browse-crypto-${item?.google_mid}`}
+                  handleNavigate={() =>
+                    router.push(`/browse-cryptos${item?.google_mid}`)
+                  }
+                />
+              ))
+          )
+        ) : data?.currency?.length === 0 ? (
+          <Text>No crypto data available</Text>
         ) : (
           data?.currency
             ?.slice(0, 5)

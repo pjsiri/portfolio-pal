@@ -4,24 +4,27 @@ import {
   Text,
   View,
   TextInput,
-  Button,
+  TouchableOpacity,
   Alert,
   Image,
-  TouchableOpacity,
+  KeyboardAvoidingView,
 } from "react-native";
 
 const LoginScreen = () => {
   const [user, setUser] = useState("");
   const [pass, setPass] = useState("");
-  const [isDarkMode, setIsDarkMode] = useState(false); // State to track dark mode
   const navigation = useNavigation();
+  const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const [imageSource, setImageSource] = useState(
+    "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
+  );
 
   const handleLogin = () => {
     // Replace these with your preset username and password
-    const setUser = "PortfolioPal";
-    const setPass = "AIVestor";
+    const presetUser = "a";
+    const presetPass = "b";
 
-    if (user === setUser && pass === setPass) {
+    if (user === presetUser && pass === presetPass) {
       // Successful login
       navigation.navigate('HomeStack');
       Alert.alert("Login Successful", "Welcome back, PortfolioPal!");
@@ -31,13 +34,28 @@ const LoginScreen = () => {
     }
   };
 
+  const handleSignUp = () => {
+    // Navigate to the "Register" screen when the button is pressed
+    navigation.navigate("Register");
+  };
+
   const handleForgotPassword = () => {
     // Navigate to the "Forgot" screen when the button is pressed
     navigation.navigate("Forgot");
   };
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode); // Toggle dark mode state
+  const handleShowPassword = () => {
+    // Toggle the visibility of the password
+    setIsPasswordVisible(!isPasswordVisible);
+
+    // Toggle the image source
+    if (!isPasswordVisible) {
+      setImageSource("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_visible.png");
+    } else {
+      setImageSource(
+        "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
+      );
+    }
   };
 
   const styles = {
@@ -45,80 +63,149 @@ const LoginScreen = () => {
       flex: 1,
       width: "100%",
       alignItems: "center",
-      justifyContent: "center",
-      backgroundColor: isDarkMode ? "black" : "white", // Use dark background for dark mode
+      justifyContent: "flex-start",
     },
     title: {
       fontSize: 24,
-      marginBottom: 10,
-      color: isDarkMode ? "white" : "black", // Use white text for dark mode
+      marginBottom: 20,
     },
     subtitle: {
       fontSize: 18,
-      color: isDarkMode ? "white" : "black",
+      marginBottom: 50,
     },
-    input: {
-      width: 200,
-      height: 40,
+    inputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      width: 330,
+      height: 50,
       borderColor: "gray",
       borderWidth: 1,
-      marginVertical: 10,
       paddingHorizontal: 10,
-      backgroundColor: isDarkMode ? "gray" : "white", // Use gray background for input in dark mode
-      color: isDarkMode ? "white" : "black", // Use white text for input in dark mode
+      marginBottom: 20,
+      borderRadius: 10,
+    },
+    input: {
+      flex: 1,
+    },
+    inputIcon: {
+      width: 24,
+      height: 24,
+      marginRight: 8,
     },
     bannerImage: {
-      width: 300,
-      height: 150,
+      width: 400,
+      height: 200,
       resizeMode: "contain",
-      marginBottom: 20,
     },
-    darkModeButton: {
+    loginButtonContainer: {
+      width: 330,
+      height: 50,
+      marginTop: 20,
+      marginBottom: 15,
+    },
+    loginButton: {
+      width: "100%",
+      height: "100%",
+      backgroundColor: "black",
+      justifyContent: "center",
+      borderRadius: 10,
+    },
+    loginButtonText: {
+      color: "white",
+      textAlign: "center",
+      fontSize: 18,
+    },
+    forgotPasswordButtonContainer: {
+      width: 330,
+      flexDirection: "row",
+      justifyContent: "flex-end",
+    },
+    forgotPasswordButtonText: {
+      color: "black",
+      textAlign: "right",
+      fontSize: 18,
+    },
+    signUpTextContainer: {
+      flexDirection: "row",
+      alignItems: "center",
       position: "absolute",
-      bottom: 10, // Adjust the position from the bottom
-      right: 10,
-      backgroundColor: isDarkMode ? "white" : "black",
-      padding: 5,
-      borderRadius: 20,
+      bottom: 30,
     },
-    darkModeButtonText: {
-      color: isDarkMode ? "black" : "white",
+    signUpText: {
+      fontSize: 16,
+    },
+    signUpLink: {
+      color: "black",
+      fontWeight: "bold",
+      textDecorationLine: "underline",
     },
   };
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={{
-          uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png",
-        }}
-        style={styles.bannerImage}
-      />
-      <Text style={styles.title}>Welcome Back!</Text>
-      <Text style={styles.subtitle}>Please Login!</Text>
-      <TextInput
-        placeholder="Username"
-        onChangeText={(text) => setUser(text)}
-        value={user}
-        style={styles.input}
-      />
-      <TextInput
-        placeholder="Password"
-        onChangeText={(text) => setPass(text)}
-        value={pass}
-        secureTextEntry
-        style={styles.input}
-      />
-      <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-        <Button title="Forgot password" onPress={() => navigation.navigate("Forgot")} />
-        <Button title="Login" onPress={handleLogin} />
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
+      <View style={styles.container}>
+        <Image
+          source={{
+            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png",
+          }}
+          style={[styles.bannerImage, { marginTop: 50 }]}
+        />
+        <Text style={[styles.title, { fontSize: 28, fontWeight: "900" }]}>Glad to have you back!</Text>
+        <Text style={[styles.subtitle, { fontSize: 16, opacity: 0.65 }]}>Fill in with your username and password.</Text>
+        <View style={styles.inputContainer}>
+          <Image
+            source={{
+              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/user.png",
+            }}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            placeholder="Username"
+            onChangeText={(text) => setUser(text)}
+            value={user}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Image
+            source={{
+              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
+            }}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            placeholder="Password"
+            onChangeText={(text) => setPass(text)}
+            value={pass}
+            secureTextEntry={!isPasswordVisible}
+            style={styles.input}
+          />
+          <TouchableOpacity onPress={handleShowPassword}>
+            <Image
+              source={{ uri: imageSource }}
+              style={styles.inputIcon}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.loginButtonContainer}>
+          {/* Use TouchableOpacity for custom button styling */}
+          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>LOGIN</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.forgotPasswordButtonContainer}>
+          <TouchableOpacity onPress={handleForgotPassword}>
+            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+          </TouchableOpacity>
+        </View>
+        <View style={styles.signUpTextContainer}>
+          <Text style={styles.signUpText}>Don't have an account? </Text>
+          <TouchableOpacity onPress={handleSignUp}>
+            <Text style={styles.signUpLink}>Sign up</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-      <TouchableOpacity style={styles.darkModeButton} onPress={toggleDarkMode}>
-        <Text style={styles.darkModeButtonText}>
-          {isDarkMode ? "Light Mode" : "Dark Mode"}
-        </Text>
-      </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 };
 

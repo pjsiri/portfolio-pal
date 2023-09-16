@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Text, View, TextInput, Button, Alert, Image, TouchableOpacity, StyleSheet } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 const ForgotPage = () => {
   const [Email, setEmail] = useState("");
@@ -7,9 +8,11 @@ const ForgotPage = () => {
   const [Pass, setPass] = useState("");
   const [ConfirmPass, setConfirmPass] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigation = useNavigation();
 
   const handleChangePassword = () => {
     if (Pass == ConfirmPass) {
+      navigation.navigate('Login');
       Alert.alert("Success", "You have Successfully changed your password!");
     } else {
       Alert.alert("Invalid", "Your Passwords do not Match!", "Try Again!");

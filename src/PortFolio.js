@@ -97,15 +97,15 @@ const PortFolio = () => {
                 paddingLeft="15"
                 absolute
             />
-            <Text>Original money: ${originalTotalPrice}</Text>
-            <Text>Changed money: ${changedTotalPrice}</Text>
+            <Text>Original assets: ${originalTotalPrice}</Text>
+            <Text>Changed assets: ${changedTotalPrice}</Text>
             {moneyText}
             <Text>{percentageText}</Text>
             <Text>Stocks list: </Text>
             {/* Map through pieData and render StockCard for each stock */}
             {pieData.map((stock, index) => (
-                <StockCard
-                    key={index} // Make sure to use a unique key for each StockCard
+                <StockCard //stock card for the displaying stock
+                    key={index} 
                     name={stock.name}
                     price={stock.price}
                     color={stock.color}

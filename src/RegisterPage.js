@@ -9,8 +9,10 @@ import {
   Image,
 } from "react-native";
 
+// Import Firebase
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+
 const RegisterScreen = () => {
-  const [user, setUser] = useState('');
   const [email, setEmail] = useState('');
   const [pass, setPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
@@ -24,13 +26,17 @@ const RegisterScreen = () => {
     "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
   );
 
-  const handleRegister = () => {
-    if (user && email && pass && pass === confirmPass) {
-      Alert.alert('Registration Successful', 'You have successfully registered!');
-      // Navigate back to the login screen
-      navigation.navigate('Login');
-      // Add to database ??
-
+  const handleRegister = async () => {
+    if (email && pass && pass === confirmPass) {
+      try {
+        const auth = getAuth();
+        await createUserWithEmailAndPassword(auth, email, pass);
+        
+        Alert.alert('Registration Successful', 'You have successfully registered!');
+        navigation.navigate('Login');
+      } catch (error) {
+        Alert.alert('Registration Failed', error.message);
+      }
     } else {
       Alert.alert('Registration Failed', 'Please provide valid information.');
     }
@@ -160,7 +166,7 @@ const RegisterScreen = () => {
       />
       <Text style={[styles.title, { fontSize: 28, fontWeight: "900" }]}>Welcome to PortfolioPal!</Text>
       <Text style={[styles.subtitle, { fontSize: 15, opacity: 0.65 }]}>Fill in with your username, email, and password.</Text>
-      <View style={styles.inputContainer}>
+      {/* <View style={styles.inputContainer}>
         <Image
           source={{
             uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/user.png",
@@ -173,7 +179,7 @@ const RegisterScreen = () => {
           value={user}
           style={styles.input}
         />
-      </View>
+      </View> */}
       <View style={styles.inputContainer}>
         <Image
           source={{

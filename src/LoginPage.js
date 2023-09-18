@@ -9,6 +9,7 @@ import {
   Image,
   KeyboardAvoidingView,
 } from "react-native";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const LoginScreen = () => {
   const [user, setUser] = useState("");
@@ -19,18 +20,19 @@ const LoginScreen = () => {
     "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
   );
 
-  const handleLogin = () => {
-    // Replace these with your preset username and password
-    const presetUser = "a";
-    const presetPass = "b";
-
-    if (user === presetUser && pass === presetPass) {
-      // Successful login
-      navigation.navigate('HomeStack');
-      Alert.alert("Login Successful", "Welcome back, PortfolioPal!");
+  const handleLogin = async () => {
+    if (user && pass) {
+      try {
+        const auth = getAuth();
+        await signInWithEmailAndPassword(auth, user, pass);
+  
+        navigation.navigate('HomeStack');
+        Alert.alert("Login Successful", "Welcome back, PortfolioPal!");
+      } catch (error) {
+        Alert.alert("Login Failed", error.message);
+      }
     } else {
-      // Failed login
-      Alert.alert("Login Failed", "Invalid username or password.");
+      Alert.alert("Login Failed", "Please provide valid username and password.");
     }
   };
 
@@ -160,7 +162,7 @@ const LoginScreen = () => {
             style={styles.inputIcon}
           />
           <TextInput
-            placeholder="Username"
+            placeholder="Email"
             onChangeText={(text) => setUser(text)}
             value={user}
             style={styles.input}

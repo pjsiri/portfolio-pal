@@ -25,12 +25,14 @@ const RegisterScreen = () => {
   );
 
   const handleRegister = () => {
-    if (user && email && pass && pass === confirmPass) {
+    if (user && email && pass && pass === confirmPass && pass.length >= 8) {
       Alert.alert('Registration Successful', 'You have successfully registered!');
       // Navigate back to the login screen
       navigation.navigate('Login');
       // Add to database ??
-
+  
+    } else if (pass.length < 8) {
+      Alert.alert('Password too short', 'Password must be at least 8 characters long.');
     } else {
       Alert.alert('Registration Failed', 'Please provide valid information.');
     }
@@ -131,7 +133,7 @@ const RegisterScreen = () => {
     },
     backButtonContainer: {
       position: 'absolute',
-      top: 50,
+      top: 80,
       left: 20,
     },
     backButton: {
@@ -156,7 +158,7 @@ const RegisterScreen = () => {
         source={{
           uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/app_logo.png",
         }}
-        style={[styles.appLogo, { marginTop: 50 }]}
+        style={[styles.appLogo, { marginTop: 120 }]}
       />
       <Text style={[styles.title, { fontSize: 28, fontWeight: "900" }]}>Welcome to PortfolioPal!</Text>
       <Text style={[styles.subtitle, { fontSize: 15, opacity: 0.65 }]}>Fill in with your username, email, and password.</Text>

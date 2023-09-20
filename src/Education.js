@@ -47,7 +47,7 @@ const Education = () => {
       width: 375,
     },
     scrollView: {
-      maxHeight: 300,
+      maxHeight: 600, // Adjust this value as needed
     },
     sectionTitle: {
       fontWeight: "bold",
@@ -89,12 +89,11 @@ const Education = () => {
       </View>
       <Text style={styles.educationText}>Education</Text>
       <View style={styles.textBox}>
-        
-      <ScrollView style={styles.scrollView}>
-          <Text style={styles.sectionTitle}> 
+        <ScrollView style={styles.scrollView}>
+          <Text style={styles.sectionTitle}>
             <Text style={styles.goldText}>Basic:</Text>
           </Text>
-            <View style={styles.videoContainer}>
+          <View style={styles.videoContainer}>
             <WebView
               source={{
                 html: `
@@ -120,7 +119,7 @@ const Education = () => {
             />
           </View>
           <Text></Text>
-          <Text style={styles.sectionTitle}> 
+          <Text style={styles.sectionTitle}>
             <Text style={styles.goldText}>Intermediate:</Text>
           </Text>
           <View style={styles.videoContainer}>
@@ -149,11 +148,11 @@ const Education = () => {
             />
           </View>
           <Text></Text>
-          <Text style={styles.sectionTitle}> 
-          <Text style={styles.goldText}>Advance:</Text>
+          <Text style={styles.sectionTitle}>
+            <Text style={styles.goldText}>Advance:</Text>
           </Text>
           <View style={styles.videoContainer}>
-              <WebView
+            <WebView
               source={{
                 html: `
                   <html>

@@ -78,7 +78,7 @@ const StockCard = ({ item, handleNavigate }) => {
         </TouchableOpacity>
         <View style={styles.priceContainer}>
           <Text style={styles.stockPrice} numberOfLines={1}>
-            ${item.price.toFixed(2)}&nbsp;{item.currency}
+            ${item.price}&nbsp;{item.currency}
           </Text>
         </View>
       </View>

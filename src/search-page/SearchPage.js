@@ -46,6 +46,7 @@ const SearchPage = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
+        <SearchStocks inputQuery={finalSearchQuery} />
         </View>
       </ScrollView>
     </SafeAreaView>

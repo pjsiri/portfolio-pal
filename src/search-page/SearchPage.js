@@ -12,10 +12,17 @@ import {
 
 import styles from "./SearchPage.style";
 import SearchStocks from "./components/SearchStocks";
+import { useDarkMode } from "../DarkModeContext"; 
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [finalSearchQuery, setFinalSearchQuery] = useState("hi");
+  const { isDarkMode } = useDarkMode();
+
+  const containerStyle = [
+    styles.appContainer,
+    isDarkMode && styles.darkModeContainer,
+  ];
 
   const handleSearch = (searchQuery) => {
     setFinalSearchQuery(searchQuery);
@@ -23,7 +30,7 @@ const SearchPage = () => {
   };
 
   return (
-    <SafeAreaView style={styles.appContainer}>
+    <SafeAreaView style={containerStyle}>
       <View style={styles.searchContainer}>
         <Image
           style={styles.searchIcon}
@@ -31,8 +38,7 @@ const SearchPage = () => {
         />
         <TextInput
           style={styles.searchBar}
-          placeholder="Search all investvents"
-          value={searchQuery}
+          placeholder="Search all investments"
           onChangeText={(text) => setSearchQuery(text)}
           onSubmitEditing={() => handleSearch(searchQuery)}
         />
@@ -40,11 +46,11 @@ const SearchPage = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
-          <SearchStocks inputQuery={finalSearchQuery} />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
+
 
 export default SearchPage;

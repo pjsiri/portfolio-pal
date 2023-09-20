@@ -4,6 +4,8 @@ import { StyleSheet, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import StackNavigator from './src/StackNavigator.js';
+import { DarkModeProvider } from "./src/DarkModeContext";
+
 
 // Import the functions you need from the SDKs
 import { initializeApp } from 'firebase/app';
@@ -25,9 +27,11 @@ const Stack = createStackNavigator();
 
 export default function App() {
   return (
-    <NavigationContainer>
-      <StackNavigator />
-    </NavigationContainer>
+    <DarkModeProvider>
+      <NavigationContainer>
+        <StackNavigator />
+      </NavigationContainer>
+    </DarkModeProvider>
   );
 }
 

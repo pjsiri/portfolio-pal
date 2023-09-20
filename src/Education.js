@@ -17,8 +17,7 @@ const Education = () => {
           <Text style={styles.sectionTitle}> 
             <Text style={styles.goldText}>Basic:</Text>
           </Text>
-          {/* Add more Text components as needed */}
-          <View style={styles.videoContainer}>
+            <View style={styles.videoContainer}>
             <WebView
               source={{
                 html: `
@@ -47,7 +46,6 @@ const Education = () => {
           <Text style={styles.sectionTitle}> 
             <Text style={styles.goldText}>Intermediate:</Text>
           </Text>
-          {/* Add more Text components as needed */}
           <View style={styles.videoContainer}>
             <WebView
               source={{
@@ -132,14 +130,14 @@ const styles = {
     width: 375,
   },
   scrollView: {
-    maxHeight: 300, // Adjust the maxHeight as needed to fit your content
+    maxHeight: 300, 
   },
   sectionTitle: {
     fontWeight: "bold",
     textDecorationLine: "underline",
   },
   goldText: {
-    color: "gold", // Set the text color to gold
+    color: "gold", 
   },
   videoContainer: {
     marginTop: 20,
@@ -149,8 +147,8 @@ const styles = {
     height: 95,
   },
   videoText: {
-    marginLeft: 10, // Adjust the margin as needed
-    fontSize: 30, // Adjust the font size as needed (changed to 20 for a larger font)
+    marginLeft: 10, 
+    fontSize: 30, 
   },
 };
 

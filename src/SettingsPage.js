@@ -2,15 +2,12 @@ import React, { useState } from "react";
 import { View, Text, Switch, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
+import { useDarkMode } from "./DarkModeContext";
 
 const SettingsPage = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [selectedCurrency, setSelectedCurrency] = useState("NZD");
   const navigation = useNavigation();
-
-  const toggleDarkMode = () => {
-    setIsDarkMode((prev) => !prev);
-  };
 
   const handleLogout = () => {
     navigation.navigate("Login");

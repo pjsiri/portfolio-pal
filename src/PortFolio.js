@@ -19,7 +19,6 @@ const PortFolio = () => {
     const earnedMoneyStyle = isDarkMode ? styles.darkModeEarnedMoney : styles.earnedMoney;
     const losesMoneyStyle = isDarkMode ? styles.darkModeLosesMoney : styles.losesMoney;
   
-
     const pieData = [
         {
             name: 'Apple',

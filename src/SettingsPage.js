@@ -13,6 +13,10 @@ const SettingsPage = () => {
     navigation.navigate("Login");
   };
 
+  const handleEducationNavigation = () => {
+    navigation.navigate("Education");
+  };
+
   return (
     <View style={[styles.container, isDarkMode && styles.darkModeContainer]}>
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>Settings</Text>
@@ -38,6 +42,9 @@ const SettingsPage = () => {
           <Picker.Item label="EUR" value="EUR" />
         </Picker>
       </View>
+      <TouchableOpacity onPress={handleEducationNavigation}>
+        <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>Education</Text>
+      </TouchableOpacity>
       <TouchableOpacity onPress={handleLogout}>
         <Text style={[styles.logoutButton, isDarkMode && styles.darkModeText]}>Logout</Text>
       </TouchableOpacity>

@@ -10,13 +10,15 @@ import {
 
 import styles from "./HomePage.style";
 import BrowseStocks from "./components/BrowseStocks";
+import { useDarkMode } from "../DarkModeContext";
 
 const HomePage = () => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const { isDarkMode, toggleDarkMode } = useDarkMode(); 
 
-  const toggleDarkMode = () => {
-    setIsDarkMode(!isDarkMode);
-  };
+  const containerStyle = [
+    styles.appContainer,
+    isDarkMode && styles.darkModeContainer,
+  ];
 
   return (
     <SafeAreaView
@@ -27,7 +29,9 @@ const HomePage = () => {
           style={styles.appLogo}
           source={require("../../assets/app_logo.png")}
         />
-        <Text style={styles.appName}>PortfolioPal</Text>
+        <Text style={[styles.appName, isDarkMode && styles.darkModeText]}>
+          PortfolioPal
+        </Text>
         <TouchableOpacity onPress={toggleDarkMode}>
           <Image
             style={styles.modeIcon}
@@ -38,7 +42,9 @@ const HomePage = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
-          <Text style={styles.header}>Explore</Text>
+          <Text style={[styles.header, isDarkMode && styles.darkModeText]}>
+            Explore
+          </Text>
 
           <BrowseStocks />
         </View>

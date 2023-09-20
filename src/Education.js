@@ -2,9 +2,11 @@ import React from "react";
 import { View, Image, Text, ScrollView, TouchableOpacity } from "react-native";
 import { WebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
+import { useDarkMode } from "./DarkModeContext"; // Import the hook
 
 const Education = () => {
   const navigation = useNavigation();
+  const { isDarkMode } = useDarkMode(); // Use the hook to access dark mode state
 
   const handleBack = () => {
     navigation.goBack(); // Navigate back to the previous screen (Settings)
@@ -15,7 +17,8 @@ const Education = () => {
       flex: 1,
       alignItems: "center",
       justifyContent: "flex-start",
-      paddingTop: 50,
+      paddingTop: 0, // Adjust this value as needed
+      backgroundColor: isDarkMode ? "#333" : "#fff", // Apply dark mode background color
     },
     headerContainer: {
       flexDirection: "row",
@@ -38,9 +41,10 @@ const Education = () => {
       fontSize: 24,
       fontWeight: "bold",
       marginTop: -25,
+      color: isDarkMode ? "lightblue" : "black", // Apply dark mode text color
     },
     textBox: {
-      backgroundColor: "#2A2C41",
+      backgroundColor: isDarkMode ? "#2A2C41" : "#fff", // Apply dark mode background color
       padding: 10,
       margin: 10,
       borderRadius: 5,
@@ -52,6 +56,7 @@ const Education = () => {
     sectionTitle: {
       fontWeight: "bold",
       textDecorationLine: "underline",
+      color: isDarkMode ? "gold" : "black", // Apply dark mode text color
     },
     goldText: {
       color: "gold",

@@ -2,12 +2,14 @@ import React from "react";
 import { View, Image, Text, ScrollView, TouchableOpacity } from "react-native";
 import { WebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
+import { useDarkMode } from "./DarkModeContext"; 
 
 const Education = () => {
   const navigation = useNavigation();
+  const { isDarkMode } = useDarkMode(); 
 
   const handleBack = () => {
-    navigation.goBack(); // Navigate back to the previous screen (Settings)
+    navigation.goBack();
   };
 
   const styles = {
@@ -15,7 +17,8 @@ const Education = () => {
       flex: 1,
       alignItems: "center",
       justifyContent: "flex-start",
-      paddingTop: 50,
+      paddingTop: 0, 
+      backgroundColor: isDarkMode ? "#333" : "#fff", 
     },
     headerContainer: {
       flexDirection: "row",
@@ -38,20 +41,22 @@ const Education = () => {
       fontSize: 24,
       fontWeight: "bold",
       marginTop: -25,
+      color: isDarkMode ? "lightblue" : "black", 
     },
     textBox: {
-      backgroundColor: "#2A2C41",
+      backgroundColor: isDarkMode ? "#2A2C41" : "#fff", 
       padding: 10,
       margin: 10,
       borderRadius: 5,
       width: 375,
     },
     scrollView: {
-      maxHeight: 600, // Adjust this value as needed
+      maxHeight: 600, 
     },
     sectionTitle: {
       fontWeight: "bold",
       textDecorationLine: "underline",
+      color: isDarkMode ? "gold" : "black", 
     },
     goldText: {
       color: "gold",

@@ -5,11 +5,13 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  TouchableWithoutFeedback,
   Alert,
   Image,
   KeyboardAvoidingView,
 } from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { Bottompopup } from "./BottomPopup";
 
 const LoginScreen = () => {
   const [user, setUser] = useState("");
@@ -20,12 +22,23 @@ const LoginScreen = () => {
     "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
   );
 
+  let popupRef = React.createRef()
+
+  const onShowPopup = () => {
+    popupRef.show()
+  }
+
+  const onClosePopup = () => {
+    popupRef.close()
+  }
+
+
   const handleLogin = async () => {
     if (user && pass) {
       try {
         const auth = getAuth();
         await signInWithEmailAndPassword(auth, user, pass);
-  
+
         navigation.navigate('HomeStack');
         Alert.alert("Login Successful", "Welcome back, PortfolioPal!");
       } catch (error) {
@@ -39,11 +52,6 @@ const LoginScreen = () => {
   const handleSignUp = () => {
     // Navigate to the "Register" screen when the button is pressed
     navigation.navigate("Register");
-  };
-
-  const handleForgotPassword = () => {
-    // Navigate to the "Forgot" screen when the button is pressed
-    navigation.navigate("Forgot");
   };
 
   const handleShowPassword = () => {
@@ -131,7 +139,7 @@ const LoginScreen = () => {
       flexDirection: "row",
       alignItems: "center",
       position: "absolute",
-      bottom: 30,
+      bottom: 20,
     },
     signUpText: {
       fontSize: 16,
@@ -157,7 +165,7 @@ const LoginScreen = () => {
         <View style={styles.inputContainer}>
           <Image
             source={{
-              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/user.png",
+              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/email.png",
             }}
             style={styles.inputIcon}
           />
@@ -196,9 +204,14 @@ const LoginScreen = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.forgotPasswordButtonContainer}>
-          <TouchableOpacity onPress={handleForgotPassword}>
+          <TouchableWithoutFeedback onPress={onShowPopup}>
             <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-          </TouchableOpacity>
+          </TouchableWithoutFeedback>
+          <Bottompopup
+            title="Forgot Password?"
+            ref={(target) => (popupRef = target)}
+            onTouchOutside={onClosePopup}
+          />
         </View>
         <View style={styles.signUpTextContainer}>
           <Text style={styles.signUpText}>Don't have an account? </Text>

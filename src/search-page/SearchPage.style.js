@@ -8,7 +8,9 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#F0F0F0",
   },
-
+  darkModeContainer: {
+    backgroundColor: "#333", // Dark mode background color
+  },
   searchContainer: {
     marginBottom: 50,
     borderRadius: 50,
@@ -17,16 +19,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
   searchIcon: {
     width: 25,
     height: 25,
   },
-
   searchBar: {
     width: 300,
     height: 50,
-    //backgroundColor: "lightgrey",
     borderRadius: 10,
     borderWidth: 0,
     paddingHorizontal: 10,

@@ -4,9 +4,21 @@ import { Image } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import { StatusBar } from 'react-native';
 import StockCard from './StockCard';
+import { useDarkMode } from "./DarkModeContext"; // Import the hook
+
 
 const PortFolio = () => {
+    const { isDarkMode } = useDarkMode(); // Use the hook to access dark mode state
 
+    // Apply dark mode styles conditionally
+    const containerStyle = [
+      styles.container,
+      isDarkMode && styles.darkModeContainer,
+    ];
+  
+    const earnedMoneyStyle = isDarkMode ? styles.darkModeEarnedMoney : styles.earnedMoney;
+    const losesMoneyStyle = isDarkMode ? styles.darkModeLosesMoney : styles.losesMoney;
+  
     const pieData = [
         {
             name: 'Apple',
@@ -86,7 +98,7 @@ const PortFolio = () => {
     };
 
     return (
-        <View style={styles.container}>
+        <View style={containerStyle}>
             <PieChart
                 data={pieData}
                 width={screenWidth}
@@ -118,18 +130,27 @@ const PortFolio = () => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
+      flex: 1,
+      backgroundColor: '#fff',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    darkModeContainer: {
+      backgroundColor: '#333', // Dark mode background color
     },
     earnedMoney: {
-        color: 'blue',
+      color: 'blue',
+    },
+    darkModeEarnedMoney: {
+      color: 'lightblue', // Dark mode text color
     },
     losesMoney: {
-        color: 'red',
+      color: 'red',
     },
-});
-
+    darkModeLosesMoney: {
+      color: 'pink', // Dark mode text color
+    },
+    // Other styles
+  });
 
 export default PortFolio;

@@ -1,23 +1,103 @@
 import React from "react";
-import { View, Image, Text, ScrollView } from "react-native";
+import { View, Image, Text, ScrollView, TouchableOpacity } from "react-native";
 import { WebView } from "react-native-webview";
+import { useNavigation } from "@react-navigation/native";
+import { useDarkMode } from "./DarkModeContext"; 
 
 const Education = () => {
+  const navigation = useNavigation();
+  const { isDarkMode } = useDarkMode(); 
+
+  const handleBack = () => {
+    navigation.goBack();
+  };
+
+  const styles = {
+    container: {
+      flex: 1,
+      alignItems: "center",
+      justifyContent: "flex-start",
+      paddingTop: 0, 
+      backgroundColor: isDarkMode ? "#333" : "#fff", 
+    },
+    headerContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 20,
+    },
+    backButtonContainer: {
+      marginRight: 10,
+    },
+    inputIcon: {
+      width: 24,
+      height: 24,
+    },
+    bannerImage: {
+      width: 300,
+      height: 200,
+      resizeMode: "contain",
+    },
+    educationText: {
+      fontSize: 24,
+      fontWeight: "bold",
+      marginTop: -25,
+      color: isDarkMode ? "lightblue" : "black", 
+    },
+    textBox: {
+      backgroundColor: isDarkMode ? "#2A2C41" : "#fff", 
+      padding: 10,
+      margin: 10,
+      borderRadius: 5,
+      width: 375,
+    },
+    scrollView: {
+      maxHeight: 600, 
+    },
+    sectionTitle: {
+      fontWeight: "bold",
+      textDecorationLine: "underline",
+      color: isDarkMode ? "gold" : "black", 
+    },
+    goldText: {
+      color: "gold",
+    },
+    videoContainer: {
+      marginTop: 20,
+    },
+    video: {
+      width: 490,
+      height: 95,
+    },
+    videoText: {
+      marginLeft: 10,
+      fontSize: 30,
+    },
+  };
+
   return (
     <View style={styles.container}>
-      <Image
-        source={{
-          uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png",
-        }}
-        style={styles.bannerImage}
-      />
+      <View style={styles.headerContainer}>
+        <TouchableOpacity style={styles.backButtonContainer} onPress={handleBack}>
+          <Image
+            source={{
+              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",
+            }}
+            style={styles.inputIcon}
+          />
+        </TouchableOpacity>
+        <Image
+          source={{
+            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png",
+          }}
+          style={styles.bannerImage}
+        />
+      </View>
       <Text style={styles.educationText}>Education</Text>
       <View style={styles.textBox}>
         <ScrollView style={styles.scrollView}>
-          <Text style={styles.sectionTitle}> 
+          <Text style={styles.sectionTitle}>
             <Text style={styles.goldText}>Basic:</Text>
           </Text>
-          {/* Add more Text components as needed */}
           <View style={styles.videoContainer}>
             <WebView
               source={{
@@ -44,10 +124,9 @@ const Education = () => {
             />
           </View>
           <Text></Text>
-          <Text style={styles.sectionTitle}> 
+          <Text style={styles.sectionTitle}>
             <Text style={styles.goldText}>Intermediate:</Text>
           </Text>
-          {/* Add more Text components as needed */}
           <View style={styles.videoContainer}>
             <WebView
               source={{
@@ -74,11 +153,11 @@ const Education = () => {
             />
           </View>
           <Text></Text>
-          <Text style={styles.sectionTitle}> 
-          <Text style={styles.goldText}>Advance:</Text>
+          <Text style={styles.sectionTitle}>
+            <Text style={styles.goldText}>Advance:</Text>
           </Text>
           <View style={styles.videoContainer}>
-                      <WebView
+            <WebView
               source={{
                 html: `
                   <html>
@@ -105,53 +184,6 @@ const Education = () => {
       </View>
     </View>
   );
-};
-
-const styles = {
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "flex-start",
-    paddingTop: 50,
-  },
-  bannerImage: {
-    width: 300,
-    height: 200,
-    resizeMode: "contain",
-  },
-  educationText: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginTop: -25,
-  },
-  textBox: {
-    backgroundColor: "#2A2C41",
-    padding: 10,
-    margin: 10,
-    borderRadius: 5,
-    width: 375,
-  },
-  scrollView: {
-    maxHeight: 300, // Adjust the maxHeight as needed to fit your content
-  },
-  sectionTitle: {
-    fontWeight: "bold",
-    textDecorationLine: "underline",
-  },
-  goldText: {
-    color: "gold", // Set the text color to gold
-  },
-  videoContainer: {
-    marginTop: 20,
-  },
-  video: {
-    width: 490,
-    height: 95,
-  },
-  videoText: {
-    marginLeft: 10, // Adjust the margin as needed
-    fontSize: 30, // Adjust the font size as needed (changed to 20 for a larger font)
-  },
 };
 
 export default Education;

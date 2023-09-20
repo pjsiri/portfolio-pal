@@ -16,7 +16,7 @@ const styles = StyleSheet.create({
   },
 
   darkModeContainer: {
-    backgroundColor: "#333333", // Set your dark mode background color here
+    backgroundColor: "#333333",
   },
   
   appName: {
@@ -24,14 +24,15 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     fontWeight: "bold",
     fontSize: 25,
+    color: "black", 
   },
 
   header: {
-    //textAlign: "center",
     fontWeight: "bold",
     fontSize: 30,
     paddingTop: 20,
     paddingBottom: 20,
+    color: "black",
   },
 
   appLogo: {
@@ -42,6 +43,10 @@ const styles = StyleSheet.create({
   modeIcon: {
     width: 50,
     height: 50,
+  },
+
+  darkModeText: {
+    color: "white",
   },
 });
 

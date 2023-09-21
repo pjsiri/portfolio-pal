@@ -118,21 +118,24 @@ const PortFolio = () => {
 
     return (
         <View style={containerStyle}>
-            <Button style={styles.addButton}
-                title="Add"
-                onPress={showModal}
-            />
+            <View style={styles.topBar}>
+            <Button title="Add" onPress={showModal} />
+            </View>
             {/* Modal */}
-            <Modal visible={isModalVisible} animationType="slide">
-                <View>
-                    <Text>Fill in the field:</Text>
-                    <TextInput
-                        value={textInputValue}
-                        onChangeText={(text) => setTextInputValue(text)}
-                        placeholder="Enter something..."
-                    />
-                    <Button title="Save" onPress={handleSave} />
-                    <Button title="Close" onPress={hideModal} />
+            <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text>Fill in the field please:</Text>
+                        <TextInput
+                            value={textInputValue}
+                            onChangeText={(text) => setTextInputValue(text)}
+                            placeholder="Enter something..."
+                        />
+                        <View style={styles.buttonContainer}>
+                            <Button title="Save" onPress={handleSave} />
+                            <Button title="Close" onPress={hideModal} />
+                        </View>
+                    </View>
                 </View>
             </Modal>
             <PieChart
@@ -189,6 +192,31 @@ const styles = StyleSheet.create({
     addButton: {
         backgroundColor: 'blue',
         color: 'black',
+    },
+    modalContainer: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background for the modal
+    },
+    modalContent: {
+        backgroundColor: 'white',
+        padding: 20,
+        borderRadius: 10,
+        width: '80%',
+        alignItems: 'center',
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-around',
+        width: '100%',
+        marginTop: 20,
+    },
+    topBar: {
+        alignSelf: 'stretch', // Make the topBar span the width of the screen
+        flexDirection: 'row', // Arrange items horizontally
+        justifyContent: 'flex-start', // Align items to the left
+        padding: 10,
     },
     //other
 });

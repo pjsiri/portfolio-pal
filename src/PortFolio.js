@@ -5,6 +5,8 @@ import { PieChart } from 'react-native-chart-kit';
 import { StatusBar } from 'react-native';
 import StockCard from './StockCard';
 import { useDarkMode } from "./DarkModeContext"; // Import the hook
+import RNPickerSelect from "react-native-picker-select";
+
 
 const PortFolio = () => {
     const { isDarkMode } = useDarkMode(); // Use the hook to access dark mode state
@@ -99,6 +101,7 @@ const PortFolio = () => {
     //pop up a window to get input from user about the stocks or crypto info
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [textInputValue, setTextInputValue] = useState('');
+    const [selectedAssetType, setSelectedAssetType] = useState('Stock'); // Default selection
 
     const showModal = () => {
         setIsModalVisible(true);
@@ -112,14 +115,14 @@ const PortFolio = () => {
         // Do something with the input value (textInputValue)
         // For example, you can store it in state or send it to a server
         console.log('Input value:', textInputValue);
+        console.log('Selected asset type:', selectedAssetType);
         hideModal();
     };
-
 
     return (
         <View style={containerStyle}>
             <View style={styles.topBar}>
-            <Button title="Add" onPress={showModal} />
+                <Button title="Add" onPress={showModal} />
             </View>
             {/* Modal */}
             <Modal visible={isModalVisible} animationType="slide" transparent={true}>
@@ -130,6 +133,20 @@ const PortFolio = () => {
                             value={textInputValue}
                             onChangeText={(text) => setTextInputValue(text)}
                             placeholder="Enter something..."
+                        />
+                        <Text>Select an asset type:</Text>
+                        <RNPickerSelect
+                            onValueChange={(value) => setSelectedAssetType(value)} // Set the selected value
+                            items={[
+                                { label: "JavaScript", value: "JavaScript" },
+                                { label: "TypeScript", value: "TypeScript" },
+                                { label: "Python", value: "Python" },
+                                { label: "Java", value: "Java" },
+                                { label: "C++", value: "C++" },
+                                { label: "C", value: "C" },
+                            ]}
+                            value={selectedAssetType} // Set the selected value
+                            placeholder={{ label: "Select an asset type", value: null }} // Set a placeholder
                         />
                         <View style={styles.buttonContainer}>
                             <Button title="Save" onPress={handleSave} />

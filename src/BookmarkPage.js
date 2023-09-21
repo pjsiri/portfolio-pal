@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
-import { getFirestore, collection, getDocs, query, orderBy } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, query, orderBy, where, deleteDoc } from 'firebase/firestore';
 import StockCard from './common/cards/StockCard'; 
 import cardStyles from './common/cards/Cards.style'; 
 import { useNavigation } from '@react-navigation/native';
@@ -33,6 +33,26 @@ const BookmarkedStocksPage = () => {
 
     fetchBookmarkedStocks();
   }, []);
+
+  const handleDelete = async (symbol) => {
+    try {
+      const db = getFirestore();
+      const stocksRef = collection(db, 'bookmarkedStocks');
+      const q = query(stocksRef, where('symbol', '==', symbol)); // Assuming you have a field named 'symbol'
+  
+      const querySnapshot = await getDocs(q);
+  
+      querySnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+  
+      // Update the state to remove the deleted item
+      setBookmarkedStocks(prevStocks => prevStocks.filter(stock => stock.symbol !== symbol));
+      console.log('Stock bookmark removed!');
+    } catch (error) {
+      console.error('Error deleting bookmarked stock:', error);
+    }
+  };
 
   const styles = {
     container: {
@@ -103,6 +123,7 @@ const BookmarkedStocksPage = () => {
               item={item}
               handleNavigate={() => {}}
               isBookedMarked={true}
+              handleDelete={handleDelete}
             />
           )}
         />

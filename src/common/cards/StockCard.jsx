@@ -13,7 +13,7 @@ const uriExists = async (uri) => {
   }
 };
 
-const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
+const StockCard = ({ item, handleNavigate, isBookedMarked, handleDelete }) => {
   let stockSymbol = item.symbol;
   let stockName = (item.name || "").split(" ");
   const [imageUri, setImageUri] = useState(null);
@@ -96,16 +96,27 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
       </View>
 
       <View style={styles.priceOuterContainer}>
-        <TouchableOpacity style={styles.heartContainer} onPress={() => { 
+
+      {isBookedMarked ? (
+      <TouchableOpacity style={styles.heartContainer} onPress={() => handleDelete(item.symbol)}>
+        <Image
+          source={require("../../../assets/heart.png")}
+          resizeMode="contain"
+          style={styles.heartImage}
+        />
+      </TouchableOpacity>
+    ) : (
+      <TouchableOpacity style={styles.heartContainer} onPress={() => { 
         toggleBookmark();
         handleBookmark();
-        }}>
-          <Image
-            source={isHeartFilled ? require("../../../assets/heart.png") : require("../../../assets/heart_hollow.png")}
-            resizeMode="contain"
-            style={styles.heartImage}
-          />
-        </TouchableOpacity>
+      }}>
+        <Image
+          source={isHeartFilled ? require("../../../assets/heart.png") : require("../../../assets/heart_hollow.png")}
+          resizeMode="contain"
+          style={styles.heartImage}
+        />
+      </TouchableOpacity>
+    )}
         <View style={styles.priceContainer}>
           <Text style={styles.stockPrice} numberOfLines={1}>
             ${item.price}&nbsp;{item.currency}

@@ -43,6 +43,7 @@ const styles = StyleSheet.create({
   modeIcon: {
     width: 50,
     height: 50,
+    right : 5,
   },
 
   darkModeText: {

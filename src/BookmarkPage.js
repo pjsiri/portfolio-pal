@@ -34,26 +34,6 @@ const BookmarkedStocksPage = () => {
     fetchBookmarkedStocks();
   }, []);
 
-  const handleDelete = async (symbol) => {
-    try {
-      const db = getFirestore();
-      const stocksRef = collection(db, 'bookmarkedStocks');
-      const q = query(stocksRef, where('symbol', '==', symbol)); // Assuming you have a field named 'symbol'
-  
-      const querySnapshot = await getDocs(q);
-  
-      querySnapshot.forEach(async (doc) => {
-        await deleteDoc(doc.ref);
-      });
-  
-      // Update the state to remove the deleted item
-      setBookmarkedStocks(prevStocks => prevStocks.filter(stock => stock.symbol !== symbol));
-      console.log('Stock bookmark removed!');
-    } catch (error) {
-      console.error('Error deleting bookmarked stock:', error);
-    }
-  };
-
   const styles = {
     container: {
       width: "100%",
@@ -123,7 +103,6 @@ const BookmarkedStocksPage = () => {
               item={item}
               handleNavigate={() => {}}
               isBookedMarked={true}
-              handleDelete={handleDelete}
             />
           )}
         />

@@ -12,7 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 
 import styles from "./Overview.style";
 import useFetch from "../../hook/useFetch";
-import { useDarkMode } from "../DarkModeContext";
+import { useDarkMode } from "../common/darkmode/DarkModeContext";
 
 const OverviewPage = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();

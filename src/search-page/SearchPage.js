@@ -12,7 +12,7 @@ import {
 
 import styles from "./SearchPage.style";
 import SearchStocks from "./components/SearchStocks";
-import { useDarkMode } from "../DarkModeContext"; 
+import { useDarkMode } from "../common/darkmode/DarkModeContext";
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -46,12 +46,11 @@ const SearchPage = () => {
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
-        <SearchStocks inputQuery={finalSearchQuery} />
+          <SearchStocks inputQuery={finalSearchQuery} />
         </View>
       </ScrollView>
     </SafeAreaView>
   );
 };
-
 
 export default SearchPage;

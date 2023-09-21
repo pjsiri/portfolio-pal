@@ -10,14 +10,14 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import styles from "./HomePage.style";
 import BrowseStocks from "./components/BrowseStocks";
-import { useDarkMode } from "../DarkModeContext";
+import { useDarkMode } from "../common/darkmode/DarkModeContext";
 
 const HomePage = () => {
   const navigation = useNavigation();
-  const { isDarkMode, toggleDarkMode } = useDarkMode(); 
+  const { isDarkMode, toggleDarkMode } = useDarkMode();
 
   const handleNavigateToBookmarks = () => {
-    navigation.navigate('BookmarkPage');
+    navigation.navigate("BookmarkPage");
   };
 
   const containerStyle = [

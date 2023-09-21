@@ -46,13 +46,15 @@ const StockCard = ({ item, handleNavigate }) => {
     checkUris();
   }, [stockSymbol, stockName]);
 
-  const bookmarkStock = async (symbol) => {
+  const bookmarkStock = async (name, symbol, price) => {
     const db = getFirestore();
     const stocksRef = collection(db, 'bookmarkedStocks');
-
+  
     try {
       await addDoc(stocksRef, {
+        name,
         symbol,
+        price,
         timestamp: new Date(),
       });
       console.log('Stock bookmarked successfully!');
@@ -62,7 +64,7 @@ const StockCard = ({ item, handleNavigate }) => {
   };
 
   const handleBookmark = () => {
-    bookmarkStock(item.symbol); 
+    bookmarkStock(item.name, item.symbol, item.price); 
   };
 
   return (

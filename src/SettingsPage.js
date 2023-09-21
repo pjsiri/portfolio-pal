@@ -43,7 +43,7 @@ const SettingsPage = () => {
         </Picker>
       </View>
       <TouchableOpacity onPress={handleEducationNavigation}>
-        <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>Education</Text>
+      <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>Education</Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleLogout}>
         <Text style={[styles.logoutButton, isDarkMode && styles.darkModeText]}>Logout</Text>
@@ -82,6 +82,12 @@ const styles = StyleSheet.create({
     marginTop: 20,
     fontSize: 18,
     color: "red",
+    textDecorationLine: "underline",
+  },
+  educationLink: {
+    fontSize: 18,
+    fontWeight: "bold", 
+    marginVertical: 10,
     textDecorationLine: "underline",
   },
 });

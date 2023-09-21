@@ -5,6 +5,7 @@ import RegisterScreen from "./RegisterPage.js";
 import BottomTabNavigator from "./BottomTabNavigator.js";
 import Education from "./Education.js";
 import OverviewPage from "./overview-page/OverviewPage.js";
+import Bookmark from "./BookmarkPage.js";
 
 const Stack = createStackNavigator();
 
@@ -34,6 +35,11 @@ const StackNavigator = () => {
       <Stack.Screen
         name="Overview"
         component={OverviewPage}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="BookmarkPage"
+        component={Bookmark}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

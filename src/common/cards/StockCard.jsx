@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 
 import styles from "./Cards.style";
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
 
 const uriExists = async (uri) => {
   try {
@@ -12,10 +13,15 @@ const uriExists = async (uri) => {
   }
 };
 
-const StockCard = ({ item, handleNavigate }) => {
+const StockCard = ({ item, handleNavigate, isBookedMarked, handleDelete }) => {
   let stockSymbol = item.symbol;
   let stockName = (item.name || "").split(" ");
   const [imageUri, setImageUri] = useState(null);
+  const [isHeartFilled, setIsHeartFilled] = useState(isBookedMarked);
+
+  const toggleBookmark = () => {
+    setIsHeartFilled(prevState => !prevState);
+  };
 
   if ((item.symbol || "").includes(":")) {
     const splittedSymbol = item.symbol.split(":");
@@ -45,6 +51,27 @@ const StockCard = ({ item, handleNavigate }) => {
     checkUris();
   }, [stockSymbol, stockName]);
 
+  const bookmarkStock = async (name, symbol, price) => {
+    const db = getFirestore();
+    const stocksRef = collection(db, 'bookmarkedStocks');
+  
+    try {
+      await addDoc(stocksRef, {
+        name,
+        symbol,
+        price,
+        timestamp: new Date(),
+      });
+      console.log('Stock bookmarked successfully!');
+    } catch (error) {
+      console.error('Error bookmarking stock:', error);
+    }
+  };
+  
+  const handleBookmark = () => {
+    bookmarkStock(item.name, item.symbol, item.price); 
+  };
+
   return (
     <TouchableOpacity style={styles.container} onPress={handleNavigate}>
       <TouchableOpacity style={styles.logoContainer}>
@@ -69,13 +96,27 @@ const StockCard = ({ item, handleNavigate }) => {
       </View>
 
       <View style={styles.priceOuterContainer}>
-        <TouchableOpacity style={styles.heartContainer}>
-          <Image
-            source={require("../../../assets/heart_hollow.png")}
-            resizeMode="contain"
-            style={styles.heartImage}
-          />
-        </TouchableOpacity>
+
+      {isBookedMarked ? (
+      <TouchableOpacity style={styles.heartContainer} onPress={() => handleDelete(item.symbol)}>
+        <Image
+          source={require("../../../assets/heart.png")}
+          resizeMode="contain"
+          style={styles.heartImage}
+        />
+      </TouchableOpacity>
+    ) : (
+      <TouchableOpacity style={styles.heartContainer} onPress={() => { 
+        toggleBookmark();
+        handleBookmark();
+      }}>
+        <Image
+          source={isHeartFilled ? require("../../../assets/heart.png") : require("../../../assets/heart_hollow.png")}
+          resizeMode="contain"
+          style={styles.heartImage}
+        />
+      </TouchableOpacity>
+    )}
         <View style={styles.priceContainer}>
           <Text style={styles.stockPrice} numberOfLines={1}>
             ${item.price}&nbsp;{item.currency}

@@ -7,13 +7,18 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-
+import { useNavigation } from "@react-navigation/native";
 import styles from "./HomePage.style";
 import BrowseStocks from "./components/BrowseStocks";
 import { useDarkMode } from "../DarkModeContext";
 
 const HomePage = () => {
+  const navigation = useNavigation();
   const { isDarkMode, toggleDarkMode } = useDarkMode(); 
+
+  const handleNavigateToBookmarks = () => {
+    navigation.navigate('BookmarkPage');
+  };
 
   const containerStyle = [
     styles.appContainer,
@@ -32,10 +37,10 @@ const HomePage = () => {
         <Text style={[styles.appName, isDarkMode && styles.darkModeText]}>
           PortfolioPal
         </Text>
-        <TouchableOpacity onPress={toggleDarkMode}>
+        <TouchableOpacity onPress={handleNavigateToBookmarks}>
           <Image
             style={styles.modeIcon}
-            source={require("../../assets/dark-mode-icon.png")}
+            source={require("../../assets/bookicon.png")}
           />
         </TouchableOpacity>
       </View>

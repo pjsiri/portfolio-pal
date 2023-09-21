@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, Text, Switch, StyleSheet, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
-import { useDarkMode } from "./DarkModeContext";
+import { useDarkMode } from "./common/darkmode/DarkModeContext";
 
 const SettingsPage = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
@@ -19,9 +19,13 @@ const SettingsPage = () => {
 
   return (
     <View style={[styles.container, isDarkMode && styles.darkModeContainer]}>
-      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>Settings</Text>
+      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
+        Settings
+      </Text>
       <View style={styles.setting}>
-        <Text style={[styles.settingText, isDarkMode && styles.darkModeText]}>Dark Mode</Text>
+        <Text style={[styles.settingText, isDarkMode && styles.darkModeText]}>
+          Dark Mode
+        </Text>
         <Switch
           value={isDarkMode}
           onValueChange={toggleDarkMode}
@@ -31,7 +35,9 @@ const SettingsPage = () => {
         />
       </View>
       <View style={styles.setting}>
-        <Text style={[styles.settingText, isDarkMode && styles.darkModeText]}>Currency</Text>
+        <Text style={[styles.settingText, isDarkMode && styles.darkModeText]}>
+          Currency
+        </Text>
         <Picker
           selectedValue={selectedCurrency}
           style={{ height: 50, width: 150 }}
@@ -43,10 +49,14 @@ const SettingsPage = () => {
         </Picker>
       </View>
       <TouchableOpacity onPress={handleEducationNavigation}>
-      <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>Education</Text>
+        <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>
+          Education
+        </Text>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleLogout}>
-        <Text style={[styles.logoutButton, isDarkMode && styles.darkModeText]}>Logout</Text>
+        <Text style={[styles.logoutButton, isDarkMode && styles.darkModeText]}>
+          Logout
+        </Text>
       </TouchableOpacity>
     </View>
   );
@@ -76,7 +86,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   settingText: {
-    fontSize: 16, 
+    fontSize: 16,
   },
   logoutButton: {
     marginTop: 20,
@@ -86,7 +96,7 @@ const styles = StyleSheet.create({
   },
   educationLink: {
     fontSize: 18,
-    fontWeight: "bold", 
+    fontWeight: "bold",
     marginVertical: 10,
     textDecorationLine: "underline",
   },

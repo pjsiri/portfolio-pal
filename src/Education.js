@@ -1,8 +1,15 @@
 import React from "react";
-import { View, Image, Text, ScrollView, TouchableOpacity, FlatList } from "react-native";
+import {
+  View,
+  Image,
+  Text,
+  ScrollView,
+  TouchableOpacity,
+  FlatList,
+} from "react-native";
 import { WebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
-import { useDarkMode } from "./DarkModeContext";
+import { useDarkMode } from "./common/darkmode/DarkModeContext";
 
 const Education = () => {
   const navigation = useNavigation();
@@ -18,42 +25,47 @@ const Education = () => {
       title: "Summary:",
       url: "https://www.youtube.com/watch?v=i5OZQQWj5-I",
       thumbnail: "https://img.youtube.com/vi/i5OZQQWj5-I/maxresdefault.jpg",
-      description: "Learn stock trading as a complete beginner:<br>Avoid risking real money; use free trading <br>simulators. Record and analyze every trade. <br>Mastery before profits. Potential video series.",
+      description:
+        "Learn stock trading as a complete beginner:<br>Avoid risking real money; use free trading <br>simulators. Record and analyze every trade. <br>Mastery before profits. Potential video series.",
     },
     {
       title: "Summary:",
       url: "https://www.youtube.com/watch?v=8mBmwomJcP8&ab_channel=KrownChakraTv",
       thumbnail: "https://img.youtube.com/vi/8mBmwomJcP8/maxresdefault.jpg",
-      description: "Promoting market confidence and taking <br>financial risks for wealth and success."
+      description:
+        "Promoting market confidence and taking <br>financial risks for wealth and success.",
     },
-  
+
     {
       category: "Intermediate",
       title: "Summary:",
       url: "https://www.youtube.com/watch?v=Ay-zLahPFEk",
       thumbnail: "https://img.youtube.com/vi/Ay-zLahPFEk/maxresdefault.jpg",
-      description: "Individual investors now have better access <br>to information. The stock market isn't a <br>lottery; research companies for success.",
+      description:
+        "Individual investors now have better access <br>to information. The stock market isn't a <br>lottery; research companies for success.",
     },
     {
       title: "Summary:",
       url: "https://www.youtube.com/watch?v=DBkvdlAlNDY&ab_channel=CollectionCrypto",
       thumbnail: "https://img.youtube.com/vi/DBkvdlAlNDY/maxresdefault.jpg",
-      description: "Shows the Step by Step Guide too investing <br> in binance."
+      description:
+        "Shows the Step by Step Guide too investing <br> in binance.",
     },
     {
-    category: "Advance",
-      "title": "Summary:",
-      "url": "https://www.youtube.com/watch?v=X6bRU-3yyEY&ab_channel=TechShiksha",
-      "thumbnail": "https://img.youtube.com/vi/X6bRU-3yyEY/maxresdefault.jpg",
-      "description": "How to set up an Excel Sheet to Track your <br>Portfolio Investments."
+      category: "Advance",
+      title: "Summary:",
+      url: "https://www.youtube.com/watch?v=X6bRU-3yyEY&ab_channel=TechShiksha",
+      thumbnail: "https://img.youtube.com/vi/X6bRU-3yyEY/maxresdefault.jpg",
+      description:
+        "How to set up an Excel Sheet to Track your <br>Portfolio Investments.",
     },
     {
       title: "Summary:",
       url: "https://www.youtube.com/watch?v=aNs0Yo5amF4&ab_channel=Pete-HowToAnalyst",
       thumbnail: "https://img.youtube.com/vi/aNs0Yo5amF4/maxresdefault.jpg",
-      description: "Step by Step guide in creating a crypto <br>portfolio dashboard in Excel."
-    }
-    
+      description:
+        "Step by Step guide in creating a crypto <br>portfolio dashboard in Excel.",
+    },
   ];
 
   const styles = {
@@ -111,16 +123,16 @@ const Education = () => {
     },
     video: {
       width: 490,
-      height: 90, 
+      height: 90,
     },
     flatListContainer: {
-      maxHeight: 500, 
+      maxHeight: 500,
     },
   };
 
   const renderVideoItem = ({ item }) => {
     const categoryColor = isDarkMode ? "gold" : "black";
-  
+
     return (
       <View style={styles.videoContainer}>
         <Text style={{ fontSize: 16, color: categoryColor }}>
@@ -157,7 +169,10 @@ const Education = () => {
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity style={styles.backButtonContainer} onPress={handleBack}>
+        <TouchableOpacity
+          style={styles.backButtonContainer}
+          onPress={handleBack}
+        >
           <Image
             source={{
               uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",

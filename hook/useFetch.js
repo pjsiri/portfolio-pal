@@ -11,7 +11,7 @@ const useFetch = (endpoint, query) => {
     url: `https://real-time-finance-data.p.rapidapi.com/${endpoint}`,
     params: { ...query },
     headers: {
-      "X-RapidAPI-Key": "6e1bb83d8bmsh53b9edba5f3ee07p18acdcjsn66674df62730",
+      "X-RapidAPI-Key": "b2e852df4amsh7677077d3d8a49fp1200e8jsn372134bc39f5",
       "X-RapidAPI-Host": "real-time-finance-data.p.rapidapi.com",
     },
   };

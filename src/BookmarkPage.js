@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image } from 'react-native';
-import { getFirestore, collection, getDocs, query, orderBy } from 'firebase/firestore';
-import StockCard from './common/cards/StockCard'; // Assuming StockCard is in the same directory
-import cardStyles from './common/cards/Cards.style'; // Assuming card.style.js is in the same directory
+import { View, Text, FlatList, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
+import { getFirestore, collection, getDocs, query, orderBy, where, deleteDoc } from 'firebase/firestore';
+import StockCard from './common/cards/StockCard'; 
+import cardStyles from './common/cards/Cards.style'; 
 import { useNavigation } from '@react-navigation/native';
+import Homestyles from "./home-page/HomePage.style";
 
 const BookmarkedStocksPage = () => {
   const [bookmarkedStocks, setBookmarkedStocks] = useState([]);
   const navigation = useNavigation();
 
   const handleBack = () => {
-    navigation.goBack(); // Navigate back to the previous screen
+    navigation.navigate('HomeStack'); // Navigate back to the previous screen
   };
 
   useEffect(() => {
@@ -33,9 +34,28 @@ const BookmarkedStocksPage = () => {
     fetchBookmarkedStocks();
   }, []);
 
+  const handleDelete = async (symbol) => {
+    try {
+      const db = getFirestore();
+      const stocksRef = collection(db, 'bookmarkedStocks');
+      const q = query(stocksRef, where('symbol', '==', symbol)); // Assuming you have a field named 'symbol'
+  
+      const querySnapshot = await getDocs(q);
+  
+      querySnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+  
+      // Update the state to remove the deleted item
+      setBookmarkedStocks(prevStocks => prevStocks.filter(stock => stock.symbol !== symbol));
+      console.log('Stock bookmark removed!');
+    } catch (error) {
+      console.error('Error deleting bookmarked stock:', error);
+    }
+  };
+
   const styles = {
     container: {
-      flex: 1,
       width: "100%",
       alignItems: "center",
       justifyContent: "flex-start",
@@ -54,32 +74,61 @@ const BookmarkedStocksPage = () => {
       width: 30,
       height: 30,
     },
+    title: {
+      fontSize: 24,
+      marginBottom: 15,
+    },
+    appContainer: {
+      flex: 1,
+      padding: 15,
+      paddingTop: 50,
+      width: "100%",
+      backgroundColor: "#F0F0F0",
+    },
+    header: {
+      fontWeight: "bold",
+      fontSize: 30,
+      paddingTop: 20,
+      paddingBottom: 20,
+      color: "black",
+      left: 20,
+    },
+    stocks: {
+      paddingTop: 20,
+      paddingBottom: 20,
+    },
   };
 
   return (
-    <View style={cardStyles.container}>
-      <View style={styles.backButtonContainer}>
-        <TouchableOpacity onPress={handleBack}>
-          <Image
-            source={{
-              uri: 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png',
-            }}
-            style={styles.inputIcon}
-          />
-        </TouchableOpacity>
+    <SafeAreaView style={[styles.appContainer]}>
+      <View style={styles.container}>
+        <Text style={[styles.title, { fontSize: 28, fontWeight: "900"}]}>Bookmark Page</Text>
       </View>
-      <FlatList
-        data={bookmarkedStocks}
-        keyExtractor={(item) => item.symbol}
-        renderItem={({ item }) => (
-          <StockCard
-            item={item}
-            handleNavigate={() => {}}
-            showBookmark={false} // Assuming you want to hide the bookmark icon
-          />
-        )}
-      />
-    </View>
+      <View>
+      <View style={styles.header}>
+          <TouchableOpacity onPress={handleBack}>
+            <Image
+              source={{
+                uri: 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png',
+              }}
+              style={styles.inputIcon}
+            />
+          </TouchableOpacity>
+        </View>
+        <FlatList style={styles.stocks}
+          data={bookmarkedStocks}
+          keyExtractor={(item) => item.symbol}
+          renderItem={({ item }) => (
+            <StockCard
+              item={item}
+              handleNavigate={() => {}}
+              isBookedMarked={true}
+              handleDelete={handleDelete}
+            />
+          )}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 

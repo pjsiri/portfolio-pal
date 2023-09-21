@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 
 import styles from "./Browse.style";
 import StockCard from "../../common/cards/StockCard";
@@ -11,6 +12,7 @@ const BrowseStocks = () => {
   const router = useRouter();
   const [trendType, setTrendType] = useState("MOST_ACTIVE");
   const [isStocks, setIsStocks] = useState(true);
+  const navigation = useNavigation();
 
   const { data, isLoading, error, refetch } = useFetch("market-trends", {
     trend_type: trendType,
@@ -57,29 +59,25 @@ const BrowseStocks = () => {
         ) : error ? (
           <Text>Something went wrong</Text>
         ) : isStocks ? (
-          data?.trends
-            ?.slice(0, 5)
-            .map((item) => (
-              <StockCard
-                item={item}
-                key={`browse-stock-${item?.google_mid}`}
-                handleNavigate={() =>
-                  router.push(`/browse-stocks${item?.google_mid}`)
-                }
-              />
-            ))
+          data?.trends?.slice(0, 5).map((item) => (
+            <StockCard
+              item={item}
+              key={`stock-browse${item?.google_mid}`}
+              handleNavigate={() => {
+                navigation.navigate("Overview", { item });
+              }}
+            />
+          ))
         ) : (
-          data?.trends
-            ?.slice(0, 5)
-            .map((item) => (
-              <CryptoCard
-                item={item}
-                key={`browse-crypto-${item?.google_mid}`}
-                handleNavigate={() =>
-                  router.push(`/browse-cryptos${item?.google_mid}`)
-                }
-              />
-            ))
+          data?.trends?.slice(0, 5).map((item) => (
+            <CryptoCard
+              item={item}
+              key={`crypto-browse-${item?.google_mid}`}
+              handleNavigate={() => {
+                navigation.navigate("Overview", { item });
+              }}
+            />
+          ))
         )}
       </View>
     </View>

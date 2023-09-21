@@ -4,12 +4,13 @@ import LoginScreen from "./LoginPage.js";
 import RegisterScreen from "./RegisterPage.js";
 import BottomTabNavigator from "./BottomTabNavigator.js";
 import Education from "./Education.js";
+import Bookmark from "./BookmarkPage.js"
 
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator initialRouteName="BookmarkPage">
       <Stack.Screen
         name="Login"
         component={LoginScreen}
@@ -28,6 +29,11 @@ const StackNavigator = () => {
       <Stack.Screen
         name="Education"
         component={Education}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="BookmarkPage"
+        component={Bookmark}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

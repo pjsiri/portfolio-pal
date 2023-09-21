@@ -13,10 +13,15 @@ const uriExists = async (uri) => {
   }
 };
 
-const StockCard = ({ item, handleNavigate }) => {
+const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
   let stockSymbol = item.symbol;
   let stockName = (item.name || "").split(" ");
   const [imageUri, setImageUri] = useState(null);
+  const [isHeartFilled, setIsHeartFilled] = useState(isBookedMarked);
+
+  const toggleBookmark = () => {
+    setIsHeartFilled(prevState => !prevState);
+  };
 
   if ((item.symbol || "").includes(":")) {
     const splittedSymbol = item.symbol.split(":");
@@ -62,7 +67,7 @@ const StockCard = ({ item, handleNavigate }) => {
       console.error('Error bookmarking stock:', error);
     }
   };
-
+  
   const handleBookmark = () => {
     bookmarkStock(item.name, item.symbol, item.price); 
   };
@@ -91,9 +96,12 @@ const StockCard = ({ item, handleNavigate }) => {
       </View>
 
       <View style={styles.priceOuterContainer}>
-        <TouchableOpacity style={styles.heartContainer} onPress={handleBookmark}>
+        <TouchableOpacity style={styles.heartContainer} onPress={() => { 
+        toggleBookmark();
+        handleBookmark();
+        }}>
           <Image
-            source={require("../../../assets/heart_hollow.png")}
+            source={isHeartFilled ? require("../../../assets/heart.png") : require("../../../assets/heart_hollow.png")}
             resizeMode="contain"
             style={styles.heartImage}
           />

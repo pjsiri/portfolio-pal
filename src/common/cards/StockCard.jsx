@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 
 import styles from "./Cards.style";
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
 
 const uriExists = async (uri) => {
   try {
@@ -45,6 +46,25 @@ const StockCard = ({ item, handleNavigate }) => {
     checkUris();
   }, [stockSymbol, stockName]);
 
+  const bookmarkStock = async (symbol) => {
+    const db = getFirestore();
+    const stocksRef = collection(db, 'bookmarkedStocks');
+
+    try {
+      await addDoc(stocksRef, {
+        symbol,
+        timestamp: new Date(),
+      });
+      console.log('Stock bookmarked successfully!');
+    } catch (error) {
+      console.error('Error bookmarking stock:', error);
+    }
+  };
+
+  const handleBookmark = () => {
+    bookmarkStock(item.symbol); 
+  };
+
   return (
     <TouchableOpacity style={styles.container} onPress={handleNavigate}>
       <TouchableOpacity style={styles.logoContainer}>
@@ -69,7 +89,7 @@ const StockCard = ({ item, handleNavigate }) => {
       </View>
 
       <View style={styles.priceOuterContainer}>
-        <TouchableOpacity style={styles.heartContainer}>
+        <TouchableOpacity style={styles.heartContainer} onPress={handleBookmark}>
           <Image
             source={require("../../../assets/heart_hollow.png")}
             resizeMode="contain"

@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
-import { Text, View, TextInput, Button, Alert, Dimensions, StyleSheet } from 'react-native';
+import { Text, TouchableOpacity, View, TextInput, Button, Modal, Alert, Dimensions, StyleSheet } from 'react-native';
 import { Image } from 'react-native';
 import { PieChart } from 'react-native-chart-kit';
 import { StatusBar } from 'react-native';
 import StockCard from './StockCard';
 import { useDarkMode } from "./DarkModeContext"; // Import the hook
 
-
 const PortFolio = () => {
     const { isDarkMode } = useDarkMode(); // Use the hook to access dark mode state
 
     // Apply dark mode styles conditionally
     const containerStyle = [
-      styles.container,
-      isDarkMode && styles.darkModeContainer,
+        styles.container,
+        isDarkMode && styles.darkModeContainer,
     ];
-  
+
     const earnedMoneyStyle = isDarkMode ? styles.darkModeEarnedMoney : styles.earnedMoney;
     const losesMoneyStyle = isDarkMode ? styles.darkModeLosesMoney : styles.losesMoney;
-  
+
     const pieData = [
         {
             name: 'Apple',
@@ -97,8 +96,45 @@ const PortFolio = () => {
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     };
 
+    //pop up a window to get input from user about the stocks or crypto info
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [textInputValue, setTextInputValue] = useState('');
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const hideModal = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleSave = () => {
+        // Do something with the input value (textInputValue)
+        // For example, you can store it in state or send it to a server
+        console.log('Input value:', textInputValue);
+        hideModal();
+    };
+
+
     return (
         <View style={containerStyle}>
+            <Button style={styles.addButton}
+                title="Add"
+                onPress={showModal}
+            />
+            {/* Modal */}
+            <Modal visible={isModalVisible} animationType="slide">
+                <View>
+                    <Text>Fill in the field:</Text>
+                    <TextInput
+                        value={textInputValue}
+                        onChangeText={(text) => setTextInputValue(text)}
+                        placeholder="Enter something..."
+                    />
+                    <Button title="Save" onPress={handleSave} />
+                    <Button title="Close" onPress={hideModal} />
+                </View>
+            </Modal>
             <PieChart
                 data={pieData}
                 width={screenWidth}
@@ -117,7 +153,7 @@ const PortFolio = () => {
             {/* Map through pieData and render StockCard for each stock */}
             {pieData.map((stock, index) => (
                 <StockCard //stock card for the displaying stock
-                    key={index} 
+                    key={index}
                     name={stock.name}
                     price={stock.price}
                     color={stock.color}
@@ -130,27 +166,31 @@ const PortFolio = () => {
 
 const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      backgroundColor: '#fff',
-      alignItems: 'center',
-      justifyContent: 'center',
+        flex: 1,
+        backgroundColor: '#fff',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     darkModeContainer: {
-      backgroundColor: '#333', // Dark mode background color
+        backgroundColor: '#333', // Dark mode background color
     },
     earnedMoney: {
-      color: 'blue',
+        color: 'blue',
     },
     darkModeEarnedMoney: {
-      color: 'lightblue', // Dark mode text color
+        color: 'lightblue', // Dark mode text color
     },
     losesMoney: {
-      color: 'red',
+        color: 'red',
     },
     darkModeLosesMoney: {
-      color: 'pink', // Dark mode text color
+        color: 'pink', // Dark mode text color
     },
-    // Other styles
-  });
+    addButton: {
+        backgroundColor: 'blue',
+        color: 'black',
+    },
+    //other
+});
 
 export default PortFolio;

@@ -5,8 +5,6 @@ import { PieChart } from 'react-native-chart-kit';
 import { StatusBar } from 'react-native';
 import StockCard from './StockCard';
 import { useDarkMode } from "./DarkModeContext"; // Import the hook
-import RNPickerSelect from "react-native-picker-select";
-
 
 const PortFolio = () => {
     const { isDarkMode } = useDarkMode(); // Use the hook to access dark mode state
@@ -135,19 +133,6 @@ const PortFolio = () => {
                             placeholder="Enter something..."
                         />
                         <Text>Select an asset type:</Text>
-                        <RNPickerSelect
-                            onValueChange={(value) => setSelectedAssetType(value)} // Set the selected value
-                            items={[
-                                { label: "JavaScript", value: "JavaScript" },
-                                { label: "TypeScript", value: "TypeScript" },
-                                { label: "Python", value: "Python" },
-                                { label: "Java", value: "Java" },
-                                { label: "C++", value: "C++" },
-                                { label: "C", value: "C" },
-                            ]}
-                            value={selectedAssetType} // Set the selected value
-                            placeholder={{ label: "Select an asset type", value: null }} // Set a placeholder
-                        />
                         <View style={styles.buttonContainer}>
                             <Button title="Save" onPress={handleSave} />
                             <Button title="Close" onPress={hideModal} />

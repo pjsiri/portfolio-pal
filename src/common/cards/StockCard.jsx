@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 
 import styles from "./Cards.style";
-import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, deleteDoc } from 'firebase/firestore';
 
 const uriExists = async (uri) => {
   try {
@@ -13,15 +13,12 @@ const uriExists = async (uri) => {
   }
 };
 
-const StockCard = ({ item, handleNavigate, isBookedMarked, handleDelete }) => {
+const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
   let stockSymbol = item.symbol;
   let stockName = (item.name || "").split(" ");
   const [imageUri, setImageUri] = useState(null);
   const [isHeartFilled, setIsHeartFilled] = useState(isBookedMarked);
-
-  const toggleBookmark = () => {
-    setIsHeartFilled(prevState => !prevState);
-  };
+  const [bookmarkedStocks, setBookmarkedStocks] = useState([]);
 
   if ((item.symbol || "").includes(":")) {
     const splittedSymbol = item.symbol.split(":");
@@ -70,6 +67,28 @@ const StockCard = ({ item, handleNavigate, isBookedMarked, handleDelete }) => {
   
   const handleBookmark = () => {
     bookmarkStock(item.name, item.symbol, item.price); 
+    setIsHeartFilled(prevState => !prevState);
+  };
+
+  const handleDelete = async (symbol) => {
+    try {
+      const db = getFirestore();
+      const stocksRef = collection(db, 'bookmarkedStocks');
+      const q = query(stocksRef, where('symbol', '==', symbol));
+
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+
+      // Update the state to remove the deleted item
+      setBookmarkedStocks(prevStocks => prevStocks.filter(stock => stock.symbol !== symbol));
+      console.log('Stock bookmark removed!');
+      setIsHeartFilled(prevState => !prevState);
+    } catch (error) {
+      console.error('Error deleting bookmarked stock:', error);
+    }
   };
 
   return (
@@ -97,17 +116,16 @@ const StockCard = ({ item, handleNavigate, isBookedMarked, handleDelete }) => {
 
       <View style={styles.priceOuterContainer}>
 
-      {isBookedMarked ? (
+      {isHeartFilled ? (
       <TouchableOpacity style={styles.heartContainer} onPress={() => handleDelete(item.symbol)}>
         <Image
-          source={require("../../../assets/heart.png")}
+          source={isHeartFilled ? require("../../../assets/heart.png") : require("../../../assets/heart_hollow.png")}
           resizeMode="contain"
           style={styles.heartImage}
         />
       </TouchableOpacity>
     ) : (
       <TouchableOpacity style={styles.heartContainer} onPress={() => { 
-        toggleBookmark();
         handleBookmark();
       }}>
         <Image

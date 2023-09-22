@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import API_KEY from "../apikey";
 
 const useFetch = (endpoint, query) => {
   const [data, setData] = useState([]);
@@ -11,7 +12,7 @@ const useFetch = (endpoint, query) => {
     url: `https://real-time-finance-data.p.rapidapi.com/${endpoint}`,
     params: { ...query },
     headers: {
-      "X-RapidAPI-Key": "40555dab5amsh19274e263ffc5acp1005f9jsnb2abd53f0882",
+      "X-RapidAPI-Key": API_KEY,
       "X-RapidAPI-Host": "real-time-finance-data.p.rapidapi.com",
     },
   };

@@ -6,6 +6,8 @@ import cardStyles from './common/cards/Cards.style';
 import { useNavigation } from '@react-navigation/native';
 import Homestyles from "./home-page/HomePage.style";
 
+import { getAuth } from 'firebase/auth';
+
 const BookmarkedStocksPage = () => {
   const [bookmarkedStocks, setBookmarkedStocks] = useState([]);
   const navigation = useNavigation();
@@ -18,19 +20,25 @@ const BookmarkedStocksPage = () => {
     const fetchBookmarkedStocks = async () => {
       const db = getFirestore();
       const stocksRef = collection(db, 'bookmarkedStocks');
+      const auth = getAuth();
+      const user = auth.currentUser;
+  
+      if (user) {
+        const q = query(stocksRef, where('userId', '==', user.uid));
+        try {
+          const querySnapshot = await getDocs(q);
 
-      const q = query(stocksRef, orderBy('timestamp', 'desc'));
-
-      const querySnapshot = await getDocs(q);
-
-      const stocks = [];
-      querySnapshot.forEach((doc) => {
-        stocks.push(doc.data());
-      });
-
-      setBookmarkedStocks(stocks);
-    };
-
+          const stocks = querySnapshot.docs.map(doc => doc.data());
+          setBookmarkedStocks(stocks);
+        } catch (error) {
+          console.error('Error fetching bookmarked stocks:', error);
+        }
+      } 
+       else {
+         console.log('No authenticated user found');
+         }
+        };
+  
     fetchBookmarkedStocks();
   }, []);
 

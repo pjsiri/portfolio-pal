@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 
 import styles from "./Search.style";
 import StockCard from "../../common/cards/StockCard";
@@ -14,6 +15,7 @@ const SearchStocks = ({ inputQuery }) => {
     query: inputQuery,
     language: "en",
   });
+  const navigation = useNavigation();
 
   const handleBrowseType = () => {
     setIsStocks(!isStocks);
@@ -59,9 +61,9 @@ const SearchStocks = ({ inputQuery }) => {
               .map((item) => (
                 <StockCard
                   item={item}
-                  key={`browse-crypto-${item?.google_mid}`}
+                  key={`browse-stock-${item?.google_mid}`}
                   handleNavigate={() =>
-                    router.push(`/browse-cryptos${item?.google_mid}`)
+                    navigation.navigate("StockOverview", { item })
                   }
                 />
               ))
@@ -69,17 +71,13 @@ const SearchStocks = ({ inputQuery }) => {
         ) : data?.currency?.length === 0 ? (
           <Text>No crypto data available</Text>
         ) : (
-          data?.currency
-            ?.slice(0, 5)
-            .map((item) => (
-              <CryptoCard
-                item={item}
-                key={`browse-crypto-${item?.google_mid}`}
-                handleNavigate={() =>
-                  router.push(`/browse-cryptos${item?.google_mid}`)
-                }
-              />
-            ))
+          data?.currency?.slice(0, 5).map((item) => (
+            <CryptoCard
+              item={item}
+              key={`browse-crypto-${item?.google_mid}`}
+              //handleNavigate={() => navigation.navigate("Overview", { item })}
+            />
+          ))
         )}
       </View>
     </View>

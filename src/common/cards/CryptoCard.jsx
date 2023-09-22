@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import styles from "./Cards.style";
-import { getFirestore, collection, addDoc, deleteDoc, query, where, getDocs } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  deleteDoc,
+  query,
+  where,
+  getDocs,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const uriExists = async (uri) => {
   try {
@@ -12,6 +20,10 @@ const uriExists = async (uri) => {
     return false;
   }
 };
+
+function formatNumber(num) {
+  return (num || 0).toFixed(2);
+}
 
 const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
   let cryptoSymbol = (item.from_symbol || "").toLowerCase();
@@ -46,8 +58,12 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
     async function checkBookmarkStatus() {
       if (user) {
         const db = getFirestore();
-        const stocksRef = collection(db, 'bookmarkedCryptos');
-        const q = query(stocksRef, where('symbol', '==', cryptoSymbol), where('userId', '==', user.uid));
+        const stocksRef = collection(db, "bookmarkedCryptos");
+        const q = query(
+          stocksRef,
+          where("symbol", "==", cryptoSymbol),
+          where("userId", "==", user.uid)
+        );
         const querySnapshot = await getDocs(q);
         setIsBookmarked(querySnapshot.size > 0);
       }
@@ -59,14 +75,18 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
   const toggleBookmark = async () => {
     if (user) {
       const db = getFirestore();
-      const stocksRef = collection(db, 'bookmarkedCryptos');
-      const q = query(stocksRef, where('symbol', '==', cryptoSymbol), where('userId', '==', user.uid));
+      const stocksRef = collection(db, "bookmarkedCryptos");
+      const q = query(
+        stocksRef,
+        where("symbol", "==", cryptoSymbol),
+        where("userId", "==", user.uid)
+      );
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach(async (doc) => {
         await deleteDoc(doc.ref);
       });
-      console.log('Crypto bookmark removed!');
+      console.log("Crypto bookmark removed!");
       setIsBookmarked(false);
     }
   };
@@ -74,7 +94,7 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
   const handleBookmark = async () => {
     if (user) {
       const db = getFirestore();
-      const stocksRef = collection(db, 'bookmarkedCryptos');
+      const stocksRef = collection(db, "bookmarkedCryptos");
       try {
         await addDoc(stocksRef, {
           name: item.from_currency_name,
@@ -84,10 +104,10 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
           userId: user.uid,
           type: "crypto",
         });
-        console.log('Crypto bookmarked successfully!');
+        console.log("Crypto bookmarked successfully!");
         setIsBookmarked(true);
       } catch (error) {
-        console.error('Error bookmarking crypto:', error);
+        console.error("Error bookmarking crypto:", error);
       }
     }
   };
@@ -116,16 +136,23 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
       </View>
 
       <View style={styles.priceOuterContainer}>
-        <TouchableOpacity style={styles.heartContainer} onPress={isBookmarked ? toggleBookmark : handleBookmark}>
+        <TouchableOpacity
+          style={styles.heartContainer}
+          onPress={isBookmarked ? toggleBookmark : handleBookmark}
+        >
           <Image
-            source={isBookmarked ? require("../../../assets/heart.png") : require("../../../assets/heart_hollow.png")}
+            source={
+              isBookmarked
+                ? require("../../../assets/heart.png")
+                : require("../../../assets/heart_hollow.png")
+            }
             resizeMode="contain"
             style={styles.heartImage}
           />
         </TouchableOpacity>
         <View style={styles.priceContainer}>
           <Text style={styles.stockPrice} numberOfLines={1}>
-            ${item.exchange_rate}&nbsp;{item.to_symbol}
+            ${formatNumber(item.exchange_rate)}&nbsp;{item.to_symbol}
           </Text>
         </View>
       </View>

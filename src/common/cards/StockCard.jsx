@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, Image } from "react-native";
 
 import styles from "./Cards.style";
 import { getFirestore, collection, addDoc, getDocs, query, orderBy, where, deleteDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const uriExists = async (uri) => {
   try {
@@ -19,6 +20,9 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
   const [imageUri, setImageUri] = useState(null);
   const [isHeartFilled, setIsHeartFilled] = useState(isBookedMarked);
   const [bookmarkedStocks, setBookmarkedStocks] = useState([]);
+
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   if ((item.symbol || "").includes(":")) {
     const splittedSymbol = item.symbol.split(":");
@@ -58,8 +62,10 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
         symbol,
         price,
         timestamp: new Date(),
+        userId: user.uid,
       });
       console.log('Stock bookmarked successfully!');
+      setIsHeartFilled(true);
     } catch (error) {
       console.error('Error bookmarking stock:', error);
     }
@@ -67,14 +73,14 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
   
   const handleBookmark = () => {
     bookmarkStock(item.name, item.symbol, item.price); 
-    setIsHeartFilled(prevState => !prevState);
+   // setIsHeartFilled(prevState => !prevState);
   };
 
   const handleDelete = async (symbol) => {
     try {
       const db = getFirestore();
       const stocksRef = collection(db, 'bookmarkedStocks');
-      const q = query(stocksRef, where('symbol', '==', symbol));
+      const q = query(stocksRef, where('symbol', '==', symbol), where('userId', '==', user.uid));
 
       const querySnapshot = await getDocs(q);
 
@@ -85,7 +91,7 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
       // Update the state to remove the deleted item
       setBookmarkedStocks(prevStocks => prevStocks.filter(stock => stock.symbol !== symbol));
       console.log('Stock bookmark removed!');
-      setIsHeartFilled(prevState => !prevState);
+      setIsHeartFilled(false);
     } catch (error) {
       console.error('Error deleting bookmarked stock:', error);
     }

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
-
 import styles from "./Cards.style";
+import { getFirestore, collection, addDoc, deleteDoc, query, where, getDocs } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const uriExists = async (uri) => {
   try {
@@ -12,14 +13,18 @@ const uriExists = async (uri) => {
   }
 };
 
-const CryptoCard = ({ item, handleNavigate }) => {
+const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
   let cryptoSymbol = (item.from_symbol || "").toLowerCase();
   let cryptoName = (item.from_currency_name || "").split(" ");
+  const [isBookmarked, setIsBookmarked] = useState(isBookedMarked);
   const [imageUri, setImageUri] = useState(null);
 
   if (cryptoName.length > 0) {
     cryptoName = cryptoName[0].toLowerCase();
   }
+
+  const auth = getAuth();
+  const user = auth.currentUser;
 
   useEffect(() => {
     async function checkUris() {
@@ -36,6 +41,56 @@ const CryptoCard = ({ item, handleNavigate }) => {
 
     checkUris();
   }, [cryptoSymbol, cryptoName]);
+
+  useEffect(() => {
+    async function checkBookmarkStatus() {
+      if (user) {
+        const db = getFirestore();
+        const stocksRef = collection(db, 'bookmarkedCryptos');
+        const q = query(stocksRef, where('symbol', '==', cryptoSymbol), where('userId', '==', user.uid));
+        const querySnapshot = await getDocs(q);
+        setIsBookmarked(querySnapshot.size > 0);
+      }
+    }
+
+    checkBookmarkStatus();
+  }, [user, cryptoSymbol]);
+
+  const toggleBookmark = async () => {
+    if (user) {
+      const db = getFirestore();
+      const stocksRef = collection(db, 'bookmarkedCryptos');
+      const q = query(stocksRef, where('symbol', '==', cryptoSymbol), where('userId', '==', user.uid));
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+      console.log('Crypto bookmark removed!');
+      setIsBookmarked(false);
+    }
+  };
+
+  const handleBookmark = async () => {
+    if (user) {
+      const db = getFirestore();
+      const stocksRef = collection(db, 'bookmarkedCryptos');
+      try {
+        await addDoc(stocksRef, {
+          name: item.from_currency_name,
+          symbol: cryptoSymbol,
+          price: item.exchange_rate,
+          timestamp: new Date(),
+          userId: user.uid,
+          type: "crypto",
+        });
+        console.log('Crypto bookmarked successfully!');
+        setIsBookmarked(true);
+      } catch (error) {
+        console.error('Error bookmarking crypto:', error);
+      }
+    }
+  };
 
   return (
     <TouchableOpacity style={styles.container} onPress={handleNavigate}>
@@ -61,9 +116,9 @@ const CryptoCard = ({ item, handleNavigate }) => {
       </View>
 
       <View style={styles.priceOuterContainer}>
-        <TouchableOpacity style={styles.heartContainer}>
+        <TouchableOpacity style={styles.heartContainer} onPress={isBookmarked ? toggleBookmark : handleBookmark}>
           <Image
-            source={require("../../../assets/heart_hollow.png")}
+            source={isBookmarked ? require("../../../assets/heart.png") : require("../../../assets/heart_hollow.png")}
             resizeMode="contain"
             style={styles.heartImage}
           />

@@ -13,17 +13,6 @@ import { useNavigation } from "@react-navigation/native";
 import styles from "./Overview.style";
 import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  orderBy,
-  where,
-  deleteDoc,
-} from "firebase/firestore";
-import { getAuth } from "firebase/auth";
 
 const OverviewPage = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
@@ -33,10 +22,10 @@ const OverviewPage = () => {
 
   const [isHeartFilled, setIsHeartFilled] = useState(false);
 
-  /*const { data, isLoading, error, refetch } = useFetch("stock-overview", {
+  const { data, isLoading, error, refetch } = useFetch("stock-overview", {
     symbol: item.symbol,
     language: "en",
-  });*/
+  });
 
   const containerStyle = [
     styles.appContainer,
@@ -47,8 +36,6 @@ const OverviewPage = () => {
     <SafeAreaView
       style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}
     >
-      {/*<View style={styles.headerContainer}></View>*/}
-
       <ScrollView showsVerticalScrollIndicator={false}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
@@ -59,15 +46,19 @@ const OverviewPage = () => {
 
         <View style={styles.container}>
           <View style={styles.container}>
-            <Text style={{ fontSize: 30, fontWeight: "bold" }}>Tesla Inc</Text>
-            <Text style={{ fontSize: 15 }}>(TSLA:NASDAQ)</Text>
-            <Text style={{ fontSize: 60, fontWeight: "bold" }}>$255.7</Text>
+            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+              {data.name}
+            </Text>
+            <Text style={{ fontSize: 15 }}>({data.symbol})</Text>
+            <Text style={{ fontSize: 60, fontWeight: "bold" }}>
+              ${data.price}
+            </Text>
             <View style={{ flexDirection: "row" }}>
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                -$6.89&nbsp;
+                ${data.change}&nbsp;
               </Text>
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                (-2.6239%)
+                ({data.change_percent}%)
               </Text>
             </View>
           </View>
@@ -100,25 +91,34 @@ const OverviewPage = () => {
           <View style={styles.detailContainer}>
             <View style={styles.priceDetailContainer}>
               <Text>
-                Open: <Text style={{ fontWeight: "bold" }}>$257.85</Text>
+                Open: <Text style={{ fontWeight: "bold" }}>${data.open}</Text>
               </Text>
               <Text>
-                High: <Text style={{ fontWeight: "bold" }}>$260.86</Text>
+                High: <Text style={{ fontWeight: "bold" }}>${data.high}</Text>
               </Text>
               <Text>
-                Low: <Text style={{ fontWeight: "bold" }}>$254.21</Text>
+                Low: <Text style={{ fontWeight: "bold" }}>${data.low}</Text>
               </Text>
             </View>
 
             <View style={styles.priceDetailContainer}>
               <Text>
-                Mkt cap: <Text style={{ fontWeight: "bold" }}>$801.23B</Text>
+                Mkt cap:{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                  ${data.company_market_cap}
+                </Text>
               </Text>
               <Text>
-                P/E ratio: <Text style={{ fontWeight: "bold" }}>72.5874</Text>
+                P/E ratio:{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                  {data.company_pe_ratio}
+                </Text>
               </Text>
               <Text>
-                Div yield: <Text style={{ fontWeight: "bold" }}>0.00%</Text>
+                Div yield:{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                  {data.company_dividend_yield}%
+                </Text>
               </Text>
             </View>
           </View>
@@ -127,26 +127,7 @@ const OverviewPage = () => {
             resizeMode="contain"
             style={styles.logoImage}
           />
-          <Text style={styles.aboutText}>
-            Apple Inc. is an American multinational technology company
-            headquartered in Cupertino, California, United States. Apple is the
-            largest technology company by revenue and, as of June 2022, is the
-            world's biggest company by market capitalization, the fourth-largest
-            personal computer vendor by unit sales and second-largest mobile
-            phone manufacturer. It is one of the Big Five American information
-            technology companies, alongside Alphabet, Amazon, Meta, and
-            Microsoft. Apple was founded as Apple Computer Company on April 1,
-            1976, by Steve Jobs, Steve Wozniak and Ronald Wayne to develop and
-            sell Wozniak's Apple I personal computer. It was incorporated by
-            Jobs and Wozniak as Apple Computer, Inc. in 1977 and the company's
-            next computer, the Apple II, became a best seller and one of the
-            first mass-produced microcomputers. Apple went public in 1980 to
-            instant financial success. The company developed computers featuring
-            innovative graphical user interfaces, including the 1984 original
-            Macintosh, announced that year in a critically acclaimed
-            advertisement. By 1985, the high cost of its products and power
-            struggles between executives caused problems.
-          </Text>
+          <Text style={styles.aboutText}>{data.about}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

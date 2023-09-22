@@ -61,9 +61,9 @@ const SearchStocks = ({ inputQuery }) => {
               .map((item) => (
                 <StockCard
                   item={item}
-                  key={`browse-crypto-${item?.google_mid}`}
+                  key={`browse-stock-${item?.google_mid}`}
                   handleNavigate={() =>
-                    navigation.navigate("Overview", { item })
+                    navigation.navigate("StockOverview", { item })
                   }
                 />
               ))
@@ -71,15 +71,13 @@ const SearchStocks = ({ inputQuery }) => {
         ) : data?.currency?.length === 0 ? (
           <Text>No crypto data available</Text>
         ) : (
-          data?.currency
-            ?.slice(0, 5)
-            .map((item) => (
-              <CryptoCard
-                item={item}
-                key={`browse-crypto-${item?.google_mid}`}
-                handleNavigate={() => navigation.navigate("Overview", { item })}
-              />
-            ))
+          data?.currency?.slice(0, 5).map((item) => (
+            <CryptoCard
+              item={item}
+              key={`browse-crypto-${item?.google_mid}`}
+              //handleNavigate={() => navigation.navigate("Overview", { item })}
+            />
+          ))
         )}
       </View>
     </View>

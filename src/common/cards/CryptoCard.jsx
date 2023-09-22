@@ -12,6 +12,10 @@ const uriExists = async (uri) => {
   }
 };
 
+function formatNumber(num) {
+  return (num || 0).toFixed(2);
+}
+
 const CryptoCard = ({ item, handleNavigate }) => {
   let cryptoSymbol = (item.from_symbol || "").toLowerCase();
   let cryptoName = (item.from_currency_name || "").split(" ");
@@ -70,7 +74,7 @@ const CryptoCard = ({ item, handleNavigate }) => {
         </TouchableOpacity>
         <View style={styles.priceContainer}>
           <Text style={styles.stockPrice} numberOfLines={1}>
-            ${item.exchange_rate}&nbsp;{item.to_symbol}
+            ${formatNumber(item.exchange_rate)}&nbsp;{item.to_symbol}
           </Text>
         </View>
       </View>

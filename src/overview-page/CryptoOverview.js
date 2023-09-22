@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -14,13 +14,67 @@ import styles from "./Overview.style";
 import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
 
-const OverviewPage = () => {
+const uriExists = async (uri) => {
+  try {
+    const response = await fetch(uri, { method: "GET" });
+    return response.ok;
+  } catch (error) {
+    return false;
+  }
+};
+
+function formatNumber(num) {
+  return (num || 0).toFixed(2);
+}
+
+function formatNumberToBillion(num) {
+  if (Math.abs(num) >= 1e9) {
+    return (num / 1e9).toFixed(2) + "B";
+  } else if (Math.abs(num) >= 1e6) {
+    return (num / 1e6).toFixed(2) + "M";
+  } else {
+    return num.toFixed(2);
+  }
+}
+
+const CryptoOverview = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const route = useRoute();
   const { item } = route.params;
   const navigation = useNavigation();
-
+  const [imageUri, setImageUri] = useState(null);
   const [isHeartFilled, setIsHeartFilled] = useState(false);
+
+  let stockSymbol = item.symbol;
+  let stockName = (item.name || "").split(" ");
+
+  if ((item.symbol || "").includes(":")) {
+    const splittedSymbol = item.symbol.split(":");
+    stockSymbol = splittedSymbol[0];
+  }
+  if (stockName.length > 0) {
+    stockName = stockName[0];
+  }
+
+  useEffect(() => {
+    async function checkUris() {
+      const symbolUri = `https://api.twelvedata.com/logo/${stockSymbol}.com`;
+      const nameUri = `https://api.twelvedata.com/logo/${stockName}.com`;
+
+      const symbolExists = await uriExists(symbolUri);
+      const nameExists = await uriExists(nameUri);
+
+      if (symbolExists) {
+        setImageUri(symbolUri);
+      } else if (nameExists) {
+        setImageUri(nameUri);
+      } else {
+        setImageUri(false);
+      }
+    }
+
+    checkUris();
+  }, [stockSymbol, stockName]);
 
   const { data, isLoading, error, refetch } = useFetch("stock-overview", {
     symbol: item.symbol,
@@ -51,14 +105,14 @@ const OverviewPage = () => {
             </Text>
             <Text style={{ fontSize: 15 }}>({data.symbol})</Text>
             <Text style={{ fontSize: 60, fontWeight: "bold" }}>
-              ${data.price}
+              ${formatNumber(data.price)}
             </Text>
             <View style={{ flexDirection: "row" }}>
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                ${data.change}&nbsp;
+                ${formatNumber(data.change)}&nbsp;
               </Text>
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                ({data.change_percent}%)
+                ({formatNumber(data.change_percent)}%)
               </Text>
             </View>
           </View>
@@ -91,13 +145,22 @@ const OverviewPage = () => {
           <View style={styles.detailContainer}>
             <View style={styles.priceDetailContainer}>
               <Text>
-                Open: <Text style={{ fontWeight: "bold" }}>${data.open}</Text>
+                Open:{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                  ${formatNumber(data.open)}
+                </Text>
               </Text>
               <Text>
-                High: <Text style={{ fontWeight: "bold" }}>${data.high}</Text>
+                High:{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                  ${formatNumber(data.high)}
+                </Text>
               </Text>
               <Text>
-                Low: <Text style={{ fontWeight: "bold" }}>${data.low}</Text>
+                Low:{" "}
+                <Text style={{ fontWeight: "bold" }}>
+                  ${formatNumber(data.low)}
+                </Text>
               </Text>
             </View>
 
@@ -105,25 +168,28 @@ const OverviewPage = () => {
               <Text>
                 Mkt cap:{" "}
                 <Text style={{ fontWeight: "bold" }}>
-                  ${data.company_market_cap}
+                  ${formatNumberToBillion(data.company_market_cap || 0)}
                 </Text>
               </Text>
               <Text>
                 P/E ratio:{" "}
                 <Text style={{ fontWeight: "bold" }}>
-                  {data.company_pe_ratio}
+                  {formatNumber(data.company_pe_ratio)}
                 </Text>
               </Text>
               <Text>
                 Div yield:{" "}
                 <Text style={{ fontWeight: "bold" }}>
-                  {data.company_dividend_yield}%
+                  {formatNumber(data.company_dividend_yield)}%
                 </Text>
               </Text>
             </View>
           </View>
+          <Text>All prices {data.currency || "CNY"}.</Text>
           <Image
-            source={{ uri: "https://api.twelvedata.com/logo/tesla.com" }}
+            source={
+              imageUri ? { uri: imageUri } : require("../../assets/no-logo.png")
+            }
             resizeMode="contain"
             style={styles.logoImage}
           />
@@ -134,4 +200,4 @@ const OverviewPage = () => {
   );
 };
 
-export default OverviewPage;
+export default CryptoOverview;

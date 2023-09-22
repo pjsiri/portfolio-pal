@@ -64,7 +64,7 @@ const BrowseStocks = () => {
               item={item}
               key={`stock-browse${item?.google_mid}`}
               handleNavigate={() => {
-                navigation.navigate("Overview", { item });
+                navigation.navigate("StockOverview", { item });
               }}
             />
           ))
@@ -73,9 +73,7 @@ const BrowseStocks = () => {
             <CryptoCard
               item={item}
               key={`crypto-browse-${item?.google_mid}`}
-              handleNavigate={() => {
-                navigation.navigate("Overview", { item });
-              }}
+              //handleNavigate={() => {navigation.navigate("Overview", { item });}}
             />
           ))
         )}

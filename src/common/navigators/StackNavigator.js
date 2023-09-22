@@ -4,7 +4,7 @@ import LoginScreen from "../../LoginPage.js";
 import RegisterScreen from "../../RegisterPage.js";
 import BottomTabNavigator from "./BottomTabNavigator.js";
 import Education from "../../Education.js";
-import OverviewPage from "../../overview-page/OverviewPage.js";
+import StockOverview from "../../overview-page/StockOverview.js";
 import Bookmark from "../../BookmarkPage.js";
 
 const Stack = createStackNavigator();
@@ -33,8 +33,8 @@ const StackNavigator = () => {
         options={{ headerShown: false }}
       />
       <Stack.Screen
-        name="Overview"
-        component={OverviewPage}
+        name="StockOverview"
+        component={StockOverview}
         options={{ headerShown: false }}
       />
       <Stack.Screen

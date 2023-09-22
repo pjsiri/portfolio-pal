@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { View, Text, Switch, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, Switch, StyleSheet, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import { useDarkMode } from "./common/darkmode/DarkModeContext";
@@ -10,9 +10,25 @@ const SettingsPage = () => {
   const navigation = useNavigation();
 
   const handleLogout = () => {
-    navigation.navigate("Login");
+    Alert.alert(
+      "Confirm Logout",
+      "Are you sure you want to log out?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Logout",
+          onPress: () => {
+            // Perform logout action here
+            navigation.navigate("Login");
+          },
+        },
+      ],
+      { cancelable: false }
+    );
   };
-
   const handleEducationNavigation = () => {
     navigation.navigate("Education");
   };

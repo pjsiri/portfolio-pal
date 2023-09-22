@@ -28,6 +28,8 @@ const PortFolio = () => {
     const [assetQuantity, setAssetQuantity] = useState('');
     const [selectedValue, setSelectedValue] = useState('Stock');
     const [userAssets, setUserAssets] = useState([]); // Array to store the user's assets
+    const [stockTotalValues, setStockTotalValues] = useState([]);
+    const [cryptoTotalValues, setCryptoTotalValues] = useState([]);
 
     // Helper function to generate a random color
     const getRandomColor = () => {
@@ -59,6 +61,20 @@ const PortFolio = () => {
         // Update userAssets with the new asset
         setUserAssets([...userAssets, newAsset]);
 
+        // Calculate the total value for the new asset
+        let totalValue = newAsset.price * newAsset.quantity;
+
+        //for displaying the value by the asset type 
+        if (newAsset.type === 'Stock') {
+            setStockTotalValues([...stockTotalValues, totalValue]);
+        } else if (newAsset.type === 'Crypto') {
+            const newCryptoAsset = {
+                name: assetName,
+                totalValue: totalValue,
+            };
+            setCryptoTotalValues([...cryptoTotalValues, newCryptoAsset]);
+        }
+
         // Clear the input fields
         setAssetName('');
         setAssetPrice('');
@@ -84,7 +100,7 @@ const PortFolio = () => {
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     };
 
-    
+
 
     // Apply dark mode styles conditionally
     const containerStyle = [
@@ -153,6 +169,24 @@ const PortFolio = () => {
                 paddingLeft="15"
                 absolute
             />
+            {/* Render total values for stocks */}
+            <Text>Stocks Total Values:</Text>
+            {userAssets.map((asset, index) => (
+                <Text key={index}>
+                    {asset.name}: ${asset.price * asset.quantity}
+                </Text>
+            ))}
+            <Text>Total Stock Assets: ${stockTotalValues}</Text>
+
+            {/* Render total values for cryptos */}
+            <Text>Cryptos Total Values:</Text>
+            {cryptoTotalValues.map((crypto, index) => (
+                <Text key={index}>
+                    {crypto.name}: ${crypto.totalValue}
+                </Text>
+            ))}
+            <Text>Total Crypto Assets: ${cryptoTotalValues}</Text>
+
             <StatusBar style="auto" />
         </View>
     );

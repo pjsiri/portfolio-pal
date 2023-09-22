@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Text,
     TouchableOpacity,
@@ -16,20 +16,23 @@ import { PieChart } from "react-native-chart-kit";
 import { StatusBar } from "react-native";
 import StockCard from "./StockCard";
 import { useDarkMode } from "./common/darkmode/DarkModeContext"; // Import the hook
-import { Picker } from '@react-native-picker/picker'; //import the picker
+import { Picker } from '@react-native-picker/picker'; // Import the picker
 
 const PortFolio = () => {
     const { isDarkMode } = useDarkMode(); // Use the hook to access dark mode state
 
-    //pop up a window to get input from the user about the stocks or crypto info
+    // Pop up a window to get input from the user about the stocks or crypto info
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [assetName, setAssetName] = useState('');
     const [assetPrice, setAssetPrice] = useState('');
     const [assetQuantity, setAssetQuantity] = useState('');
     const [selectedValue, setSelectedValue] = useState('Stock');
     const [userAssets, setUserAssets] = useState([]); // Array to store the user's assets
-    const [stockTotalValues, setStockTotalValues] = useState([]);
+    const [totalStockValue, setTotalStockValue] = useState(0); // Initialize totalStockValue state
+    const [totalCryptoValue, setTotalCryptoValue] = useState(0); // Initialize totalCryptoValue state
+    const [totalAssetsValue, setTotalAssetsValue] = useState(0); // Initialize totalAssetsValue state
     const [cryptoTotalValues, setCryptoTotalValues] = useState([]);
+    const [stockTotalValues, setStockTotalValues] = useState([]); // Initialize stockTotalValues state
 
     // Helper function to generate a random color
     const getRandomColor = () => {
@@ -64,7 +67,7 @@ const PortFolio = () => {
         // Calculate the total value for the new asset
         let totalValue = newAsset.price * newAsset.quantity;
 
-        //for displaying the value by the asset type 
+        // For displaying the value by the asset type
         if (newAsset.type === 'Stock') {
             setStockTotalValues([...stockTotalValues, totalValue]);
         } else if (newAsset.type === 'Crypto') {
@@ -100,8 +103,6 @@ const PortFolio = () => {
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     };
 
-
-
     // Apply dark mode styles conditionally
     const containerStyle = [
         styles.container,
@@ -115,6 +116,19 @@ const PortFolio = () => {
         ? styles.darkModeLosesMoney
         : styles.losesMoney;
 
+    // Calculate totalStockValue and totalCryptoValue when stockTotalValues and cryptoTotalValues change
+    useEffect(() => {
+        const stockValue = stockTotalValues.reduce((total, value) => total + value, 0);
+        const cryptoValue = cryptoTotalValues.reduce((total, crypto) => total + crypto.totalValue, 0);
+        setTotalStockValue(stockValue);
+        setTotalCryptoValue(cryptoValue);
+    }, [stockTotalValues, cryptoTotalValues]);
+
+    // Calculate totalAssetsValue whenever totalStockValue or totalCryptoValue changes
+    useEffect(() => {
+        setTotalAssetsValue(totalStockValue + totalCryptoValue);
+    }, [totalStockValue, totalCryptoValue]);
+
     return (
         <View style={containerStyle}>
             <View style={styles.topBar}>
@@ -123,7 +137,8 @@ const PortFolio = () => {
             <Modal visible={isModalVisible} animationType="slide" transparent={true}>
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                        <Text>Fill in the fields:</Text>
+                        <Text>Fill in the fields: </Text>
+                        <Text>{"\n"}</Text>
                         <TextInput
                             value={assetName}
                             onChangeText={(text) => setAssetName(text)}
@@ -142,7 +157,8 @@ const PortFolio = () => {
                             keyboardType="numeric"
                         />
                         <View style={styles.pickerContainer}>
-                            <Text>Select an option:</Text>
+                            <Text>{"\n"}</Text>
+                            <Text style={styles.selectOptionText}>Select an option:</Text>
                             <Picker
                                 selectedValue={selectedValue}
                                 onValueChange={(itemValue) => setSelectedValue(itemValue)}
@@ -170,24 +186,26 @@ const PortFolio = () => {
                 absolute
             />
             {/* Render total values for stocks */}
-            <Text>Stocks Total Values:</Text>
+            <Text style={styles.assetValue}>Stocks Total Values:</Text>
             {userAssets.map((asset, index) => (
                 <Text key={index}>
                     {asset.name}: ${asset.price * asset.quantity}
                 </Text>
             ))}
-            <Text>Total Stock Assets: ${stockTotalValues}</Text>
+            <Text>Total Stock Assets: ${totalStockValue}</Text>
+            <Text>{"\n"}</Text>
 
             {/* Render total values for cryptos */}
-            <Text>Cryptos Total Values:</Text>
+            <Text style={styles.assetValue}>Cryptos Total Values:</Text>
             {cryptoTotalValues.map((crypto, index) => (
                 <Text key={index}>
                     {crypto.name}: ${crypto.totalValue}
                 </Text>
             ))}
-            <Text>Total Crypto Assets: ${cryptoTotalValues}</Text>
-
+            <Text>Total Crypto Assets: ${totalCryptoValue}</Text>
+            <Text>{"\n"}</Text>
             <StatusBar style="auto" />
+            <Text style={styles.totalValue}>Total assets values: ${totalAssetsValue}</Text>
         </View>
     );
 };
@@ -239,15 +257,26 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     topBar: {
-        alignSelf: "stretch", // Make the topBar span the width of the screen
+        position: 'absolute',
+        top: 10,  // Adjust this value as needed to position the button vertically
+        left: 10, // Adjust this value as needed to position the button horizontally
         flexDirection: "row", // Arrange items horizontally
-        justifyContent: "flex-start", // Align items to the left
-        padding: 10,
     },
     pickerContainer: {
         flex: 1,
-    }
-    //other
+    },
+    assetValue: {
+        fontSize: 15,
+        fontWeight: "bold",
+    },
+    totalValue: {
+        fontSize: 20,
+        fontWeight: "bold",
+        color: "blue",
+    },
+    selectOptionText: {
+        marginBottom: 5, // Adjust this value as needed to reduce the gap
+    },
 });
 
 export default PortFolio;

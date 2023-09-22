@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useRouter } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
 
 import styles from "./Search.style";
 import StockCard from "../../common/cards/StockCard";
@@ -14,6 +15,7 @@ const SearchStocks = ({ inputQuery }) => {
     query: inputQuery,
     language: "en",
   });
+  const navigation = useNavigation();
 
   const handleBrowseType = () => {
     setIsStocks(!isStocks);
@@ -61,7 +63,7 @@ const SearchStocks = ({ inputQuery }) => {
                   item={item}
                   key={`browse-crypto-${item?.google_mid}`}
                   handleNavigate={() =>
-                    router.push(`/browse-cryptos${item?.google_mid}`)
+                    navigation.navigate("Overview", { item })
                   }
                 />
               ))
@@ -75,9 +77,7 @@ const SearchStocks = ({ inputQuery }) => {
               <CryptoCard
                 item={item}
                 key={`browse-crypto-${item?.google_mid}`}
-                handleNavigate={() =>
-                  router.push(`/browse-cryptos${item?.google_mid}`)
-                }
+                handleNavigate={() => navigation.navigate("Overview", { item })}
               />
             ))
         )}

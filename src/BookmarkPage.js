@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
 import { getFirestore, collection, getDocs, query, orderBy, where, deleteDoc } from 'firebase/firestore';
 import StockCard from './common/cards/StockCard'; 
+import CryptoCard from './common/cards/CryptoCard'; 
 import cardStyles from './common/cards/Cards.style'; 
 import { useNavigation } from '@react-navigation/native';
 import Homestyles from "./home-page/HomePage.style";
@@ -9,7 +10,7 @@ import Homestyles from "./home-page/HomePage.style";
 import { getAuth } from 'firebase/auth';
 
 const BookmarkedStocksPage = () => {
-  const [bookmarkedStocks, setBookmarkedStocks] = useState([]);
+  const [bookmarkedItems, setBookmarkedItems] = useState([]);
   const navigation = useNavigation();
 
   const handleBack = () => {
@@ -17,29 +18,35 @@ const BookmarkedStocksPage = () => {
   };
 
   useEffect(() => {
-    const fetchBookmarkedStocks = async () => {
+    const fetchBookmarkedItems = async () => {
       const db = getFirestore();
-      const stocksRef = collection(db, 'bookmarkedStocks');
       const auth = getAuth();
       const user = auth.currentUser;
-  
-      if (user) {
-        const q = query(stocksRef, where('userId', '==', user.uid));
-        try {
-          const querySnapshot = await getDocs(q);
 
-          const stocks = querySnapshot.docs.map(doc => doc.data());
-          setBookmarkedStocks(stocks);
+      if (user) {
+        const stocksRef = collection(db, 'bookmarkedStocks');
+        const cryptosRef = collection(db, 'bookmarkedCryptos'); // Added reference for cryptos
+
+        const stocksQuery = query(stocksRef, where('userId', '==', user.uid));
+        const cryptosQuery = query(cryptosRef, where('userId', '==', user.uid));
+
+        try {
+          const stocksSnapshot = await getDocs(stocksQuery);
+          const cryptosSnapshot = await getDocs(cryptosQuery);
+
+          const stocks = stocksSnapshot.docs.map(doc => ({ ...doc.data(), type: 'stock' }));
+          const cryptos = cryptosSnapshot.docs.map(doc => ({ ...doc.data(), type: 'crypto' }));
+
+          setBookmarkedItems([...stocks, ...cryptos]);
         } catch (error) {
-          console.error('Error fetching bookmarked stocks:', error);
+          console.error('Error fetching bookmarked items:', error);
         }
-      } 
-       else {
-         console.log('No authenticated user found');
-         }
-        };
-  
-    fetchBookmarkedStocks();
+      } else {
+        console.log('No authenticated user found');
+      }
+    };
+
+    fetchBookmarkedItems();
   }, []);
 
   const styles = {
@@ -104,14 +111,22 @@ const BookmarkedStocksPage = () => {
           </TouchableOpacity>
         </View>
         <FlatList style={styles.stocks}
-          data={bookmarkedStocks}
-          keyExtractor={(item) => item.symbol}
+          data={bookmarkedItems}
+          keyExtractor={(item) => item.type + '-' + (item.symbol || item.from_symbol)} // Adjusted keyExtractor
           renderItem={({ item }) => (
-            <StockCard
-              item={item}
-              handleNavigate={() => {}}
-              isBookedMarked={true}
-            />
+            item.type === 'crypto' || 'stocks' ? (
+              <StockCard
+                item={item}
+                handleNavigate={() => {}}
+                isBookedMarked={true}
+              />
+            ) : (
+              <CryptoCard
+                item={item}
+                handleNavigate={() => {}}
+                isBookedMarked={true}
+              />
+            )
           )}
         />
       </View>

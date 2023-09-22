@@ -13,10 +13,10 @@ const uriExists = async (uri) => {
   }
 };
 
-const CryptoCard = ({ item, handleNavigate }) => {
+const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
   let cryptoSymbol = (item.from_symbol || "").toLowerCase();
   let cryptoName = (item.from_currency_name || "").split(" ");
-  const [isBookmarked, setIsBookmarked] = useState(false);
+  const [isBookmarked, setIsBookmarked] = useState(isBookedMarked);
   const [imageUri, setImageUri] = useState(null);
 
   if (cryptoName.length > 0) {
@@ -82,6 +82,7 @@ const CryptoCard = ({ item, handleNavigate }) => {
           price: item.exchange_rate,
           timestamp: new Date(),
           userId: user.uid,
+          type: "crypto",
         });
         console.log('Crypto bookmarked successfully!');
         setIsBookmarked(true);

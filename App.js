@@ -5,9 +5,12 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import StackNavigator from "./src/common/navigators/StackNavigator.js";
 import { DarkModeProvider } from "./src/common/darkmode/DarkModeContext.js";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 // Import the functions you need from the SDKs
 import { initializeApp } from "firebase/app";
+import {  initializeAuth, getReactNativePersistence } from "firebase/auth"
 
 // Your web app's Firebase configuration
 const firebaseConfig = {

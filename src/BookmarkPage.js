@@ -24,21 +24,20 @@ const BookmarkedStocksPage = () => {
       const user = auth.currentUser;
   
       if (user) {
-        const q = query(
-          stocksRef,
-          where('userId', '==', user.uid),
-          orderBy('timestamp', 'desc')
-        );
-  
+        const q = query(stocksRef, where('userId', '==', user.uid));
         try {
           const querySnapshot = await getDocs(q);
+
           const stocks = querySnapshot.docs.map(doc => doc.data());
           setBookmarkedStocks(stocks);
         } catch (error) {
           console.error('Error fetching bookmarked stocks:', error);
         }
-      }
-    };
+      } 
+       else {
+         console.log('No authenticated user found');
+         }
+        };
   
     fetchBookmarkedStocks();
   }, []);

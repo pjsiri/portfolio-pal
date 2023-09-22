@@ -76,6 +76,7 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
         price,
         timestamp: new Date(),
         userId: user.uid,
+        type: "stock",
       });
       console.log("Stock bookmarked successfully!");
       setIsHeartFilled(true);

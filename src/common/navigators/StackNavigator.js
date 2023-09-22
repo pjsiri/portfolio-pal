@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import LoginScreen from "../../LoginPage.js";
-import RegisterScreen from "../../RegisterPage.js";
+import LoginScreen from "../../Login-page/LoginPage.js";
+import RegisterScreen from "../../Login-page/RegisterPage.js";
 import BottomTabNavigator from "./BottomTabNavigator.js";
 import Education from "../../Education.js";
 import StockOverview from "../../overview-page/StockOverview.js";

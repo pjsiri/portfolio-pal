@@ -23,10 +23,12 @@ const styles = StyleSheet.create({
   },
 
   backButton: {
+    flexDirection: "row",
     width: 100,
     height: 40,
     backgroundColor: "lightgrey",
     justifyContent: "center",
+    alignItems: "center",
     borderRadius: 10,
   },
 
@@ -34,6 +36,13 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "500",
     fontSize: 20,
+  },
+
+  inputIcon: {
+    width: 16,
+    height: 15,
+    marginRight: 3,
+    marginLeft: -10,
   },
 
   graphContainer: {

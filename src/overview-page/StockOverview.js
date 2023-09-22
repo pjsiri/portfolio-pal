@@ -95,6 +95,12 @@ const StockOverview = () => {
           onPress={() => navigation.goBack()}
           style={styles.backButton}
         >
+          <Image
+            source={{
+              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",
+            }}
+            style={styles.inputIcon}
+          />
           <Text style={styles.backButtonText}>Back</Text>
         </TouchableOpacity>
 

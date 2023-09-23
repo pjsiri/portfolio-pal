@@ -39,7 +39,7 @@ const HomePage = () => {
         </Text>
         <TouchableOpacity onPress={handleNavigateToBookmarks}>
           <Image
-            style={{ width: 80, height: 80, marginTop: -10}}
+            style={{ width: 40, height: 40, marginTop: 10}}
             source={require("../../assets/Bookmark_icon.png")}
           />
         </TouchableOpacity>

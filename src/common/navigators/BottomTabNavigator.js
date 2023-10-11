@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import HomePage from "../../home-page/HomePage.js";
 import PortfolioPage from "../../PortFolio.js";
-import SettingsPage from "../../SettingsPage.js";
+import SettingsPage from "../../settings-page/SettingsPage.js";
 import SearchPage from "../../search-page/SearchPage.js";
 
 const TabIcon = ({ name, color, size }) => {

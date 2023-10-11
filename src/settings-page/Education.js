@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { WebView } from "react-native-webview";
 import { useNavigation } from "@react-navigation/native";
-import { useDarkMode } from "./common/darkmode/DarkModeContext";
+import { useDarkMode } from "../common/darkmode/DarkModeContext";
 
 const Education = () => {
   const navigation = useNavigation();

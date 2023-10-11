@@ -8,12 +8,11 @@ import {
   Alert,
   Image,
 } from "react-native";
-
-// Import Firebase
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [pass, setPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
   const navigation = useNavigation();
@@ -27,11 +26,14 @@ const RegisterScreen = () => {
   );
 
   const handleRegister = async () => {
-    if (email && pass && pass === confirmPass) {
+    if (email && pass && pass === confirmPass && username.length >= 3) {
       try {
         const auth = getAuth();
         await createUserWithEmailAndPassword(auth, email, pass);
         
+        const user = auth.currentUser;
+        await updateProfile(user, { displayName: username });
+
         Alert.alert('Registration Successful', 'You have successfully registered!');
         navigation.navigate('Login');
       } catch (error) {
@@ -166,20 +168,6 @@ const RegisterScreen = () => {
       />
       <Text style={[styles.title, { fontSize: 28, fontWeight: "900" }]}>Welcome to PortfolioPal!</Text>
       <Text style={[styles.subtitle, { fontSize: 15, opacity: 0.65 }]}>Fill in with your username, email, and password.</Text>
-      {/* <View style={styles.inputContainer}>
-        <Image
-          source={{
-            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/user.png",
-          }}
-          style={styles.inputIcon}
-        />
-        <TextInput
-          placeholder="Username"
-          onChangeText={(text) => setUser(text)}
-          value={user}
-          style={styles.input}
-        />
-      </View> */}
       <View style={styles.inputContainer}>
         <Image
           source={{
@@ -191,6 +179,20 @@ const RegisterScreen = () => {
           placeholder="Email"
           onChangeText={(text) => setEmail(text)}
           value={email}
+          style={styles.input}
+        />
+      </View>
+      <View style={styles.inputContainer}>
+        <Image
+          source={{
+            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/user.png",
+          }}
+          style={styles.inputIcon}
+        />
+        <TextInput
+          placeholder="Username"
+          onChangeText={(text) => setUsername(text)}
+          value={username}
           style={styles.input}
         />
       </View>

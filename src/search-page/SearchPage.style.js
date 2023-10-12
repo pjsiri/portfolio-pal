@@ -8,23 +8,34 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#F0F0F0",
   },
+
   darkModeContainer: {
     backgroundColor: "#333", // Dark mode background color
   },
+
+  searchOuterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+  },
+
   searchContainer: {
+    flex: 11,
     marginBottom: 50,
     borderRadius: 50,
     backgroundColor: "white",
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "flex-start",
     alignItems: "center",
+    marginRight: 20,
   },
+
   searchIcon: {
     width: 25,
     height: 25,
+    marginLeft: 20,
   },
+
   searchBar: {
-    width: 300,
     height: 50,
     borderRadius: 10,
     borderWidth: 0,
@@ -42,6 +53,22 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 20,
     textAlign: "center",
+  },
+
+  filterButton: {
+    flex: 1,
+    width: 50,
+    height: 50,
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: "black",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
+  filterIcon: {
+    width: 35,
+    height: 35,
   },
 
   appName: {

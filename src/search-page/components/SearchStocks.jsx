@@ -8,7 +8,7 @@ import StockCard from "../../common/cards/StockCard";
 import CryptoCard from "../../common/cards/CryptoCard";
 import useFetch from "../../../hook/useFetch";
 
-const SearchStocks = ({ inputQuery }) => {
+const SearchStocks = ({ inputQuery, currency, priceOption, stockSelected }) => {
   const router = useRouter();
   const [isStocks, setIsStocks] = useState(true);
   const { data, isLoading, error, refetch } = useFetch("search", {
@@ -57,6 +57,7 @@ const SearchStocks = ({ inputQuery }) => {
             <Text>No stock data available</Text>
           ) : (
             data?.stock
+              //?.filter((item) => item.price >= 100)
               ?.slice(0, 5)
               .map((item) => (
                 <StockCard

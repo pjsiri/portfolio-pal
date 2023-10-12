@@ -8,21 +8,40 @@ import {
   SafeAreaView,
   TouchableOpacity,
   ScrollView,
+  TouchableWithoutFeedback,
 } from "react-native";
 
 import styles from "./SearchPage.style";
 import SearchStocks from "./components/SearchStocks";
+import { FilterPopup } from "./components/FilterPopup";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
 
 const SearchPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
-  const [finalSearchQuery, setFinalSearchQuery] = useState("hi");
+  const [finalSearchQuery, setFinalSearchQuery] = useState(" ");
+  const [currency, setCurrency] = useState("");
+  const [priceOption, setPriceOption] = useState("");
+  const [stockSelected, setStockSelected] = useState(true);
   const { isDarkMode } = useDarkMode();
+
+  const filters = (currency, priceOption, stockSelected) => {
+    setCurrency(currency);
+    setPriceOption(priceOption);
+    setStockSelected(stockSelected);
+  };
 
   const containerStyle = [
     styles.appContainer,
     isDarkMode && styles.darkModeContainer,
   ];
+
+  let popupRef = React.createRef();
+  const onShowPopup = () => {
+    popupRef.show();
+  };
+  const onClosePopup = () => {
+    popupRef.close();
+  };
 
   const handleSearch = (searchQuery) => {
     setFinalSearchQuery(searchQuery);
@@ -31,22 +50,42 @@ const SearchPage = () => {
 
   return (
     <SafeAreaView style={containerStyle}>
-      <View style={styles.searchContainer}>
-        <Image
-          style={styles.searchIcon}
-          source={require("../../assets/search.png")}
-        />
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search all investments"
-          onChangeText={(text) => setSearchQuery(text)}
-          onSubmitEditing={() => handleSearch(searchQuery)}
+      <View style={styles.searchOuterContainer}>
+        <View style={styles.searchContainer}>
+          <Image
+            style={styles.searchIcon}
+            source={require("../../assets/search.png")}
+          />
+          <TextInput
+            style={styles.searchBar}
+            placeholder="Search all investments"
+            onChangeText={(text) => setSearchQuery(text)}
+            onSubmitEditing={() => handleSearch(searchQuery)}
+          />
+        </View>
+        <TouchableOpacity style={styles.filterButton} onPress={onShowPopup}>
+          <Image
+            style={styles.filterIcon}
+            source={require("../../assets/filter-icon3.png")}
+          />
+        </TouchableOpacity>
+        <FilterPopup
+          title="Filters"
+          stockSelected={stockSelected}
+          ref={(target) => (popupRef = target)}
+          onTouchOutside={onClosePopup}
+          applyFilters={filters}
         />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
-          <SearchStocks inputQuery={finalSearchQuery} />
+          <SearchStocks
+            inputQuery={finalSearchQuery}
+            currency={currency}
+            priceOption={priceOption}
+            stockSelected={stockSelected}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -44,7 +44,7 @@ const SearchPage = () => {
   };
 
   const handleSearch = (searchQuery) => {
-    setFinalSearchQuery(searchQuery);
+    setFinalSearchQuery(searchQuery || " ");
     //console.log("Search query:", searchQuery);
   };
 
@@ -85,6 +85,7 @@ const SearchPage = () => {
             currency={currency}
             priceOption={priceOption}
             stockSelected={stockSelected}
+            setStockSelected={setStockSelected}
           />
         </View>
       </ScrollView>

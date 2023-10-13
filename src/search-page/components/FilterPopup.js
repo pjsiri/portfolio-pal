@@ -22,8 +22,8 @@ export class FilterPopup extends React.Component {
     this.state = {
       show: false,
       currency: "",
-      priceOption: "",
-      stockSelected: props.stockSelected,
+      priceOption: "0",
+      stockSelected: this.props.stockSelected,
     };
   }
 
@@ -44,7 +44,7 @@ export class FilterPopup extends React.Component {
   };
 
   setStockSelected = (isSelected) => {
-    this.setState({ currency: isSelected });
+    this.setState({ stockSelected: isSelected });
   };
 
   handleApplyFilters = async () => {
@@ -72,19 +72,8 @@ export class FilterPopup extends React.Component {
   renderTitle = () => {
     const { title } = this.props;
     return (
-      <View style={{ alignItems: "center" }}>
-        <Text
-          style={{
-            color: "#182E44",
-            fontSize: 25,
-            fontWeight: "500",
-            marginTop: 15,
-            marginBottom: 20,
-            fontWeight: 900,
-          }}
-        >
-          {title}
-        </Text>
+      <View style={styles.titleContainer}>
+        <Text style={styles.titleText}>{title}</Text>
       </View>
     );
   };
@@ -92,7 +81,7 @@ export class FilterPopup extends React.Component {
   renderContent = () => {
     const { currency, priceOption, stockSelected } = this.state;
     return (
-      <View>
+      <View style={styles.contentContainer}>
         <Text>Currency</Text>
 
         <Picker
@@ -100,8 +89,15 @@ export class FilterPopup extends React.Component {
           onValueChange={(itemValue) => this.setCurrency(itemValue)}
         >
           <Picker.Item label="Any" value="" />
+          <Picker.Item label="AUD" value="AUD" />
+          <Picker.Item label="CAD" value="CAD" />
+          <Picker.Item label="EUR" value="EUR" />
+          <Picker.Item label="GBP" value="GBP" />
+          <Picker.Item label="GBX" value="GBX" />
+          <Picker.Item label="INR" value="INR" />
+          <Picker.Item label="MXN" value="MXN" />
+          <Picker.Item label="THB" value="THB" />
           <Picker.Item label="USD" value="USD" />
-          <Picker.Item label="NZD" value="NZD" />
         </Picker>
 
         <Text>Price Range</Text>
@@ -110,7 +106,7 @@ export class FilterPopup extends React.Component {
           selectedValue={priceOption}
           onValueChange={(itemValue) => this.setPriceOption(itemValue)}
         >
-          <Picker.Item label="Any" value="" />
+          <Picker.Item label="Any" value="0" />
           <Picker.Item label="$0 ~ $50" value="1" />
           <Picker.Item label="$50 ~ $100" value="2" />
           <Picker.Item label="$100 ~ $200" value="3" />

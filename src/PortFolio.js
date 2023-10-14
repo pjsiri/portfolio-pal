@@ -17,8 +17,9 @@ import { StatusBar } from "react-native";
 import StockCard from "./StockCard";
 import { useDarkMode } from "./common/darkmode/DarkModeContext"; // Import the hook
 import { Picker } from '@react-native-picker/picker'; // Import the picker
-import firebase from 'firebase/app';
-import 'firebase/firestore';
+import { getFirestore, collection, addDoc, query, where } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+
 
 const PortFolio = () => {
     const { isDarkMode } = useDarkMode(); // Use the hook to access dark mode state
@@ -54,7 +55,7 @@ const PortFolio = () => {
         setIsModalVisible(false);
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         // Create an object to store the asset details
         const newAsset = {
             name: assetName,
@@ -62,13 +63,39 @@ const PortFolio = () => {
             quantity: parseInt(assetQuantity),
             type: selectedValue,
         };
-
+    
+        //firebase
+        const db = getFirestore();
+        const auth = getAuth();
+        const user = auth.currentUser;
+    
+        if (user) {
+            let userAssetRef;
+            if (selectedValue === 'Stock') {
+                userAssetRef = collection(db, `userAssets/${user.uid}/Stocks`);
+            } else if (selectedValue === 'Crypto') {
+                userAssetRef = collection(db, `userAssets/${user.uid}/Cryptos`);
+            } else {
+                console.error('Invalid asset type');
+                return;
+            }
+    
+            try {
+                // Add the new asset to the appropriate collection
+                await addDoc(userAssetRef, newAsset);
+            } catch (error) {
+                console.error('Error adding asset to Firestore:', error);
+            }
+        } else {
+            console.log('No authenticated user found');
+        }
+    
         // Update userAssets with the new asset
         setUserAssets([...userAssets, newAsset]);
-
+    
         // Calculate the total value for the new asset
         let totalValue = newAsset.price * newAsset.quantity;
-
+    
         // For displaying the value by the asset type
         if (newAsset.type === 'Stock') {
             setStockTotalValues([...stockTotalValues, totalValue]);
@@ -79,15 +106,16 @@ const PortFolio = () => {
             };
             setCryptoTotalValues([...cryptoTotalValues, newCryptoAsset]);
         }
-
+    
         // Clear the input fields
         setAssetName('');
         setAssetPrice('');
         setAssetQuantity('');
         setSelectedValue('Stock');
-
+    
         hideModal();
     };
+    
 
     const screenWidth = Dimensions.get("window").width;
 
@@ -130,9 +158,6 @@ const PortFolio = () => {
     useEffect(() => {
         setTotalAssetsValue(totalStockValue + totalCryptoValue);
     }, [totalStockValue, totalCryptoValue]);
-
-    //Firebase 
-    
 
     return (
         <View style={containerStyle}>

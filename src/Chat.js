@@ -1,4 +1,3 @@
-import { useNavigation } from "@react-navigation/native";
 import React, { useState, useRef, useEffect } from "react";
 import {
   View,
@@ -10,12 +9,12 @@ import {
   TouchableOpacity,
   Image,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { CHAT_API_KEY } from "../apikey";
 
 const Chat = () => {
   const navigation = useNavigation();
-
   const [inputText, setInputText] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -25,16 +24,18 @@ const Chat = () => {
 
   const scrollViewRef = useRef();
 
-  const sendMessage = async () => {
-    if (inputText.trim() === "") {
+  const handleBack = () => {
+    navigation.goBack();
+  };
+
+  const sendMessage = async (message) => {
+    if (message.trim() === "") {
       return;
     }
 
-    const userMessage = { role: "user", content: inputText };
+    const userMessage = { role: "user", content: message };
     const newChatHistory = [...chatHistory, userMessage];
     setChatHistory(newChatHistory);
-    setInputText("");
-
     setIsTyping(true);
 
     try {
@@ -61,7 +62,6 @@ const Chat = () => {
       };
       const updatedChatHistory = [...newChatHistory, aiMessage];
       setChatHistory(updatedChatHistory);
-
       setIsTyping(false);
     } catch (error) {
       console.error("Error:", error);
@@ -80,8 +80,15 @@ const Chat = () => {
     scrollToBottom();
   }, [chatHistory]);
 
-  const handleBack = () => {
-    navigation.goBack();
+  const predefinedQuestions = [
+    "How do I invest in stocks?",
+    "How hard is it to invest",
+    "How much are Tesla Stocks?",
+    "Who is the owner of Tesla",
+  ];
+
+  const handlePredefinedQuestionClick = (question) => {
+    sendMessage(question);
   };
 
   return (
@@ -117,15 +124,26 @@ const Chat = () => {
         ))}
         {isTyping && <Text style={styles.aiMessage}>Typing...</Text>}
       </ScrollView>
+      <View style={styles.predefinedQuestionsContainer}>
+        {predefinedQuestions.map((question, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.predefinedQuestionBubble}
+            onPress={() => handlePredefinedQuestionClick(question)}
+          >
+            <Text style={styles.predefinedQuestionText}>{question}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
 
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Send a message"
+          placeholder="Send a message..."
           value={inputText}
           onChangeText={setInputText}
         />
-        <Button title="Send" onPress={sendMessage} />
+        <Button title="Send" onPress={() => sendMessage(inputText)} />
       </View>
     </View>
   );
@@ -142,11 +160,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 20,
-    marginTop: 50,
+    marginTop: 100,
   },
   backButtonContainer: {
     position: "absolute",
-    left: -145,
+    right: 225,
   },
   backButtonIcon: {
     width: 24,
@@ -177,8 +195,9 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: "row",
     alignItems: "center",
-    width: "80%",
-    margin: 50,
+    width: "75%",
+    marginTop: 10,
+    marginBottom: 40,
   },
   input: {
     flex: 4,
@@ -187,6 +206,21 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     height: 40,
+  },
+  predefinedQuestionsContainer: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    marginTop: 25,
+  },
+  predefinedQuestionBubble: {
+    backgroundColor: "#bfe4e2",
+    padding: 10,
+    margin: 5,
+    borderRadius: 10,
+  },
+  predefinedQuestionText: {
+    fontSize: 12,
   },
 });
 

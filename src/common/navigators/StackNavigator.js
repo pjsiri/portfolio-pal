@@ -1,19 +1,20 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import LoginScreen from "../../login-page/LoginPage.js";
-import RegisterScreen from "../../login-page/RegisterPage.js";
+import LoginScreen from "../../Login-page/LoginPage.js";
+import RegisterScreen from "../../Login-page/RegisterPage.js";
 import BottomTabNavigator from "./BottomTabNavigator.js";
 import SettingsPage from "../../settings-page/SettingsPage.js";
 import Education from "../../settings-page/Education.js";
 import StockOverview from "../../overview-page/StockOverview.js";
 import Bookmark from "../../BookmarkPage.js";
 import ProfilePage from "../../settings-page/profileSettings.js";
+import Chat from "../../Chat.js";
 
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="Login">
+    <Stack.Navigator initialRouteName="Chat">
       <Stack.Screen
         name="Login"
         component={LoginScreen}
@@ -52,6 +53,11 @@ const StackNavigator = () => {
       <Stack.Screen
         name="Profile"
         component={ProfilePage}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Chat"
+        component={Chat}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

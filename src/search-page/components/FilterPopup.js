@@ -47,6 +47,12 @@ export class FilterPopup extends React.Component {
     this.setState({ stockSelected: isSelected });
   };
 
+  componentDidUpdate(prevProps) {
+    if (this.props.stockSelected !== prevProps.stockSelected) {
+      this.setState({ stockSelected: this.props.stockSelected });
+    }
+  }
+
   handleApplyFilters = async () => {
     const { currency, priceOption, stockSelected } = this.state;
 
@@ -82,61 +88,75 @@ export class FilterPopup extends React.Component {
     const { currency, priceOption, stockSelected } = this.state;
     return (
       <View style={styles.contentContainer}>
-        <Text>Currency</Text>
-
-        <Picker
-          selectedValue={currency}
-          onValueChange={(itemValue) => this.setCurrency(itemValue)}
-        >
-          <Picker.Item label="Any" value="" />
-          <Picker.Item label="AUD" value="AUD" />
-          <Picker.Item label="CAD" value="CAD" />
-          <Picker.Item label="EUR" value="EUR" />
-          <Picker.Item label="GBP" value="GBP" />
-          <Picker.Item label="GBX" value="GBX" />
-          <Picker.Item label="INR" value="INR" />
-          <Picker.Item label="MXN" value="MXN" />
-          <Picker.Item label="THB" value="THB" />
-          <Picker.Item label="USD" value="USD" />
-        </Picker>
-
-        <Text>Price Range</Text>
-
-        <Picker
-          selectedValue={priceOption}
-          onValueChange={(itemValue) => this.setPriceOption(itemValue)}
-        >
-          <Picker.Item label="Any" value="0" />
-          <Picker.Item label="$0 ~ $50" value="1" />
-          <Picker.Item label="$50 ~ $100" value="2" />
-          <Picker.Item label="$100 ~ $200" value="3" />
-          <Picker.Item label="$200 ~ $400" value="4" />
-          <Picker.Item label="$400 ~ $800" value="5" />
-          <Picker.Item label="$800+" value="6" />
-        </Picker>
-
-        <Text>Stock/Crypto</Text>
-
-        <View>
-          <TouchableOpacity
-            onPress={() => {
-              this.setStockSelected(true);
-            }}
-          >
-            <Text>Stock</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            onPress={() => {
-              this.setStockSelected(false);
-            }}
-          >
-            <Text>Currency</Text>
-          </TouchableOpacity>
+        <View style={styles.sectionContainer}>
+          <Text style={styles.subjectText}>Type</Text>
+          <View style={styles.stockButtonsContainer}>
+            <TouchableOpacity
+              style={styles.stockButton(stockSelected)}
+              onPress={() => {
+                this.setStockSelected(true);
+              }}
+            >
+              <Text style={styles.stockButtonText(stockSelected)}>Stock</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.cryptoButton(stockSelected)}
+              onPress={() => {
+                this.setStockSelected(false);
+              }}
+            >
+              <Text style={styles.cryptoButtonText(stockSelected)}>Crypto</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <TouchableOpacity onPress={this.handleApplyFilters}>
-          <Text>Apply Filters</Text>
-        </TouchableOpacity>
+        <View style={styles.sectionContainer}>
+          <Text style={styles.subjectText}>Currency</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={currency}
+              onValueChange={(itemValue) => this.setCurrency(itemValue)}
+            >
+              <Picker.Item label="Any" value="" />
+              <Picker.Item label="AUD" value="AUD" />
+              <Picker.Item label="CAD" value="CAD" />
+              <Picker.Item label="EUR" value="EUR" />
+              {/* <Picker.Item label="GBP" value="GBP" /> */}
+              {/* <Picker.Item label="GBX" value="GBX" /> */}
+              <Picker.Item label="INR" value="INR" />
+              {/* <Picker.Item label="MXN" value="MXN" /> */}
+              {/* <Picker.Item label="THB" value="THB" /> */}
+              <Picker.Item label="USD" value="USD" />
+            </Picker>
+          </View>
+        </View>
+
+        <View style={styles.sectionContainer}>
+          <Text style={styles.subjectText}>Price Range</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={priceOption}
+              onValueChange={(itemValue) => this.setPriceOption(itemValue)}
+            >
+              <Picker.Item label="Any" value="0" />
+              <Picker.Item label="$0 ~ $50" value="1" />
+              <Picker.Item label="$50 ~ $100" value="2" />
+              <Picker.Item label="$100 ~ $200" value="3" />
+              <Picker.Item label="$200 ~ $400" value="4" />
+              <Picker.Item label="$400 ~ $800" value="5" />
+              <Picker.Item label="$800+" value="6" />
+            </Picker>
+          </View>
+        </View>
+
+        <View style={styles.applyButtonContainer}>
+          <TouchableOpacity
+            style={styles.applyButton}
+            onPress={this.handleApplyFilters}
+          >
+            <Text style={styles.applyButtonText}>Apply Filters</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     );
   };
@@ -147,7 +167,7 @@ export class FilterPopup extends React.Component {
 
     return (
       <Modal
-        animationType={"fade"}
+        animationType={"slide"}
         transparent={true}
         visible={show}
         onRequestClose={this.close}
@@ -168,6 +188,7 @@ export class FilterPopup extends React.Component {
               borderTopRightRadius: 80,
               borderTopLeftRadius: 80,
               paddingHorizontal: 20,
+              borderColor: "grey",
               //maxHeight: deviceHeight * 0.4,
             }}
           >

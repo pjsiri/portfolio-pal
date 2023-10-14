@@ -26,6 +26,18 @@ const styles = StyleSheet.create({
   cardsContainer: {
     marginTop: 10,
   },
+
+  notFoundContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingTop: 100,
+  },
+
+  notFoundIcon: {
+    width: 100,
+    height: 100,
+    marginBottom: 10,
+  },
 });
 
 export default styles;

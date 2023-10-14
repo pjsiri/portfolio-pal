@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 
@@ -176,7 +182,13 @@ const SearchStocks = ({
           <Text>Something went wrong</Text>
         ) : stockSelected ? (
           filteredStockData?.length === 0 ? (
-            <Text>No stock data available</Text>
+            <View style={styles.notFoundContainer}>
+              <Image
+                style={styles.notFoundIcon}
+                source={require("../../../assets/not-found-icon.png")}
+              />
+              <Text>No Results Found</Text>
+            </View>
           ) : (
             stockItems.map((item) => (
               <StockCard
@@ -189,7 +201,13 @@ const SearchStocks = ({
             ))
           )
         ) : filteredCryptoData?.length === 0 ? (
-          <Text>No crypto data available</Text>
+          <View style={styles.notFoundContainer}>
+            <Image
+              style={styles.notFoundIcon}
+              source={require("../../../assets/not-found-icon.png")}
+            />
+            <Text>No Results Found</Text>
+          </View>
         ) : (
           cryptoItems.map((item) => (
             <CryptoCard

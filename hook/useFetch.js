@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import API_KEY from "../apikey";
+import { STOCK_API_KEY } from "../apikey";
 
 const useFetch = (endpoint, query) => {
   const [data, setData] = useState([]);
@@ -12,7 +12,7 @@ const useFetch = (endpoint, query) => {
     url: `https://real-time-finance-data.p.rapidapi.com/${endpoint}`,
     params: { ...query },
     headers: {
-      "X-RapidAPI-Key": API_KEY,
+      "X-RapidAPI-Key": STOCK_API_KEY,
       "X-RapidAPI-Host": "real-time-finance-data.p.rapidapi.com",
     },
   };
@@ -26,7 +26,7 @@ const useFetch = (endpoint, query) => {
       setIsLoading(false);
     } catch (error) {
       setError(error);
-      alert("There is an error!!!");
+      alert("Request error...");
       console.error(error);
     } finally {
       setIsLoading(false);

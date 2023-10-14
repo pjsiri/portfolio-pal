@@ -17,6 +17,8 @@ import { StatusBar } from "react-native";
 import StockCard from "./StockCard";
 import { useDarkMode } from "./common/darkmode/DarkModeContext"; // Import the hook
 import { Picker } from '@react-native-picker/picker'; // Import the picker
+import firebase from 'firebase/app';
+import 'firebase/firestore';
 
 const PortFolio = () => {
     const { isDarkMode } = useDarkMode(); // Use the hook to access dark mode state
@@ -128,6 +130,9 @@ const PortFolio = () => {
     useEffect(() => {
         setTotalAssetsValue(totalStockValue + totalCryptoValue);
     }, [totalStockValue, totalCryptoValue]);
+
+    //Firebase 
+    
 
     return (
         <View style={containerStyle}>

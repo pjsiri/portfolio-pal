@@ -57,25 +57,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   }),
 
-  cryptoButton: (stockSelected) => ({
-    backgroundColor: !stockSelected ? "#0096FF" : "#F0F0F0",
-    width: 120,
-    height: 45,
-    marginTop: 10,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 15,
-  }),
-
   stockButtonText: (stockSelected) => ({
     color: stockSelected ? "white" : "#5F5F5F",
-    fontSize: 18,
-    fontWeight: "500",
-  }),
-
-  cryptoButtonText: (stockSelected) => ({
-    color: !stockSelected ? "white" : "#5F5F5F",
     fontSize: 18,
     fontWeight: "500",
   }),

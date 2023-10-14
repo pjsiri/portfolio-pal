@@ -26,7 +26,7 @@ const useFetch = (endpoint, query) => {
       setIsLoading(false);
     } catch (error) {
       setError(error);
-      alert("There is an error!!!");
+      alert("Request error...");
       console.error(error);
     } finally {
       setIsLoading(false);

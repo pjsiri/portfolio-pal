@@ -1,30 +1,32 @@
-import { useNavigation } from "@react-navigation/native";
 import React, { useState, useRef, useEffect } from "react";
 import { View, Text, StyleSheet, TextInput, Button, ScrollView, TouchableOpacity, Image } from "react-native";
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
-const Chat = () => {
-  const navigation = useNavigation(); 
 
+const Chat = () => {
+  const navigation = useNavigation();
   const [inputText, setInputText] = useState('');
   const [chatHistory, setChatHistory] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
-  const openaiAPIKey = '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';
+  const openaiAPIKey = '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';
 
   const apiUrl = 'https://api.openai.com/v1/chat/completions';
 
   const scrollViewRef = useRef();
 
-  const sendMessage = async () => {
-    if (inputText.trim() === '') {
+  const handleBack = () => {
+    navigation.goBack();
+  };
+
+  const sendMessage = async (message) => {
+    if (message.trim() === '') {
       return;
     }
 
-    const userMessage = { role: 'user', content: inputText };
+    const userMessage = { role: 'user', content: message };
     const newChatHistory = [...chatHistory, userMessage];
     setChatHistory(newChatHistory);
-    setInputText('');
-
     setIsTyping(true); 
 
     try {
@@ -44,7 +46,6 @@ const Chat = () => {
       const aiMessage = { role: 'ai', content: response.data.choices[0].message.content };
       const updatedChatHistory = [...newChatHistory, aiMessage];
       setChatHistory(updatedChatHistory);
-
       setIsTyping(false); 
     } catch (error) {
       console.error('Error:', error);
@@ -63,26 +64,33 @@ const Chat = () => {
     scrollToBottom();
   }, [chatHistory]);
 
-  const handleBack = () => {
-    navigation.goBack();
+  const predefinedQuestions = [
+    "How do I invest in stocks?",
+    "How hard is it to invest",
+    "How much are Tesla Stocks?",
+    "Who is the owner of Tesla",
+  ];
+
+  const handlePredefinedQuestionClick = (question) => {
+    sendMessage(question);
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButtonContainer}
-          onPress={handleBack}
-        >
-          <Image
-            source={{
-              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",
-            }}
-            style={styles.backButtonIcon}
-          />
-        </TouchableOpacity>
-        <Text style={styles.title}>AIVestor</Text>
-      </View>
+<View style={styles.container}>
+  <View style={styles.header}>
+    <TouchableOpacity
+      style={styles.backButtonContainer}
+      onPress={handleBack}
+    >
+      <Image
+        source={{
+          uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",
+        }}
+        style={styles.backButtonIcon}
+      />
+    </TouchableOpacity>
+    <Text style={styles.title}>AIVestor</Text>
+  </View>
 
       <ScrollView
         ref={scrollViewRef}
@@ -97,15 +105,26 @@ const Chat = () => {
           <Text style={styles.aiMessage}>Typing...</Text>
         )}
       </ScrollView>
-      
+      <View style={styles.predefinedQuestionsContainer}>
+        {predefinedQuestions.map((question, index) => (
+          <TouchableOpacity
+            key={index}
+            style={styles.predefinedQuestionBubble}
+            onPress={() => handlePredefinedQuestionClick(question)}
+          >
+            <Text style={styles.predefinedQuestionText}>{question}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Send a message"
+          placeholder="Send a message..."
           value={inputText}
           onChangeText={setInputText}
         />
-        <Button title="Send" onPress={sendMessage} />
+        <Button title="Send" onPress={() => sendMessage(inputText)} />
       </View>
     </View>
   );
@@ -122,11 +141,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center', 
     marginBottom: 20,
-    marginTop: 50, 
+    marginTop: 100, 
   },
   backButtonContainer: {
     position: 'absolute',
-    left: -145,
+    right: 225,
   },
   backButtonIcon: {
     width: 24,
@@ -157,8 +176,9 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    width: '80%',
-    margin: 50,
+    width: '75%',
+    marginTop: 10,
+    marginBottom: 40,
   },
   input: {
     flex: 4,
@@ -167,6 +187,21 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     height: 40,
+  },
+  predefinedQuestionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    marginTop: 25,
+  },
+  predefinedQuestionBubble: {
+    backgroundColor: '#bfe4e2',
+    padding: 10,
+    margin: 5,
+    borderRadius: 10,
+  },
+  predefinedQuestionText: {
+    fontSize: 12,
   },
 });
 

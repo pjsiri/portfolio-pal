@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
 
   searchContainer: {
     flex: 11,
-    marginBottom: 50,
     borderRadius: 50,
     backgroundColor: "white",
     flexDirection: "row",
@@ -71,25 +70,38 @@ const styles = StyleSheet.create({
     height: 35,
   },
 
-  appName: {
-    textAlign: "center",
-    textAlignVertical: "center",
-    fontWeight: "bold",
-    fontSize: 25,
+  sortContainer: {
+    backgroundColor: "black",
+    flexDirection: "row",
+    alignSelf: "center",
+    width: "100%",
+    height: 53,
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingHorizontal: 15,
+    borderRadius: 25,
+    marginTop: 20,
+    marginBottom: 15,
   },
 
-  header: {
-    //textAlign: "center",
-    fontWeight: "bold",
-    fontSize: 30,
-    paddingTop: 20,
-    paddingBottom: 20,
+  sortBy: {
+    borderColor: "white",
+    paddingHorizontal: 15,
   },
+  sortButton: (selected) => ({
+    backgroundColor: selected ? "white" : "black",
+    paddingHorizontal: 15,
+    marginHorizontal: 5,
+    height: "75%",
+    borderRadius: 20,
+    justifyContent: "center",
+  }),
 
-  modeIcon: {
-    width: 50,
-    height: 50,
-  },
+  sortText: (selected) => ({
+    color: selected ? "black" : "white",
+    fontSize: 16,
+    fontWeight: "500",
+  }),
 });
 
 export default styles;

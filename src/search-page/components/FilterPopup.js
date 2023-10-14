@@ -100,12 +100,12 @@ export class FilterPopup extends React.Component {
               <Text style={styles.stockButtonText(stockSelected)}>Stock</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.cryptoButton(stockSelected)}
+              style={styles.stockButton(!stockSelected)}
               onPress={() => {
                 this.setStockSelected(false);
               }}
             >
-              <Text style={styles.cryptoButtonText(stockSelected)}>Crypto</Text>
+              <Text style={styles.stockButtonText(!stockSelected)}>Crypto</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -182,7 +182,7 @@ export class FilterPopup extends React.Component {
           {this.renderOutsideTouchable(onTouchOutside)}
           <View
             style={{
-              backgroundColor: "white",
+              backgroundColor: "#F0F0F0",
               width: "100%",
               height: "75%",
               borderTopRightRadius: 80,

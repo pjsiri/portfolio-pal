@@ -18,11 +18,12 @@ const styles = StyleSheet.create({
   },
 
   sectionContainer: {
+    backgroundColor: "white",
     borderColor: "lightgrey",
     borderTopWidth: 0.5,
     borderBottomWidth: 0.5,
-    borderRightWidth: 5,
-    borderLeftWidth: 5,
+    borderRightWidth: 4,
+    borderLeftWidth: 4,
     borderRadius: 20,
     padding: 10,
     paddingHorizontal: 15,
@@ -56,25 +57,8 @@ const styles = StyleSheet.create({
     borderRadius: 15,
   }),
 
-  cryptoButton: (stockSelected) => ({
-    backgroundColor: !stockSelected ? "#0096FF" : "#F0F0F0",
-    width: 120,
-    height: 45,
-    marginTop: 10,
-    padding: 10,
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 15,
-  }),
-
   stockButtonText: (stockSelected) => ({
     color: stockSelected ? "white" : "#5F5F5F",
-    fontSize: 18,
-    fontWeight: "500",
-  }),
-
-  cryptoButtonText: (stockSelected) => ({
-    color: !stockSelected ? "white" : "#5F5F5F",
     fontSize: 18,
     fontWeight: "500",
   }),

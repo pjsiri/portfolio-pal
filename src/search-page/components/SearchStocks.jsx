@@ -20,14 +20,12 @@ const SearchStocks = ({
   priceOption,
   stockSelected,
   setStockSelected,
+  sortType,
+  ascendOrder,
 }) => {
   const navigation = useNavigation();
-  // const [trendType, setTrendType] = useState(
-  //   stockSelected ? "MOST_ACTIVE" : "CRYPTO"
-  // );
   const { data, isLoading, error, refetch } = useFetch("search", {
     query: inputQuery,
-    //trend_type: trendType,
     language: "en",
   });
 
@@ -59,15 +57,15 @@ const SearchStocks = ({
       });
     }
 
-    // if (inputQuery !== "") {
-    //   filteredData = filteredData.filter(
-    //     (item) =>
-    //       (item.symbol || "")
-    //         .toLowerCase()
-    //         .includes(inputQuery.toLowerCase()) ||
-    //       (item.name || "").toLowerCase().includes(inputQuery.toLowerCase())
-    //   );
-    // }
+    if (sortType === 1) {
+      filteredData.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortType === 2) {
+      filteredData.sort((a, b) => a.price - b.price);
+    }
+
+    if (sortType !== 0 && !ascendOrder) {
+      filteredData.reverse(); // Reverse the order to make it descending
+    }
 
     return filteredData;
   };
@@ -117,17 +115,15 @@ const SearchStocks = ({
       });
     }
 
-    // if (inputQuery !== "") {
-    //   filteredData = filteredData.filter(
-    //     (item) =>
-    //       (item.from_symbol || "")
-    //         .toLowerCase()
-    //         .includes(inputQuery.toLowerCase()) ||
-    //       (item.from_currency_name || "")
-    //         .toLowerCase()
-    //         .includes(inputQuery.toLowerCase())
-    //   );
-    // }
+    if (sortType === 1) {
+      filteredData.sort((a, b) => a.from_symbol.localeCompare(b.from_symbol));
+    } else if (sortType === 2) {
+      filteredData.sort((a, b) => a.exchange_rate - b.exchange_rate);
+    }
+
+    if (sortType !== 0 && !ascendOrder) {
+      filteredData.reverse(); // Reverse the order to make it descending
+    }
 
     return filteredData;
   };
@@ -144,14 +140,6 @@ const SearchStocks = ({
   useEffect(() => {
     refetch();
   }, []);
-
-  // useEffect(() => {
-  //   setTrendType(stockSelected ? "MOST_ACTIVE" : "CRYPTO");
-  // }, [stockSelected]);
-
-  // useEffect(() => {
-  //   refetch();
-  // }, [trendType]);
 
   useEffect(() => {
     refetch();

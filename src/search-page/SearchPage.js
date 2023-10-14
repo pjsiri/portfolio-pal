@@ -22,6 +22,8 @@ const SearchPage = () => {
   const [currency, setCurrency] = useState("");
   const [priceOption, setPriceOption] = useState("");
   const [stockSelected, setStockSelected] = useState(true);
+  const [sortType, setSortType] = useState(0);
+  const [ascendOrder, setAscendOrder] = useState(true);
   const { isDarkMode } = useDarkMode();
 
   const filters = (currency, priceOption, stockSelected) => {
@@ -46,6 +48,15 @@ const SearchPage = () => {
   const handleSearch = (searchQuery) => {
     setFinalSearchQuery(searchQuery || " ");
     //console.log("Search query:", searchQuery);
+  };
+
+  const handleSort = (selectedSortType) => {
+    if (sortType === selectedSortType) {
+      setAscendOrder(!ascendOrder);
+    } else {
+      setAscendOrder(true);
+      setSortType(selectedSortType);
+    }
   };
 
   return (
@@ -78,6 +89,30 @@ const SearchPage = () => {
         />
       </View>
 
+      <View style={styles.sortContainer}>
+        <View style={styles.sortBy}>
+          <Text style={styles.sortText(false)}>Sort By:</Text>
+        </View>
+        <TouchableOpacity
+          style={styles.sortButton(sortType === 0)}
+          onPress={() => handleSort(0)}
+        >
+          <Text style={styles.sortText(sortType === 0)}>Relevent</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.sortButton(sortType === 1)}
+          onPress={() => handleSort(1)}
+        >
+          <Text style={styles.sortText(sortType === 1)}>Name</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.sortButton(sortType === 2)}
+          onPress={() => handleSort(2)}
+        >
+          <Text style={styles.sortText(sortType === 2)}>Price</Text>
+        </TouchableOpacity>
+      </View>
+
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={{ flex: 1 }}>
           <SearchStocks
@@ -86,6 +121,8 @@ const SearchPage = () => {
             priceOption={priceOption}
             stockSelected={stockSelected}
             setStockSelected={setStockSelected}
+            sortType={sortType}
+            ascendOrder={ascendOrder}
           />
         </View>
       </ScrollView>

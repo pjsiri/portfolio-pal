@@ -18,11 +18,12 @@ const styles = StyleSheet.create({
   },
 
   sectionContainer: {
+    backgroundColor: "white",
     borderColor: "lightgrey",
     borderTopWidth: 0.5,
     borderBottomWidth: 0.5,
-    borderRightWidth: 5,
-    borderLeftWidth: 5,
+    borderRightWidth: 4,
+    borderLeftWidth: 4,
     borderRadius: 20,
     padding: 10,
     paddingHorizontal: 15,

@@ -182,7 +182,7 @@ export class FilterPopup extends React.Component {
           {this.renderOutsideTouchable(onTouchOutside)}
           <View
             style={{
-              backgroundColor: "white",
+              backgroundColor: "#F0F0F0",
               width: "100%",
               height: "75%",
               borderTopRightRadius: 80,

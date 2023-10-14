@@ -18,8 +18,10 @@ import StockCard from "./StockCard";
 import { useDarkMode } from "./common/darkmode/DarkModeContext"; // Import the hook
 import { Picker } from '@react-native-picker/picker'; // Import the picker
 
+
 const PortFolio = () => {
     const { isDarkMode } = useDarkMode(); // Use the hook to access dark mode state
+
 
     // Pop up a window to get input from the user about the stocks or crypto info
     const [isModalVisible, setIsModalVisible] = useState(false);
@@ -34,6 +36,7 @@ const PortFolio = () => {
     const [cryptoTotalValues, setCryptoTotalValues] = useState([]);
     const [stockTotalValues, setStockTotalValues] = useState([]); // Initialize stockTotalValues state
 
+
     // Helper function to generate a random color
     const getRandomColor = () => {
         const letters = "0123456789ABCDEF";
@@ -44,13 +47,16 @@ const PortFolio = () => {
         return color;
     };
 
+
     const showModal = () => {
         setIsModalVisible(true);
     };
 
+
     const hideModal = () => {
         setIsModalVisible(false);
     };
+
 
     const handleSave = () => {
         // Create an object to store the asset details
@@ -61,11 +67,14 @@ const PortFolio = () => {
             type: selectedValue,
         };
 
+
         // Update userAssets with the new asset
         setUserAssets([...userAssets, newAsset]);
 
+
         // Calculate the total value for the new asset
         let totalValue = newAsset.price * newAsset.quantity;
+
 
         // For displaying the value by the asset type
         if (newAsset.type === 'Stock') {
@@ -78,16 +87,20 @@ const PortFolio = () => {
             setCryptoTotalValues([...cryptoTotalValues, newCryptoAsset]);
         }
 
+
         // Clear the input fields
         setAssetName('');
         setAssetPrice('');
         setAssetQuantity('');
         setSelectedValue('Stock');
 
+
         hideModal();
     };
 
+
     const screenWidth = Dimensions.get("window").width;
+
 
     const chartData = userAssets.map((asset) => ({
         name: asset.name,
@@ -97,11 +110,13 @@ const PortFolio = () => {
         legendFontSize: 15,
     }));
 
+
     const chartConfig = {
         backgroundGradientFrom: "#fff",
         backgroundGradientTo: "#fff",
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     };
+
 
     // Apply dark mode styles conditionally
     const containerStyle = [
@@ -109,12 +124,14 @@ const PortFolio = () => {
         isDarkMode && styles.darkModeContainer,
     ];
 
+
     const earnedMoneyStyle = isDarkMode
-        ? styles.darkModeEarnedMoney
-        : styles.earnedMoney;
-    const losesMoneyStyle = isDarkMode
-        ? styles.darkModeLosesMoney
-        : styles.losesMoney;
+    ? styles.darkModeEarnedMoney
+    : { ...styles.earnedMoney, color: 'black' };
+const losesMoneyStyle = isDarkMode
+    ? styles.darkModeLosesMoney
+    : { ...styles.losesMoney, color: 'black' };
+
 
     // Calculate totalStockValue and totalCryptoValue when stockTotalValues and cryptoTotalValues change
     useEffect(() => {
@@ -124,10 +141,12 @@ const PortFolio = () => {
         setTotalCryptoValue(cryptoValue);
     }, [stockTotalValues, cryptoTotalValues]);
 
+
     // Calculate totalAssetsValue whenever totalStockValue or totalCryptoValue changes
     useEffect(() => {
         setTotalAssetsValue(totalStockValue + totalCryptoValue);
     }, [totalStockValue, totalCryptoValue]);
+
 
     return (
         <View style={containerStyle}>
@@ -186,29 +205,30 @@ const PortFolio = () => {
                 absolute
             />
             {/* Render total values for stocks */}
-            <Text style={styles.assetValue}>Stocks Total Values:</Text>
-            {userAssets.map((asset, index) => (
-                <Text key={index}>
-                    {asset.name}: ${asset.price * asset.quantity}
-                </Text>
-            ))}
-            <Text>Total Stock Assets: ${totalStockValue}</Text>
-            <Text>{"\n"}</Text>
+            <Text style={[earnedMoneyStyle, styles.assetValue]}>Stocks Total Values:</Text>
+                {userAssets.map((asset, index) => (
+                    <Text key={index} style={isDarkMode ? styles.darkModeEarnedMoney : { ...styles.earnedMoney, color: 'black' }}>
+                        {asset.name}: ${asset.price * asset.quantity}
+                    </Text>
+                ))}
+                <Text style={isDarkMode ? styles.darkModeEarnedMoney : { ...styles.earnedMoney, color: 'black' }}>Total Stock Assets: ${totalStockValue}</Text>
+                <Text>{"\n"}</Text>
 
-            {/* Render total values for cryptos */}
-            <Text style={styles.assetValue}>Cryptos Total Values:</Text>
-            {cryptoTotalValues.map((crypto, index) => (
-                <Text key={index}>
-                    {crypto.name}: ${crypto.totalValue}
-                </Text>
-            ))}
-            <Text>Total Crypto Assets: ${totalCryptoValue}</Text>
-            <Text>{"\n"}</Text>
-            <StatusBar style="auto" />
-            <Text style={styles.totalValue}>Total assets values: ${totalAssetsValue}</Text>
-        </View>
-    );
+
+                <Text style={[earnedMoneyStyle, styles.assetValue]}>Cryptos Total Values:</Text>
+                {cryptoTotalValues.map((crypto, index) => (
+                    <Text key={index} style={isDarkMode ? styles.darkModeEarnedMoney : { ...styles.earnedMoney, color: 'black' }}>
+                        {crypto.name}: ${crypto.totalValue}
+                    </Text>
+                ))}
+                <Text style={isDarkMode ? styles.darkModeEarnedMoney : { ...styles.earnedMoney, color: 'black' }}>Total Crypto Assets: ${totalCryptoValue}</Text>
+                <Text>{"\n"}</Text>
+                        <StatusBar style="auto" />
+                        <Text style={[styles.totalValue, isDarkMode ? styles.darkModeEarnedMoney : styles.earnedMoney]}>Total assets values: ${totalAssetsValue}</Text>
+                    </View>
+                );
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -218,19 +238,19 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     darkModeContainer: {
-        backgroundColor: "#333", // Dark mode background color
+        backgroundColor: "#333",
     },
     earnedMoney: {
         color: "blue",
     },
     darkModeEarnedMoney: {
-        color: "lightblue", // Dark mode text color
+        color: "white",
     },
     losesMoney: {
         color: "red",
     },
     darkModeLosesMoney: {
-        color: "pink", // Dark mode text color
+        color: "pink",
     },
     addButton: {
         backgroundColor: "blue",
@@ -240,7 +260,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background for the modal
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
     modalContent: {
         backgroundColor: "white",
@@ -279,4 +299,8 @@ const styles = StyleSheet.create({
     },
 });
 
+
 export default PortFolio;
+
+
+

@@ -233,7 +233,7 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
             ]}
             numberOfLines={1}
           >
-            ${formatNumber(item.price)}&nbsp;{item.currency || "CNY"}
+            ${formatNumber(item.price)}&nbsp;{item.currency || "USD"}
           </Text>
         </View>
       </View>

@@ -9,13 +9,13 @@ import {
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
-
 import styles from "./Overview.style";
 import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
-import { getFirestore, collection, addDoc, updateDoc, doc, getDocs, query, where } from "firebase/firestore";
+import { getFirestore, collection, addDoc, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import QuantityInput from "./QuantityInput";
+import { fakeBuyStock, fakeSellStock } from './stockActions';
 
 const uriExists = async (uri) => {
   try {
@@ -84,83 +84,26 @@ const StockOverview = () => {
     }
   };
 
-  const handleBookmarkInOverview = () => {
-    bookmarkStock(item.name, item.symbol, item.price);
-  };
+  const handleDelete = async (symbol) => {
+    try {
+      const db = getFirestore();
+      const stocksRef = collection(db, "bookmarkedStocks");
+      const q = query(
+        stocksRef,
+        where("symbol", "==", symbol),
+        where("userId", "==", user.uid)
+      );
 
-  // Function to simulate buying a stock
-  const fakeBuyStock = async (userId, symbol, quantity, price) => {
-    try {
-      const userRef = doc(firestore, 'users', userId);
-      const portfolioRef = collection(userRef, 'portfolio');
-  
-      // Check if the user already owns this stock
-      const existingStock = await getDocs(query(portfolioRef, where('symbol', '==', symbol)));
-  
-      if (existingStock.size > 0) {
-        // Update the quantity if the user already owns this stock
-        const stockDoc = existingStock.docs[0];
-        await updateDoc(stockDoc.ref, {
-          quantity: stockDoc.data().quantity + quantity,
-        });
-      } else {
-        // Add the stock to the user's portfolio if they don't already own it
-        await addDoc(portfolioRef, {
-          symbol,
-          quantity,
-        });
-      }
-  
-      // Record the transaction
-      const transactionsRef = collection(userRef, 'transactions');
-      await addDoc(transactionsRef, {
-        type: 'buy',
-        symbol,
-        quantity,
-        price,
-        timestamp: new Date(),
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
       });
-  
-      return true; // Success
+
+      console.log("Stock bookmark removed!");
+      setIsHeartFilled(false);
     } catch (error) {
-      console.error('Error buying stock:', error);
-      return false; // Error occurred
-    }
-  };
-  
-  // Function to simulate selling a stock
-  const fakeSellStock = async (userId, symbol, quantity, price) => {
-    try {
-      const userRef = doc(firestore, 'users', userId);
-      const portfolioRef = collection(userRef, 'portfolio');
-  
-      // Check if the user owns this stock
-      const existingStock = await getDocs(query(portfolioRef, where('symbol', '==', symbol)));
-  
-      if (existingStock.size > 0 && existingStock.docs[0].data().quantity >= quantity) {
-        // Update the quantity if the user has enough of this stock
-        const stockDoc = existingStock.docs[0];
-        await updateDoc(stockDoc.ref, {
-          quantity: stockDoc.data().quantity - quantity,
-        });
-  
-        // Record the transaction
-        const transactionsRef = collection(userRef, 'transactions');
-        await addDoc(transactionsRef, {
-          type: 'sell',
-          symbol,
-          quantity,
-          price,
-          timestamp: new Date(),
-        });
-  
-        return true; // Success
-      } else {
-        return false; // User doesn't own enough of this stock
-      }
-    } catch (error) {
-      console.error('Error selling stock:', error);
-      return false; // Error occurred
+      console.error("Error deleting bookmarked stock:", error);
     }
   };
 
@@ -201,6 +144,10 @@ const StockOverview = () => {
     checkUris();
   }, [stockSymbol, stockName]);
 
+  const handleBookmarkInOverview = () => {
+    bookmarkStock(item.name, item.symbol, item.price);
+  };
+
   const { data, isLoading, error, refetch } = useFetch("stock-overview", {
     symbol: item.symbol,
     language: "en",
@@ -208,8 +155,8 @@ const StockOverview = () => {
 
   const handleBuy = async () => {
     const success = await fakeBuyStock(userId, stockSymbol, quantity, data.price);
+    
     if (success) {
-      // Update UI or show a success message
       console.log('Buy successful!');
     } else {
       // Handle error
@@ -220,7 +167,6 @@ const StockOverview = () => {
   const handleSell = async () => {
     const success = await fakeSellStock(userId, stockSymbol, quantity, data.price);
     if (success) {
-      // Update UI or show a success message
       console.log('Sell successful!');
     } else {
       // Handle error
@@ -276,8 +222,14 @@ const StockOverview = () => {
             <Text style={{ ...textColor }}>Stock chart work in progress</Text>
           </View>
           <TouchableOpacity
-          style={styles.bookmarkContainer}
-          onPress={handleBookmarkInOverview} // Use the function in StockOverview
+            style={styles.bookmarkContainer}
+            onPress={() => {
+              if (isHeartFilled) {
+                handleDelete(item.symbol); // Delete only if it's heart-filled
+              } else {
+                handleBookmarkInOverview(); // Add to watchlist if it's not heart-filled
+              }
+            }}
           >
             <Image
               source={

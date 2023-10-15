@@ -21,9 +21,6 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
-});
 const Stack = createStackNavigator();
 LogBox.ignoreAllLogs();
 export default function App() {

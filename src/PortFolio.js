@@ -5,46 +5,41 @@ import {
     View,
     TextInput,
     Button,
-    Modal,
-    Alert,
     Dimensions,
-    ScrollView,
     StyleSheet,
+    Modal,
 } from "react-native";
-import { Image } from "react-native";
 import { PieChart } from "react-native-chart-kit";
 import { StatusBar } from "react-native";
-import StockCard from "./StockCard";
-import { useDarkMode } from "./common/darkmode/DarkModeContext"; // Import the hook
-import { Picker } from '@react-native-picker/picker'; // Import the picker
-import { getFirestore, collection, addDoc, query, where } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { useDarkMode } from "./common/darkmode/DarkModeContext";
+import { Picker } from "@react-native-picker/picker";
+import {
+    getFirestore,
+    collection,
+    addDoc,
+    query,
+    where,
+    getDocs,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-
-const PortFolio = () => {
-    const { isDarkMode } = useDarkMode(); // Use the hook to access dark mode state
-
-    // Pop up a window to get input from the user about the stocks or crypto info
+const Portfolio = () => {
+    const { isDarkMode } = useDarkMode();
     const [isModalVisible, setIsModalVisible] = useState(false);
-    const [assetName, setAssetName] = useState('');
-    const [assetPrice, setAssetPrice] = useState('');
-    const [assetQuantity, setAssetQuantity] = useState('');
-    const [selectedValue, setSelectedValue] = useState('Stock');
-    const [userAssets, setUserAssets] = useState([]); // Array to store the user's assets
-    const [totalStockValue, setTotalStockValue] = useState(0); // Initialize totalStockValue state
-    const [totalCryptoValue, setTotalCryptoValue] = useState(0); // Initialize totalCryptoValue state
-    const [totalAssetsValue, setTotalAssetsValue] = useState(0); // Initialize totalAssetsValue state
+    const [assetName, setAssetName] = useState("");
+    const [assetPrice, setAssetPrice] = useState("");
+    const [assetQuantity, setAssetQuantity] = useState("");
+    const [selectedValue, setSelectedValue] = useState("Stock");
+    const [userAssets, setUserAssets] = useState([]);
+    const [totalStockValue, setTotalStockValue] = useState(0);
+    const [totalCryptoValue, setTotalCryptoValue] = useState(0);
+    const [totalAssetsValue, setTotalAssetsValue] = useState(0);
     const [cryptoTotalValues, setCryptoTotalValues] = useState([]);
-    const [stockTotalValues, setStockTotalValues] = useState([]); // Initialize stockTotalValues state
+    const [stockTotalValues, setStockTotalValues] = useState([]);
 
-    // Helper function to generate a random color
-    const getRandomColor = () => {
-        const letters = "0123456789ABCDEF";
-        let color = "#";
-        for (let i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        return color;
+    // Helper function to calculate total asset price
+    const calculateTotalPrice = (price, quantity) => {
+        return price * quantity;
     };
 
     const showModal = () => {
@@ -56,7 +51,6 @@ const PortFolio = () => {
     };
 
     const handleSave = async () => {
-        // Create an object to store the asset details
         const newAsset = {
             name: assetName,
             price: parseFloat(assetPrice),
@@ -64,69 +58,92 @@ const PortFolio = () => {
             type: selectedValue,
         };
 
-        newAsset.totalPrice = newAsset.price * newAsset.quantity;
-    
-        //Save to database 
+        newAsset.totalPrice = calculateTotalPrice(newAsset.price, newAsset.quantity);
+
         const db = getFirestore();
         const auth = getAuth();
         const user = auth.currentUser;
-    
+
         if (user) {
             let userAssetRef;
-            if (selectedValue === 'Stock') {
+            if (selectedValue === "Stock") {
                 userAssetRef = collection(db, `userAssets/${user.uid}/Stocks`);
-            } else if (selectedValue === 'Crypto') {
+            } else if (selectedValue === "Crypto") {
                 userAssetRef = collection(db, `userAssets/${user.uid}/Cryptos`);
             } else {
-                console.error('Invalid asset type');
+                console.error("Invalid asset type");
                 return;
             }
-    
+
             try {
-                // Add the new asset to the appropriate collection
                 await addDoc(userAssetRef, newAsset);
             } catch (error) {
-                console.error('Error adding asset to Firestore:', error);
+                console.error("Error adding asset to Firestore:", error);
             }
         } else {
-            console.log('No authenticated user found');
+            console.log("No authenticated user found");
         }
-        
-        // Update userAssets with the new asset
+
         setUserAssets([...userAssets, newAsset]);
-    
-        // Calculate the total value for the new asset
-        let totalValue = newAsset.price * newAsset.quantity;
-    
-        // For displaying the value by the asset type
-        if (newAsset.type === 'Stock') {
-            setStockTotalValues([...stockTotalValues, totalValue]);
-        } else if (newAsset.type === 'Crypto') {
+
+        // Update total values based on the added asset
+        if (newAsset.type === "Stock") {
+            setTotalStockValue(totalStockValue + newAsset.totalPrice);
+        } else if (newAsset.type === "Crypto") {
             const newCryptoAsset = {
                 name: assetName,
-                totalValue: totalValue,
+                totalValue: newAsset.totalPrice,
             };
             setCryptoTotalValues([...cryptoTotalValues, newCryptoAsset]);
         }
-    
-        // Clear the input fields
-        setAssetName('');
-        setAssetPrice('');
-        setAssetQuantity('');
-        setSelectedValue('Stock');
-    
+
+        setAssetName("");
+        setAssetPrice("");
+        setAssetQuantity("");
+        setSelectedValue("Stock");
+
         hideModal();
     };
-    
 
     const screenWidth = Dimensions.get("window").width;
 
+    useEffect(() => {
+        const fetchUserAssets = async () => {
+            const db = getFirestore();
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (user) {
+                try {
+                    const userAssetRef = collection(db, `userAssets/${user.uid}/Assets`);
+                    const querySnapshot = await getDocs(userAssetRef);
+                    const assets = [];
+                    querySnapshot.forEach((doc) => {
+                        assets.push(doc.data());
+                    });
+
+                    setUserAssets(assets);
+                } catch (error) {
+                    console.error("Error fetching user assets from Firestore:", error);
+                }
+            } else {
+                console.log("No authenticated user found");
+            }
+        };
+
+        fetchUserAssets();
+    }, []);
+
+    useEffect(() => {
+        setTotalAssetsValue(
+            userAssets.reduce((total, asset) => total + asset.totalPrice, 0)
+        );
+    }, [userAssets]);
+
+    // Create the chart data based on userAssets
     const chartData = userAssets.map((asset) => ({
         name: asset.name,
-        price: asset.price * asset.quantity, // Calculate the total price for the asset
-        color: getRandomColor(),
-        legendFontColor: "#7F7F7F",
-        legendFontSize: 15,
+        price: asset.totalPrice,
     }));
 
     const chartConfig = {
@@ -135,31 +152,10 @@ const PortFolio = () => {
         color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
     };
 
-    // Apply dark mode styles conditionally
     const containerStyle = [
         styles.container,
         isDarkMode && styles.darkModeContainer,
     ];
-
-    const earnedMoneyStyle = isDarkMode
-        ? styles.darkModeEarnedMoney
-        : styles.earnedMoney;
-    const losesMoneyStyle = isDarkMode
-        ? styles.darkModeLosesMoney
-        : styles.losesMoney;
-
-    // Calculate totalStockValue and totalCryptoValue when stockTotalValues and cryptoTotalValues change
-    useEffect(() => {
-        const stockValue = stockTotalValues.reduce((total, value) => total + value, 0);
-        const cryptoValue = cryptoTotalValues.reduce((total, crypto) => total + crypto.totalValue, 0);
-        setTotalStockValue(stockValue);
-        setTotalCryptoValue(cryptoValue);
-    }, [stockTotalValues, cryptoTotalValues]);
-
-    // Calculate totalAssetsValue whenever totalStockValue or totalCryptoValue changes
-    useEffect(() => {
-        setTotalAssetsValue(totalStockValue + totalCryptoValue);
-    }, [totalStockValue, totalCryptoValue]);
 
     return (
         <View style={containerStyle}>
@@ -217,27 +213,11 @@ const PortFolio = () => {
                 paddingLeft="15"
                 absolute
             />
-            {/* Render total values for stocks */}
-            <Text style={styles.assetValue}>Stocks Total Values:</Text>
-            {userAssets.map((asset, index) => (
-                <Text key={index}>
-                    {asset.name}: ${asset.price * asset.quantity}
-                </Text>
-            ))}
             <Text>Total Stock Assets: ${totalStockValue}</Text>
             <Text>{"\n"}</Text>
-
-            {/* Render total values for cryptos */}
-            <Text style={styles.assetValue}>Cryptos Total Values:</Text>
-            {cryptoTotalValues.map((crypto, index) => (
-                <Text key={index}>
-                    {crypto.name}: ${crypto.totalValue}
-                </Text>
-            ))}
-            <Text>Total Crypto Assets: ${totalCryptoValue}</Text>
-            <Text>{"\n"}</Text>
-            <StatusBar style="auto" />
-            <Text style={styles.totalValue}>Total assets values: ${totalAssetsValue}</Text>
+            <Text style={styles.totalValue}>
+                Total assets values: ${totalAssetsValue}
+            </Text>
         </View>
     );
 };
@@ -250,19 +230,19 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     darkModeContainer: {
-        backgroundColor: "#333", // Dark mode background color
+        backgroundColor: "#333",
     },
     earnedMoney: {
         color: "blue",
     },
     darkModeEarnedMoney: {
-        color: "lightblue", // Dark mode text color
+        color: "lightblue",
     },
     losesMoney: {
         color: "red",
     },
     darkModeLosesMoney: {
-        color: "pink", // Dark mode text color
+        color: "pink",
     },
     addButton: {
         backgroundColor: "blue",
@@ -272,7 +252,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background for the modal
+        backgroundColor: "rgba(0, 0, 0, 0.5)",
     },
     modalContent: {
         backgroundColor: "white",
@@ -289,26 +269,22 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     topBar: {
-        position: 'absolute',
-        top: 10,  // Adjust this value as needed to position the button vertically
-        left: 10, // Adjust this value as needed to position the button horizontally
-        flexDirection: "row", // Arrange items horizontally
+        position: "absolute",
+        top: 10,
+        left: 10,
+        flexDirection: "row",
     },
     pickerContainer: {
         flex: 1,
     },
-    assetValue: {
-        fontSize: 15,
-        fontWeight: "bold",
+    selectOptionText: {
+        marginBottom: 5,
     },
     totalValue: {
         fontSize: 20,
         fontWeight: "bold",
         color: "blue",
     },
-    selectOptionText: {
-        marginBottom: 5, // Adjust this value as needed to reduce the gap
-    },
 });
 
-export default PortFolio;
+export default Portfolio;

@@ -11,7 +11,6 @@ import {
   KeyboardAvoidingView,
 } from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
-
 import { Bottompopup } from "./BottomPopup";
 
 const LoginScreen = () => {
@@ -32,7 +31,6 @@ const LoginScreen = () => {
   const onClosePopup = () => {
     popupRef.close()
   }
-
 
   const handleLogin = async () => {
     if (user && pass) {

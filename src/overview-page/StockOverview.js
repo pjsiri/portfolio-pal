@@ -16,9 +16,6 @@ import { useDarkMode } from "../common/darkmode/DarkModeContext";
 import { getFirestore, collection, addDoc, updateDoc, doc, getDocs, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-const firestore = getFirestore();
-const auth = getAuth();
-
 const uriExists = async (uri) => {
   try {
     const response = await fetch(uri, { method: "GET" });
@@ -41,83 +38,6 @@ function formatNumberToBillion(num) {
     return num.toFixed(2);
   }
 }
-// Function to simulate buying a stock
-const fakeBuyStock = async (userId, symbol, quantity, price) => {
-  try {
-    const userRef = doc(firestore, 'users', userId);
-    const portfolioRef = collection(userRef, 'portfolio');
-
-    // Check if the user already owns this stock
-    const existingStock = await getDocs(query(portfolioRef, where('symbol', '==', symbol)));
-
-    if (existingStock.size > 0) {
-      // Update the quantity if the user already owns this stock
-      const stockDoc = existingStock.docs[0];
-      await updateDoc(stockDoc.ref, {
-        quantity: stockDoc.data().quantity + quantity,
-      });
-    } else {
-      // Add the stock to the user's portfolio if they don't already own it
-      await addDoc(portfolioRef, {
-        symbol,
-        quantity,
-      });
-    }
-
-    // Record the transaction
-    const transactionsRef = collection(userRef, 'transactions');
-    await addDoc(transactionsRef, {
-      type: 'buy',
-      symbol,
-      quantity,
-      price,
-      timestamp: new Date(),
-    });
-
-    return true; // Success
-  } catch (error) {
-    console.error('Error buying stock:', error);
-    return false; // Error occurred
-  }
-};
-
-// Function to simulate selling a stock
-const fakeSellStock = async (userId, symbol, quantity, price) => {
-  try {
-    const userRef = doc(firestore, 'users', userId);
-    const portfolioRef = collection(userRef, 'portfolio');
-
-    // Check if the user owns this stock
-    const existingStock = await getDocs(query(portfolioRef, where('symbol', '==', symbol)));
-
-    if (existingStock.size > 0 && existingStock.docs[0].data().quantity >= quantity) {
-      // Update the quantity if the user has enough of this stock
-      const stockDoc = existingStock.docs[0];
-      await updateDoc(stockDoc.ref, {
-        quantity: stockDoc.data().quantity - quantity,
-      });
-
-      // Record the transaction
-      const transactionsRef = collection(userRef, 'transactions');
-      await addDoc(transactionsRef, {
-        type: 'sell',
-        symbol,
-        quantity,
-        price,
-        timestamp: new Date(),
-      });
-
-      return true; // Success
-    } else {
-      return false; // User doesn't own enough of this stock
-    }
-  } catch (error) {
-    console.error('Error selling stock:', error);
-    return false; // Error occurred
-  }
-};
-
-export { fakeBuyStock, fakeSellStock };
 
 const StockOverview = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
@@ -126,7 +46,10 @@ const StockOverview = () => {
   const navigation = useNavigation();
   const [imageUri, setImageUri] = useState(null);
   const [isHeartFilled, setIsHeartFilled] = useState(false);
+  const firestore = getFirestore();
+  const auth = getAuth();
   const user = auth.currentUser;
+  const userId = user.uid;
 
   let stockSymbol = item.symbol;
   let stockName = (item.name || "").split(" ");
@@ -138,6 +61,82 @@ const StockOverview = () => {
   if (stockName.length > 0) {
     stockName = stockName[0];
   }
+
+  // Function to simulate buying a stock
+  const fakeBuyStock = async (userId, symbol, quantity, price) => {
+    try {
+      const userRef = doc(firestore, 'users', userId);
+      const portfolioRef = collection(userRef, 'portfolio');
+  
+      // Check if the user already owns this stock
+      const existingStock = await getDocs(query(portfolioRef, where('symbol', '==', symbol)));
+  
+      if (existingStock.size > 0) {
+        // Update the quantity if the user already owns this stock
+        const stockDoc = existingStock.docs[0];
+        await updateDoc(stockDoc.ref, {
+          quantity: stockDoc.data().quantity + quantity,
+        });
+      } else {
+        // Add the stock to the user's portfolio if they don't already own it
+        await addDoc(portfolioRef, {
+          symbol,
+          quantity,
+        });
+      }
+  
+      // Record the transaction
+      const transactionsRef = collection(userRef, 'transactions');
+      await addDoc(transactionsRef, {
+        type: 'buy',
+        symbol,
+        quantity,
+        price,
+        timestamp: new Date(),
+      });
+  
+      return true; // Success
+    } catch (error) {
+      console.error('Error buying stock:', error);
+      return false; // Error occurred
+    }
+  };
+  
+  // Function to simulate selling a stock
+  const fakeSellStock = async (userId, symbol, quantity, price) => {
+    try {
+      const userRef = doc(firestore, 'users', userId);
+      const portfolioRef = collection(userRef, 'portfolio');
+  
+      // Check if the user owns this stock
+      const existingStock = await getDocs(query(portfolioRef, where('symbol', '==', symbol)));
+  
+      if (existingStock.size > 0 && existingStock.docs[0].data().quantity >= quantity) {
+        // Update the quantity if the user has enough of this stock
+        const stockDoc = existingStock.docs[0];
+        await updateDoc(stockDoc.ref, {
+          quantity: stockDoc.data().quantity - quantity,
+        });
+  
+        // Record the transaction
+        const transactionsRef = collection(userRef, 'transactions');
+        await addDoc(transactionsRef, {
+          type: 'sell',
+          symbol,
+          quantity,
+          price,
+          timestamp: new Date(),
+        });
+  
+        return true; // Success
+      } else {
+        return false; // User doesn't own enough of this stock
+      }
+    } catch (error) {
+      console.error('Error selling stock:', error);
+      return false; // Error occurred
+    }
+  };
 
   useEffect(() => {
     async function checkUris() {
@@ -165,7 +164,6 @@ const StockOverview = () => {
   });
 
   const handleBuy = async () => {
-    const userId = user.uid;
     const quantity = 1;
     const success = await fakeBuyStock(userId, stockSymbol, quantity, data.price);
     if (success) {
@@ -178,7 +176,6 @@ const StockOverview = () => {
   };
 
   const handleSell = async () => {
-    const userId = user.uid;
     const quantity = 1;
     const success = await fakeSellStock(userId, stockSymbol, quantity, data.price);
     if (success) {

@@ -9,6 +9,9 @@ const styles = StyleSheet.create({
     backgroundColor: "#F0F0F0",
   },
 
+  darkModeContainer: {
+    backgroundColor: "#333",
+  },
   headerContainer: {
     width: 200,
     flexDirection: "row",

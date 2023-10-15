@@ -83,17 +83,20 @@ const StockOverview = () => {
 
   const containerStyle = [
     styles.appContainer,
-    isDarkMode && styles.darkModeContainer,
+    isDarkMode && { backgroundColor: "#333" },
   ];
 
+  const textColor = isDarkMode ? { color: "white" } : {};
+
   return (
-    <SafeAreaView
-      style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}
-    >
+    <SafeAreaView style={containerStyle}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={styles.backButton}
+          style={[
+            styles.backButton,
+            isDarkMode && { backgroundColor: '#404040' }, // Change background color in dark mode
+          ]}
         >
           <Image
             source={{
@@ -101,30 +104,29 @@ const StockOverview = () => {
             }}
             style={styles.inputIcon}
           />
-          <Text style={styles.backButtonText}>Back</Text>
+          <Text style={{ ...styles.backButtonText, ...textColor }}>Back</Text>
         </TouchableOpacity>
-
         <View style={styles.container}>
           <View style={styles.container}>
-            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+            <Text style={{ fontSize: 25, fontWeight: "bold", ...textColor }}>
               {data.name}
             </Text>
-            <Text style={{ fontSize: 15 }}>({data.symbol})</Text>
-            <Text style={{ fontSize: 60, fontWeight: "bold" }}>
+            <Text style={{ fontSize: 15, ...textColor }}>({data.symbol})</Text>
+            <Text style={{ fontSize: 60, fontWeight: "bold", ...textColor }}>
               ${formatNumber(data.price)}
             </Text>
             <View style={{ flexDirection: "row" }}>
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 20, fontWeight: "bold", ...textColor }}>
                 ${formatNumber(data.change)}&nbsp;
               </Text>
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 20, fontWeight: "bold", ...textColor }}>
                 ({formatNumber(data.change_percent)}%)
               </Text>
             </View>
           </View>
 
           <View style={styles.graphContainer}>
-            <Text>Stock chart work in progress</Text>
+            <Text style={{ ...textColor }}>Stock chart work in progress</Text>
           </View>
 
           <TouchableOpacity style={styles.bookmarkContainer}>
@@ -137,34 +139,34 @@ const StockOverview = () => {
               resizeMode="contain"
               style={styles.heartImage}
             />
-            <Text>Add to watchlist</Text>
+            <Text style={textColor}>Add to watchlist</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.buyContainer}>
-            <Text style={styles.buySellText}>Buy</Text>
+            <Text style={{ ...styles.buySellText, ...textColor }}>Buy</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.sellContainer}>
-            <Text style={styles.buySellText}>Sell</Text>
+            <Text style={{ ...styles.buySellText, ...textColor }}>Sell</Text>
           </TouchableOpacity>
 
           <View style={styles.detailContainer}>
             <View style={styles.priceDetailContainer}>
               <Text>
                 Open:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   ${formatNumber(data.open)}
                 </Text>
               </Text>
               <Text>
                 High:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   ${formatNumber(data.high)}
                 </Text>
               </Text>
               <Text>
                 Low:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   ${formatNumber(data.low)}
                 </Text>
               </Text>
@@ -173,25 +175,25 @@ const StockOverview = () => {
             <View style={styles.priceDetailContainer}>
               <Text>
                 Mkt cap:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   ${formatNumberToBillion(data.company_market_cap || 0)}
                 </Text>
               </Text>
               <Text>
                 P/E ratio:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   {formatNumber(data.company_pe_ratio)}
                 </Text>
               </Text>
               <Text>
                 Div yield:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   {formatNumber(data.company_dividend_yield)}%
                 </Text>
               </Text>
             </View>
           </View>
-          <Text>All prices {data.currency || "CNY"}.</Text>
+          <Text style={textColor}>All prices {data.currency || "CNY"}.</Text>
           <Image
             source={
               imageUri ? { uri: imageUri } : require("../../assets/no-logo.png")
@@ -199,7 +201,7 @@ const StockOverview = () => {
             resizeMode="contain"
             style={styles.logoImage}
           />
-          <Text style={styles.aboutText}>{data.about}</Text>
+          <Text style={{ ...styles.aboutText, ...textColor }}>{data.about}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

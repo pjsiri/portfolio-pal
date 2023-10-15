@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import styles from "./Cards.style";
+import { useDarkMode } from "../../common/darkmode/DarkModeContext";
 import {
   getFirestore,
   collection,
@@ -16,10 +17,10 @@ const uriExists = async (uri) => {
   try {
     const response = await fetch(uri, { method: "GET" });
     return response.ok;
-  } catch (error) {
+  } catch ( error) {
     return false;
   }
-};
+}
 
 function formatNumber(num) {
   return (num || 0).toFixed(2);
@@ -112,8 +113,20 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
     }
   };
 
+  // Get the dark mode state
+  const { isDarkMode } = useDarkMode();
+
   return (
-    <TouchableOpacity style={styles.container} onPress={handleNavigate}>
+    <TouchableOpacity
+      style={[
+        styles.container,
+        // Conditionally set background and text color based on dark mode state
+        {
+          backgroundColor: isDarkMode ? "#5a5a5a" : "#FFF",
+        }
+      ]}
+      onPress={handleNavigate}
+    >
       <TouchableOpacity style={styles.logoContainer}>
         <Image
           source={
@@ -127,10 +140,28 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
       </TouchableOpacity>
 
       <View style={styles.nameContainer}>
-        <Text style={styles.stockName} numberOfLines={1}>
+        <Text
+          style={[
+            styles.stockName,
+            // Conditionally set text color based on dark mode state
+            {
+              color: isDarkMode ? "white" : "black",
+            }
+          ]}
+          numberOfLines={1}
+        >
           {item.from_currency_name}
         </Text>
-        <Text style={styles.stockSymbol} numberOfLines={1}>
+        <Text
+          style={[
+            styles.stockSymbol,
+            // Conditionally set text color based on dark mode state
+            {
+              color: isDarkMode ? "white" : "black",
+            }
+          ]}
+          numberOfLines={1}
+        >
           {item.from_symbol}
         </Text>
       </View>
@@ -151,7 +182,16 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
           />
         </TouchableOpacity>
         <View style={styles.priceContainer}>
-          <Text style={styles.stockPrice} numberOfLines={1}>
+          <Text
+            style={[
+              styles.stockPrice,
+              // Conditionally set text color based on dark mode state
+              {
+                color: isDarkMode ? "white" : "black",
+              }
+            ]}
+            numberOfLines={1}
+          >
             ${formatNumber(item.exchange_rate)}&nbsp;{item.to_symbol}
           </Text>
         </View>

@@ -63,8 +63,10 @@ const PortFolio = () => {
             quantity: parseInt(assetQuantity),
             type: selectedValue,
         };
+
+        newAsset.totalPrice = newAsset.price * newAsset.quantity;
     
-        //firebase
+        //Save to database 
         const db = getFirestore();
         const auth = getAuth();
         const user = auth.currentUser;
@@ -89,7 +91,7 @@ const PortFolio = () => {
         } else {
             console.log('No authenticated user found');
         }
-    
+        
         // Update userAssets with the new asset
         setUserAssets([...userAssets, newAsset]);
     

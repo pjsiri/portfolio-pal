@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, Image } from "react-native";
-
 import styles from "./Cards.style";
+import { useDarkMode } from "../../common/darkmode/DarkModeContext";
 import {
   getFirestore,
   collection,
@@ -117,8 +117,20 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
     }
   };
 
+  // Get the dark mode state
+  const { isDarkMode } = useDarkMode();
+
   return (
-    <TouchableOpacity style={styles.container} onPress={handleNavigate}>
+    <TouchableOpacity
+      style={[
+        styles.container,
+        // Conditionally set background and text color based on dark mode state
+        {
+          backgroundColor: isDarkMode ? "#5a5a5a" : "#FFF",
+        },
+      ]}
+      onPress={handleNavigate}
+    >
       <TouchableOpacity style={styles.logoContainer}>
         <Image
           source={
@@ -132,10 +144,28 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
       </TouchableOpacity>
 
       <View style={styles.nameContainer}>
-        <Text style={styles.stockName} numberOfLines={1}>
+        <Text
+          style={[
+            styles.stockName,
+            // Conditionally set text color based on dark mode state
+            {
+              color: isDarkMode ? "white" : "black",
+            },
+          ]}
+          numberOfLines={1}
+        >
           {item.name}
         </Text>
-        <Text style={styles.stockSymbol} numberOfLines={1}>
+        <Text
+          style={[
+            styles.stockSymbol,
+            // Conditionally set text color based on dark mode state
+            {
+              color: isDarkMode ? "white" : "black",
+            },
+          ]}
+          numberOfLines={1}
+        >
           {stockSymbol}
         </Text>
       </View>
@@ -175,7 +205,16 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
           </TouchableOpacity>
         )}
         <View style={styles.priceContainer}>
-          <Text style={styles.stockPrice} numberOfLines={1}>
+          <Text
+            style={[
+              styles.stockPrice,
+              // Conditionally set text color based on dark mode state
+              {
+                color: isDarkMode ? "white" : "black",
+              },
+            ]}
+            numberOfLines={1}
+          >
             ${formatNumber(item.price)}&nbsp;{item.currency || "CNY"}
           </Text>
         </View>

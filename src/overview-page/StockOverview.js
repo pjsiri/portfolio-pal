@@ -13,6 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 import styles from "./Overview.style";
 import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
+import { getFirestore, collection, addDoc, updateDoc, doc, getDocs, query, where } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 const uriExists = async (uri) => {
   try {
@@ -44,6 +46,10 @@ const StockOverview = () => {
   const navigation = useNavigation();
   const [imageUri, setImageUri] = useState(null);
   const [isHeartFilled, setIsHeartFilled] = useState(false);
+  const firestore = getFirestore();
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const userId = user.uid;
 
   let stockSymbol = item.symbol;
   let stockName = (item.name || "").split(" ");
@@ -55,6 +61,82 @@ const StockOverview = () => {
   if (stockName.length > 0) {
     stockName = stockName[0];
   }
+
+  // Function to simulate buying a stock
+  const fakeBuyStock = async (userId, symbol, quantity, price) => {
+    try {
+      const userRef = doc(firestore, 'users', userId);
+      const portfolioRef = collection(userRef, 'portfolio');
+  
+      // Check if the user already owns this stock
+      const existingStock = await getDocs(query(portfolioRef, where('symbol', '==', symbol)));
+  
+      if (existingStock.size > 0) {
+        // Update the quantity if the user already owns this stock
+        const stockDoc = existingStock.docs[0];
+        await updateDoc(stockDoc.ref, {
+          quantity: stockDoc.data().quantity + quantity,
+        });
+      } else {
+        // Add the stock to the user's portfolio if they don't already own it
+        await addDoc(portfolioRef, {
+          symbol,
+          quantity,
+        });
+      }
+  
+      // Record the transaction
+      const transactionsRef = collection(userRef, 'transactions');
+      await addDoc(transactionsRef, {
+        type: 'buy',
+        symbol,
+        quantity,
+        price,
+        timestamp: new Date(),
+      });
+  
+      return true; // Success
+    } catch (error) {
+      console.error('Error buying stock:', error);
+      return false; // Error occurred
+    }
+  };
+  
+  // Function to simulate selling a stock
+  const fakeSellStock = async (userId, symbol, quantity, price) => {
+    try {
+      const userRef = doc(firestore, 'users', userId);
+      const portfolioRef = collection(userRef, 'portfolio');
+  
+      // Check if the user owns this stock
+      const existingStock = await getDocs(query(portfolioRef, where('symbol', '==', symbol)));
+  
+      if (existingStock.size > 0 && existingStock.docs[0].data().quantity >= quantity) {
+        // Update the quantity if the user has enough of this stock
+        const stockDoc = existingStock.docs[0];
+        await updateDoc(stockDoc.ref, {
+          quantity: stockDoc.data().quantity - quantity,
+        });
+  
+        // Record the transaction
+        const transactionsRef = collection(userRef, 'transactions');
+        await addDoc(transactionsRef, {
+          type: 'sell',
+          symbol,
+          quantity,
+          price,
+          timestamp: new Date(),
+        });
+  
+        return true; // Success
+      } else {
+        return false; // User doesn't own enough of this stock
+      }
+    } catch (error) {
+      console.error('Error selling stock:', error);
+      return false; // Error occurred
+    }
+  };
 
   useEffect(() => {
     async function checkUris() {
@@ -81,19 +163,46 @@ const StockOverview = () => {
     language: "en",
   });
 
+  const handleBuy = async () => {
+    const quantity = 1;
+    const success = await fakeBuyStock(userId, stockSymbol, quantity, data.price);
+    if (success) {
+      // Update UI or show a success message
+      console.log('Buy successful!');
+    } else {
+      // Handle error
+      console.log('Error buying stock');
+    }
+  };
+
+  const handleSell = async () => {
+    const quantity = 1;
+    const success = await fakeSellStock(userId, stockSymbol, quantity, data.price);
+    if (success) {
+      // Update UI or show a success message
+      console.log('Sell successful!');
+    } else {
+      // Handle error
+      console.log('Error selling stock');
+    }
+  };
+
   const containerStyle = [
     styles.appContainer,
-    isDarkMode && styles.darkModeContainer,
+    isDarkMode && { backgroundColor: "#333" },
   ];
 
+  const textColor = isDarkMode ? { color: "white" } : {};
+
   return (
-    <SafeAreaView
-      style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}
-    >
+    <SafeAreaView style={containerStyle}>
       <ScrollView showsVerticalScrollIndicator={false}>
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={styles.backButton}
+          style={[
+            styles.backButton,
+            isDarkMode && { backgroundColor: '#404040' }, // Change background color in dark mode
+          ]}
         >
           <Image
             source={{
@@ -101,30 +210,29 @@ const StockOverview = () => {
             }}
             style={styles.inputIcon}
           />
-          <Text style={styles.backButtonText}>Back</Text>
+          <Text style={{ ...styles.backButtonText, ...textColor }}>Back</Text>
         </TouchableOpacity>
-
         <View style={styles.container}>
           <View style={styles.container}>
-            <Text style={{ fontSize: 25, fontWeight: "bold" }}>
+            <Text style={{ fontSize: 25, fontWeight: "bold", ...textColor }}>
               {data.name}
             </Text>
-            <Text style={{ fontSize: 15 }}>({data.symbol})</Text>
-            <Text style={{ fontSize: 60, fontWeight: "bold" }}>
+            <Text style={{ fontSize: 15, ...textColor }}>({data.symbol})</Text>
+            <Text style={{ fontSize: 60, fontWeight: "bold", ...textColor }}>
               ${formatNumber(data.price)}
             </Text>
             <View style={{ flexDirection: "row" }}>
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 20, fontWeight: "bold", ...textColor }}>
                 ${formatNumber(data.change)}&nbsp;
               </Text>
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              <Text style={{ fontSize: 20, fontWeight: "bold", ...textColor }}>
                 ({formatNumber(data.change_percent)}%)
               </Text>
             </View>
           </View>
 
           <View style={styles.graphContainer}>
-            <Text>Stock chart work in progress</Text>
+            <Text style={{ ...textColor }}>Stock chart work in progress</Text>
           </View>
 
           <TouchableOpacity style={styles.bookmarkContainer}>
@@ -137,34 +245,34 @@ const StockOverview = () => {
               resizeMode="contain"
               style={styles.heartImage}
             />
-            <Text>Add to watchlist</Text>
+            <Text style={textColor}>Add to watchlist</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.buyContainer}>
-            <Text style={styles.buySellText}>Buy</Text>
+          <TouchableOpacity onPress={handleBuy} style={styles.buyContainer}>
+            <Text style={{ ...styles.buySellText, ...textColor }}>Buy</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.sellContainer}>
-            <Text style={styles.buySellText}>Sell</Text>
+          <TouchableOpacity onPress={handleSell} style={styles.sellContainer}>
+            <Text style={{ ...styles.buySellText, ...textColor }}>Sell</Text>
           </TouchableOpacity>
 
           <View style={styles.detailContainer}>
             <View style={styles.priceDetailContainer}>
               <Text>
                 Open:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   ${formatNumber(data.open)}
                 </Text>
               </Text>
               <Text>
                 High:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   ${formatNumber(data.high)}
                 </Text>
               </Text>
               <Text>
                 Low:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   ${formatNumber(data.low)}
                 </Text>
               </Text>
@@ -173,25 +281,25 @@ const StockOverview = () => {
             <View style={styles.priceDetailContainer}>
               <Text>
                 Mkt cap:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   ${formatNumberToBillion(data.company_market_cap || 0)}
                 </Text>
               </Text>
               <Text>
                 P/E ratio:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   {formatNumber(data.company_pe_ratio)}
                 </Text>
               </Text>
               <Text>
                 Div yield:{" "}
-                <Text style={{ fontWeight: "bold" }}>
+                <Text style={{ fontWeight: "bold", ...textColor }}>
                   {formatNumber(data.company_dividend_yield)}%
                 </Text>
               </Text>
             </View>
           </View>
-          <Text>All prices {data.currency || "CNY"}.</Text>
+          <Text style={textColor}>All prices {data.currency || "CNY"}.</Text>
           <Image
             source={
               imageUri ? { uri: imageUri } : require("../../assets/no-logo.png")
@@ -199,7 +307,7 @@ const StockOverview = () => {
             resizeMode="contain"
             style={styles.logoImage}
           />
-          <Text style={styles.aboutText}>{data.about}</Text>
+          <Text style={{ ...styles.aboutText, ...textColor }}>{data.about}</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

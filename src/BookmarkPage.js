@@ -6,12 +6,13 @@ import CryptoCard from './common/cards/CryptoCard';
 import cardStyles from './common/cards/Cards.style'; 
 import { useNavigation } from '@react-navigation/native';
 import Homestyles from "./home-page/HomePage.style";
-
 import { getAuth } from 'firebase/auth';
+import { useDarkMode } from './common/darkmode/DarkModeContext'; 
 
 const BookmarkedStocksPage = () => {
   const [bookmarkedItems, setBookmarkedItems] = useState([]);
   const navigation = useNavigation();
+  const { isDarkMode } = useDarkMode(); 
 
   const handleBack = () => {
     navigation.navigate('HomeStack'); // Navigate back to the previous screen
@@ -49,6 +50,7 @@ const BookmarkedStocksPage = () => {
     fetchBookmarkedItems();
   }, []);
 
+
   const styles = {
     container: {
       width: "100%",
@@ -68,25 +70,26 @@ const BookmarkedStocksPage = () => {
     backButton: {
       width: 30,
       height: 30,
+      tintColor: isDarkMode ? "white" : "black",
     },
     title: {
       fontSize: 24,
       marginBottom: 15,
+      color: isDarkMode ? "white" : "black",
     },
     appContainer: {
       flex: 1,
       padding: 15,
       paddingTop: 50,
       width: "100%",
-      backgroundColor: "#F0F0F0",
+      backgroundColor: isDarkMode ? "#333" : "White",
     },
     header: {
       fontWeight: "bold",
       fontSize: 30,
       paddingTop: 20,
       paddingBottom: 20,
-      color: "black",
-      left: 20,
+      color: isDarkMode ? "White" : "Black",
     },
     stocks: {
       paddingTop: 20,
@@ -100,7 +103,7 @@ const BookmarkedStocksPage = () => {
         <Text style={[styles.title, { fontSize: 28, fontWeight: "900"}]}>Bookmark Page</Text>
       </View>
       <View>
-      <View style={styles.header}>
+        <View style={styles.header}>
           <TouchableOpacity onPress={handleBack}>
             <Image
               source={{
@@ -112,7 +115,7 @@ const BookmarkedStocksPage = () => {
         </View>
         <FlatList style={styles.stocks}
           data={bookmarkedItems}
-          keyExtractor={(item) => item.type + '-' + (item.symbol || item.from_symbol)} // Adjusted keyExtractor
+          keyExtractor={(item) => item.type + '-' + (item.symbol || item.from_symbol)}
           renderItem={({ item }) => (
             item.type === 'crypto' || 'stocks' ? (
               <StockCard

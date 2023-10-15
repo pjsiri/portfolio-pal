@@ -15,6 +15,7 @@ import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
 import { getFirestore, collection, addDoc, updateDoc, doc, getDocs, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import QuantityInput from "./QuantityInput";
 
 const uriExists = async (uri) => {
   try {
@@ -41,6 +42,7 @@ function formatNumberToBillion(num) {
 
 const StockOverview = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
+  const [quantity, setQuantity] = useState(0);
   const route = useRoute();
   const { item } = route.params;
   const navigation = useNavigation();
@@ -61,6 +63,30 @@ const StockOverview = () => {
   if (stockName.length > 0) {
     stockName = stockName[0];
   }
+
+  const bookmarkStock = async (name, symbol, price) => {
+    const db = getFirestore();
+    const stocksRef = collection(db, "bookmarkedStocks");
+
+    try {
+      await addDoc(stocksRef, {
+        name,
+        symbol,
+        price,
+        timestamp: new Date(),
+        userId: user.uid,
+        type: "stock",
+      });
+      console.log("Stock bookmarked successfully!");
+      setIsHeartFilled(true);
+    } catch (error) {
+      console.error("Error bookmarking stock:", error);
+    }
+  };
+
+  const handleBookmarkInOverview = () => {
+    bookmarkStock(item.name, item.symbol, item.price);
+  };
 
   // Function to simulate buying a stock
   const fakeBuyStock = async (userId, symbol, quantity, price) => {
@@ -155,6 +181,23 @@ const StockOverview = () => {
       }
     }
 
+    // Function to check if a stock is bookmarked
+    const isStockBookmarked = async () => {
+      try {
+        const stocksRef = collection(firestore, "bookmarkedStocks");
+        const q = query(stocksRef, where("userId", "==", userId), where("symbol", "==", item.symbol));
+        const querySnapshot = await getDocs(q);
+
+        if (!querySnapshot.empty) {
+          setIsHeartFilled(true);
+        }
+      } catch (error) {
+        console.error("Error checking if stock is bookmarked:", error);
+      }
+    };
+
+    isStockBookmarked(); // Call the function
+
     checkUris();
   }, [stockSymbol, stockName]);
 
@@ -164,7 +207,6 @@ const StockOverview = () => {
   });
 
   const handleBuy = async () => {
-    const quantity = 1;
     const success = await fakeBuyStock(userId, stockSymbol, quantity, data.price);
     if (success) {
       // Update UI or show a success message
@@ -176,7 +218,6 @@ const StockOverview = () => {
   };
 
   const handleSell = async () => {
-    const quantity = 1;
     const success = await fakeSellStock(userId, stockSymbol, quantity, data.price);
     if (success) {
       // Update UI or show a success message
@@ -234,8 +275,10 @@ const StockOverview = () => {
           <View style={styles.graphContainer}>
             <Text style={{ ...textColor }}>Stock chart work in progress</Text>
           </View>
-
-          <TouchableOpacity style={styles.bookmarkContainer}>
+          <TouchableOpacity
+          style={styles.bookmarkContainer}
+          onPress={handleBookmarkInOverview} // Use the function in StockOverview
+          >
             <Image
               source={
                 isHeartFilled
@@ -247,7 +290,7 @@ const StockOverview = () => {
             />
             <Text style={textColor}>Add to watchlist</Text>
           </TouchableOpacity>
-
+          <QuantityInput quantity={quantity} setQuantity={setQuantity} />
           <TouchableOpacity onPress={handleBuy} style={styles.buyContainer}>
             <Text style={{ ...styles.buySellText, ...textColor }}>Buy</Text>
           </TouchableOpacity>

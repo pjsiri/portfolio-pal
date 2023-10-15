@@ -65,6 +65,24 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
     checkUris();
   }, [stockSymbol, stockName]);
 
+  useEffect(() => {
+    async function checkBookmarkStatus() {
+      if (user) {
+        const db = getFirestore();
+        const stocksRef = collection(db, "bookmarkedStocks");
+        const q = query(
+          stocksRef,
+          where("symbol", "==", item.symbol),
+          where("userId", "==", user.uid)
+        );
+        const querySnapshot = await getDocs(q);
+        setIsHeartFilled(querySnapshot.size > 0);
+      }
+    }
+
+    checkBookmarkStatus();
+  }, [user, stockSymbol]);
+
   const bookmarkStock = async (name, symbol, price) => {
     const db = getFirestore();
     const stocksRef = collection(db, "bookmarkedStocks");

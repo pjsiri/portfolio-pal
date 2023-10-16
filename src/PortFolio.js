@@ -49,6 +49,7 @@ const Portfolio = () => {
         setIsModalVisible(false);
     };
 
+    //Data saving to database 
     const handleSave = async () => {
         const newAsset = {
             name: assetName,
@@ -106,8 +107,10 @@ const Portfolio = () => {
 
     const screenWidth = Dimensions.get("window").width;
 
+    //get data from database 
     useEffect(() => {
-        const fetchUserAssets = async () => {
+        //authorisation
+        const fetchUserAssets = async () => { 
             const db = getFirestore();
             const auth = getAuth();
             const user = auth.currentUser;
@@ -217,6 +220,7 @@ const Portfolio = () => {
                 absolute
             />
             <Text>Total Stock Assets: ${totalStockValue}</Text>
+            <Text>Total Crypotos Assets: ${totalStockValue}</Text>
             <Text>{"\n"}</Text>
             <Text style={styles.totalValue}>
                 Total assets values: ${totalStockValue + totalCryptoValue}

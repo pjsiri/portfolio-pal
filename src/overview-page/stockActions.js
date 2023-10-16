@@ -1,10 +1,9 @@
 import { getFirestore, collection, addDoc, updateDoc, doc, getDocs, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-const firestore = getFirestore();
-
 export const fakeBuyStock = async (userId, symbol, quantity, price) => {
     try {
+        const firestore = getFirestore();
         const userRef = doc(firestore, 'users', userId);
         const portfolioRef = collection(userRef, 'portfolio');
     
@@ -44,6 +43,7 @@ export const fakeBuyStock = async (userId, symbol, quantity, price) => {
   
   export const fakeSellStock = async (userId, symbol, quantity, price) => {
     try {
+      const firestore = getFirestore();
       const userRef = doc(firestore, 'users', userId);
       const portfolioRef = collection(userRef, 'portfolio');
   

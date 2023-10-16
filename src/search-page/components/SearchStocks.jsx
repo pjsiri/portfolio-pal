@@ -8,7 +8,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
-
+import { useDarkMode } from '../../common/darkmode/DarkModeContext.js';
 import styles from "./Search.style";
 import StockCard from "../../common/cards/StockCard";
 import CryptoCard from "../../common/cards/CryptoCard";
@@ -145,24 +145,33 @@ const SearchStocks = ({
     refetch();
   }, [inputQuery, stockSelected]);
 
+  const { isDarkMode } = useDarkMode();
+
   return (
     <View style={styles.container}>
       {stockSelected ? (
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Browse stocks</Text>
+          <Text style={[styles.headerTitle, isDarkMode && styles.headerTitleDark]}>
+            Browse stocks
+          </Text>
           <TouchableOpacity onPress={handleBrowseType}>
-            <Text style={styles.headerBtn}>Browse cryptos</Text>
+            <Text style={[styles.headerBtn, isDarkMode && styles.headerBtnDark]}>
+              Browse cryptos
+            </Text>
           </TouchableOpacity>
         </View>
       ) : (
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Browse cryptos</Text>
+          <Text style={[styles.headerTitle, isDarkMode && styles.headerTitleDark]}>
+            Browse cryptos
+          </Text>
           <TouchableOpacity onPress={handleBrowseType}>
-            <Text style={styles.headerBtn}>Browse stocks</Text>
+            <Text style={[styles.headerBtn, isDarkMode && styles.headerBtnDark]}>
+              Browse stocks
+            </Text>
           </TouchableOpacity>
         </View>
       )}
-
       <View style={styles.cardsContainer}>
         {isLoading ? (
           <ActivityIndicator size="large" colors={"black"} />

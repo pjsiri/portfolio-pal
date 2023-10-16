@@ -20,11 +20,6 @@ const HomePage = () => {
     navigation.navigate("BookmarkPage");
   };
 
-  const containerStyle = [
-    styles.appContainer,
-    isDarkMode && styles.darkModeContainer,
-  ];
-
   return (
     <SafeAreaView
       style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}
@@ -39,7 +34,13 @@ const HomePage = () => {
         </Text>
         <TouchableOpacity onPress={handleNavigateToBookmarks}>
           <Image
-            style={{ width: 40, height: 40, marginTop: 10, marginRight: 10}}
+            style={{
+              width: 40,
+              height: 40,
+              marginTop: 10,
+              marginRight: 10,
+              tintColor: isDarkMode ? "white" : undefined,
+            }}
             source={require("../../assets/heart_hollow.png")}
           />
         </TouchableOpacity>

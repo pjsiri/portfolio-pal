@@ -33,7 +33,6 @@ const Portfolio = () => {
     const [userAssets, setUserAssets] = useState([]);
     const [totalStockValue, setTotalStockValue] = useState(0);
     const [totalCryptoValue, setTotalCryptoValue] = useState(0);
-    const [totalAssetsValue, setTotalAssetsValue] = useState(0);
     const [cryptoTotalValues, setCryptoTotalValues] = useState([]);
     const [stockTotalValues, setStockTotalValues] = useState([]);
 
@@ -118,11 +117,22 @@ const Portfolio = () => {
                     const userAssetRef = collection(db, `userAssets/${user.uid}/Assets`);
                     const querySnapshot = await getDocs(userAssetRef);
                     const assets = [];
+                    let stockTotal = 0;
+                    let cryptoTotal = 0;
+
                     querySnapshot.forEach((doc) => {
-                        assets.push(doc.data());
+                        const asset = doc.data();
+                        assets.push(asset);
+                        if (asset.type === "Stock") {
+                            stockTotal += asset.totalPrice;
+                        } else if (asset.type === "Crypto") {
+                            cryptoTotal += asset.totalPrice;
+                        }
                     });
 
                     setUserAssets(assets);
+                    setTotalStockValue(stockTotal);
+                    setTotalCryptoValue(cryptoTotal);
                 } catch (error) {
                     console.error("Error fetching user assets from Firestore:", error);
                 }
@@ -134,18 +144,11 @@ const Portfolio = () => {
         fetchUserAssets();
     }, []);
 
-    useEffect(() => {
-        setTotalAssetsValue(
-            userAssets.reduce((total, asset) => total + asset.totalPrice, 0)
-        );
-    }, [userAssets]);
-
     // Create the chart data based on userAssets
-    const chartData = userAssets.map((asset) => ({
-        name: asset.name,
-        price: asset.totalPrice,
-    }));
-
+    const chartData = [
+        { name: "Stocks", price: totalStockValue },
+        { name: "Cryptos", price: totalCryptoValue },
+    ];
     const chartConfig = {
         backgroundGradientFrom: "#fff",
         backgroundGradientTo: "#fff",
@@ -216,7 +219,7 @@ const Portfolio = () => {
             <Text>Total Stock Assets: ${totalStockValue}</Text>
             <Text>{"\n"}</Text>
             <Text style={styles.totalValue}>
-                Total assets values: ${totalAssetsValue}
+                Total assets values: ${totalStockValue + totalCryptoValue}
             </Text>
         </View>
     );

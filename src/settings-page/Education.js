@@ -98,8 +98,10 @@ const Education = () => {
   // Function to search YouTube videos
   const searchYouTube = async () => {
     try {
+      // Include "crypto" and "stocks" in the query to prioritize related videos
+      const updatedQuery = `${query} crypto stocks`;
       const response = await fetch(
-        `https://www.googleapis.com/youtube/v3/search?key=AIzaSyBooVy4u6DM90b76M3366Ceca957awSs3g&q=${query}&type=video&part=snippet&maxResults=10`
+        `https://www.googleapis.com/youtube/v3/search?key=AIzaSyBooVy4u6DM90b76M3366Ceca957awSs3g&q=${updatedQuery}&type=video&part=snippet&maxResults=10`
       );
       const data = await response.json();
       // Limit the number of results to 5
@@ -180,4 +182,3 @@ const Education = () => {
 };
 
 export default Education;
-

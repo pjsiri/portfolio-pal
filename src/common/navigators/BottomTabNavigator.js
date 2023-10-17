@@ -19,6 +19,7 @@ const BottomTabNavigator = () => {
         name="Home"
         component={HomePage}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <TabIcon name="home-outline" color={color} size={size} />
           ),
@@ -28,6 +29,7 @@ const BottomTabNavigator = () => {
         name="Portfolio"
         component={PortfolioPage}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <TabIcon name="briefcase-outline" color={color} size={size} />
           ),
@@ -37,6 +39,7 @@ const BottomTabNavigator = () => {
         name="SearchPage"
         component={SearchPage}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <TabIcon name="search-outline" color={color} size={size} />
           ),
@@ -46,6 +49,7 @@ const BottomTabNavigator = () => {
         name="Settings"
         component={SettingsPage}
         options={{
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <TabIcon name="cog-outline" color={color} size={size} />
           ),

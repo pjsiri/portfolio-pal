@@ -53,13 +53,14 @@ const styles = StyleSheet.create({
 
   bookmarkContainer: {
     // backgroundColor: "#008000",
-    backgroundColor: "",
+    backgroundColor: "black",
     flexDirection: "row",
     borderRadius: 25,
     padding: 15,
     alignSelf: "center",
     width: 200,
     justifyContent: "space-evenly",
+    marginBottom: 10,
   },
 
   bookmarkIcon: {

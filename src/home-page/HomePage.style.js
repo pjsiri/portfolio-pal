@@ -14,17 +14,22 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#F0F0F0",
     padding: 15,
-    paddingTop: 20,
+    paddingTop: 30,
   },
 
   headerContainer: {
     // backgroundColor: "#252525",
-    backgroundColor: "black",
+    backgroundColor: "white",
     flexDirection: "row",
     paddingVertical: 15,
     justifyContent: "center",
-    borderRadius: 20,
+    borderRadius: 50,
     marginBottom: 15,
+    borderColor: "black",
+    borderTopWidth: 10,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 10,
   },
 
   appLogo: {
@@ -41,12 +46,13 @@ const styles = StyleSheet.create({
     textAlignVertical: "center",
     fontWeight: "bold",
     fontSize: 38,
-    color: "white",
+    color: "black",
     left: -10,
   },
 
   bookmarkContainer: {
-    backgroundColor: "#008000",
+    // backgroundColor: "#008000",
+    backgroundColor: "",
     flexDirection: "row",
     borderRadius: 25,
     padding: 15,

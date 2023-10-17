@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#F0F0F0",
     padding: 15,
-    paddingTop: 30,
+    paddingTop: 20,
   },
 
   headerContainer: {
@@ -24,6 +24,7 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     justifyContent: "center",
     borderRadius: 50,
+    marginTop: 30,
     marginBottom: 15,
     borderColor: "black",
     borderTopWidth: 10,

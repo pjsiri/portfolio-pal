@@ -1,84 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Image,
   Text,
-  ScrollView,
   TouchableOpacity,
   FlatList,
-} from "react-native";
-import { WebView } from "react-native-webview";
-import { useNavigation } from "@react-navigation/native";
-import { useDarkMode } from "../common/darkmode/DarkModeContext";
+  TextInput,
+  Button,
+} from 'react-native';
+import { WebView } from 'react-native-webview';
+import { useNavigation } from '@react-navigation/native';
+import { useDarkMode } from '../common/darkmode/DarkModeContext';
 
 const Education = () => {
   const navigation = useNavigation();
   const { isDarkMode } = useDarkMode();
+  const [query, setQuery] = useState('');
+  const [searchResults, setSearchResults] = useState([]); 
 
   const handleBack = () => {
     navigation.goBack();
   };
 
-  const videoData = [
-    {
-      category: "Beginner",
-      title: "Summary:",
-      url: "https://www.youtube.com/watch?v=i5OZQQWj5-I",
-      thumbnail: "https://img.youtube.com/vi/i5OZQQWj5-I/maxresdefault.jpg",
-      description:
-        "Learn stock trading as a complete beginner:<br>Avoid risking real money; use free trading <br>simulators. Record and analyze every trade. <br>Mastery before profits. Potential video series.",
-    },
-    {
-      title: "Summary:",
-      url: "https://www.youtube.com/watch?v=8mBmwomJcP8&ab_channel=KrownChakraTv",
-      thumbnail: "https://img.youtube.com/vi/8mBmwomJcP8/maxresdefault.jpg",
-      description:
-        "Promoting market confidence and taking <br>financial risks for wealth and success.",
-    },
-
-    {
-      category: "Intermediate",
-      title: "Summary:",
-      url: "https://www.youtube.com/watch?v=Ay-zLahPFEk",
-      thumbnail: "https://img.youtube.com/vi/Ay-zLahPFEk/maxresdefault.jpg",
-      description:
-        "Individual investors now have better access <br>to information. The stock market isn't a <br>lottery; research companies for success.",
-    },
-    {
-      title: "Summary:",
-      url: "https://www.youtube.com/watch?v=DBkvdlAlNDY&ab_channel=CollectionCrypto",
-      thumbnail: "https://img.youtube.com/vi/DBkvdlAlNDY/maxresdefault.jpg",
-      description:
-        "Shows the Step by Step Guide too investing <br> in binance.",
-    },
-    {
-      category: "Advance",
-      title: "Summary:",
-      url: "https://www.youtube.com/watch?v=X6bRU-3yyEY&ab_channel=TechShiksha",
-      thumbnail: "https://img.youtube.com/vi/X6bRU-3yyEY/maxresdefault.jpg",
-      description:
-        "How to set up an Excel Sheet to Track your <br>Portfolio Investments.",
-    },
-    {
-      title: "Summary:",
-      url: "https://www.youtube.com/watch?v=aNs0Yo5amF4&ab_channel=Pete-HowToAnalyst",
-      thumbnail: "https://img.youtube.com/vi/aNs0Yo5amF4/maxresdefault.jpg",
-      description:
-        "Step by Step guide in creating a crypto <br>portfolio dashboard in Excel.",
-    },
-  ];
+  useEffect(() => {
+    searchYouTube();
+  }, []);
 
   const styles = {
     container: {
       flex: 1,
-      alignItems: "center",
-      justifyContent: "flex-start",
+      alignItems: 'center',
+      justifyContent: 'flex-start',
       paddingTop: 0,
-      backgroundColor: isDarkMode ? "#333" : "#fff",
+      backgroundColor: isDarkMode ? '#333' : '#fff',
     },
     headerContainer: {
-      flexDirection: "row",
-      alignItems: "center",
+      flexDirection: 'row',
+      alignItems: 'center',
       marginBottom: 20,
     },
     backButtonContainer: {
@@ -91,35 +49,34 @@ const Education = () => {
     bannerImage: {
       width: 300,
       height: 200,
-      resizeMode: "contain",
+      resizeMode: 'contain',
     },
     educationText: {
       fontSize: 24,
-      fontWeight: "bold",
-      marginTop: -25,
-      color: isDarkMode ? "lightblue" : "black",
+      fontWeight: 'bold',
+      marginTop: -55,
+      color: isDarkMode ? 'lightblue' : 'black',
     },
     textBox: {
-      backgroundColor: isDarkMode ? "#2A2C41" : "#fff",
+      backgroundColor: isDarkMode ? '#333' : '#fff',
       padding: 10,
       margin: 10,
       borderRadius: 5,
       width: 375,
-      height: 450,
+      height: 400,
+      borderColor: '#777',     
+      borderWidth: 2,          
     },
     scrollView: {
       maxHeight: 400,
     },
     sectionTitle: {
-      fontWeight: "bold",
-      textDecorationLine: "underline",
-      color: isDarkMode ? "gold" : "black",
-    },
-    goldText: {
-      color: "gold",
+      fontWeight: 'bold',
+      textDecorationLine: 'underline',
+      color: isDarkMode ? 'white' : 'black',
     },
     videoContainer: {
-      marginBottom: 20,
+      marginBottom: 30,
     },
     video: {
       width: 490,
@@ -128,72 +85,93 @@ const Education = () => {
     flatListContainer: {
       maxHeight: 500,
     },
+    searchInput: {
+      backgroundColor: isDarkMode ? '#404040' : '#f8f8ff', 
+      margin: 10,
+      borderRadius: 5,
+      width: 375,
+      height: 40,
+    },
+    
+  };
+
+  // Function to search YouTube videos
+  const searchYouTube = async () => {
+    try {
+      const response = await fetch(
+        `https://www.googleapis.com/youtube/v3/search?key=AIzaSyBooVy4u6DM90b76M3366Ceca957awSs3g&q=${query}&type=video&part=snippet&maxResults=10`
+      );
+      const data = await response.json();
+      // Limit the number of results to 5
+      const limitedResults = data.items.slice(0, 5);
+      setSearchResults(limitedResults);
+    } catch (error) {
+      console.error('Error searching YouTube:', error);
+    }
   };
 
   const renderVideoItem = ({ item }) => {
-    const categoryColor = isDarkMode ? "gold" : "black";
-
+    const categoryColor = isDarkMode ? 'white' : 'black';
+    const videoContainerBackgroundColor = isDarkMode ? '#444' : '#fafafa';
+  
     return (
-      <View style={styles.videoContainer}>
-        <Text style={{ fontSize: 16, color: categoryColor }}>
-          {item.category}
-        </Text>
-        <WebView
-          source={{
-            html: `
-              <html>
-                <body>
-                  <div style="display: flex; align-items: center;">
-                    <a href="${item.url}" target="_blank">
-                      <img src="${item.thumbnail}" alt="YouTube Thumbnail" width="300" height="169" />
-                    </a>
-                    <div style="flex: 1; padding-left: 10px;">
-                      <p style="font-size: 20px;">
-                        <strong>${item.title}</strong>
-                      </p>
-                      <p style="font-size: 20px;">
-                        ${item.description}
-                      </p>
-                    </div>
-                  </div>
-                </body>
-              </html>
-            `,
+      <View style={[styles.videoContainer, { backgroundColor: videoContainerBackgroundColor }]}>
+        <TouchableOpacity
+          style={{ flexDirection: 'row', alignItems: 'center' }}
+          onPress={() => {
+            navigation.navigate('VideoDetail', { videoId: item.id.videoId });
           }}
-          style={styles.video}
-        />
+        >
+          <Image
+            source={{ uri: item.snippet.thumbnails.high.url }}
+            style={{ width: 140, height: 100, marginRight: 10 }}
+          />
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontSize: 13, color: categoryColor, flexWrap: 'wrap' }}>
+              {item.snippet.title}
+            </Text>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   };
-
+  
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
-        <TouchableOpacity
-          style={styles.backButtonContainer}
-          onPress={handleBack}
-        >
+        <TouchableOpacity style={styles.backButtonContainer} onPress={handleBack}>
           <Image
             source={{
-              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",
+              uri: 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png',
             }}
             style={styles.inputIcon}
           />
         </TouchableOpacity>
         <Image
           source={{
-            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png",
+            uri: 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png',
           }}
           style={styles.bannerImage}
         />
       </View>
       <Text style={styles.educationText}>Education</Text>
+      <TextInput
+        style={[
+          styles.searchInput,
+          { color: isDarkMode ? 'white' : 'black' }
+        ]}
+        placeholder="Search YouTube videos"
+        placeholderTextColor={isDarkMode ? 'white' : 'black'}
+        value={query}
+        onChangeText={(text) => setQuery(text)}
+      />
+      <Button title="Search" onPress={searchYouTube} />
       <View style={styles.textBox}>
         <View style={styles.flatListContainer}>
           <FlatList
-            data={videoData}
+            data={searchResults}
             renderItem={renderVideoItem}
-            keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item, index) => item.id.videoId}
           />
         </View>
       </View>
@@ -202,3 +180,4 @@ const Education = () => {
 };
 
 export default Education;
+

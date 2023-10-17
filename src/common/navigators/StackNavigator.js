@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
-import LoginScreen from "../../login-page/LoginPage.js";
-import RegisterScreen from "../../login-page/RegisterPage.js";
+import LoginScreen from "../../Login-page/LoginPage.js";
+import RegisterScreen from "../../Login-page/RegisterPage.js";
 import BottomTabNavigator from "./BottomTabNavigator.js";
 import SettingsPage from "../../settings-page/SettingsPage.js";
 import Education from "../../settings-page/Education.js";
@@ -9,6 +9,7 @@ import StockOverview from "../../overview-page/StockOverview.js";
 import Bookmark from "../../BookmarkPage.js";
 import ProfilePage from "../../settings-page/profileSettings.js";
 import Chat from "../../Chat.js";
+import VideoDetail from "../../settings-page/VideoDetail.js";
 
 const Stack = createStackNavigator();
 
@@ -58,6 +59,11 @@ const StackNavigator = () => {
       <Stack.Screen
         name="Chat"
         component={Chat}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="VideoDetail"
+        component={VideoDetail}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

@@ -20,17 +20,17 @@ const HomePage = () => {
     navigation.navigate("BookmarkPage");
   };
 
-  const containerStyle = [
-    styles.appContainer,
-    isDarkMode && styles.darkModeContainer,
-  ];
-
   return (
     <SafeAreaView
       style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.headerContainer}>
+        <View
+          style={[
+            styles.headerContainer,
+            isDarkMode && styles.darkModeContainer,
+          ]}
+        >
           <Image
             style={styles.appLogo}
             source={require("../../assets/app_logo.png")}
@@ -48,6 +48,14 @@ const HomePage = () => {
           <Image
             style={styles.bookmarkIcon}
             source={require("../../assets/heart.png")}
+            // style={{
+            //   width: 40,
+            //   height: 40,
+            //   marginTop: 10,
+            //   marginRight: 10,
+            //   tintColor: isDarkMode ? "white" : undefined,
+            // }}
+            // source={require("../../assets/heart_hollow.png")}
           />
         </TouchableOpacity>
 

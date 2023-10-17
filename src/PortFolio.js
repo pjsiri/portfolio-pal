@@ -24,17 +24,21 @@ import {
 import { getAuth } from "firebase/auth";
 
 const Portfolio = () => {
-    const { isDarkMode } = useDarkMode();
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [assetName, setAssetName] = useState("");
-    const [assetPrice, setAssetPrice] = useState("");
-    const [assetQuantity, setAssetQuantity] = useState("");
-    const [selectedValue, setSelectedValue] = useState("Stock");
-    const [userAssets, setUserAssets] = useState([]);
+    const { isDarkMode } = useDarkMode(); //dark mode
+    const [isModalVisible, setIsModalVisible] = useState(false); // modal
+    const [assetName, setAssetName] = useState(""); //assetName
+    const [assetPrice, setAssetPrice] = useState(""); //assetPrice
+    const [assetQuantity, setAssetQuantity] = useState(""); //assetQuantity 
+    const [selectedValue, setSelectedValue] = useState("Stock"); //SelectedValue
+    const [userAssets, setUserAssets] = useState([]); 
     const [totalStockValue, setTotalStockValue] = useState(0);
     const [totalCryptoValue, setTotalCryptoValue] = useState(0);
     const [cryptoTotalValues, setCryptoTotalValues] = useState([]);
     const [stockTotalValues, setStockTotalValues] = useState([]);
+    const [chartData, setChartData] = useState([  // Declare chartData as a state variable
+    { name: "Stocks", price: 0 },
+    { name: "Cryptos", price: 0 },
+]);
 
     // Helper function to calculate total asset price
     const calculateTotalPrice = (price, quantity) => {
@@ -107,10 +111,9 @@ const Portfolio = () => {
 
     const screenWidth = Dimensions.get("window").width;
 
-    //get data from database 
+    // Fetch data from the database and update chart data
     useEffect(() => {
-        //authorisation
-        const fetchUserAssets = async () => { 
+        const fetchUserAssets = async () => {
             const db = getFirestore();
             const auth = getAuth();
             const user = auth.currentUser;
@@ -136,6 +139,13 @@ const Portfolio = () => {
                     setUserAssets(assets);
                     setTotalStockValue(stockTotal);
                     setTotalCryptoValue(cryptoTotal);
+
+                    // Update chart data based on the fetched data
+                    const updatedChartData = [
+                        { name: "Stocks", price: stockTotal },
+                        { name: "Cryptos", price: cryptoTotal },
+                    ];
+                    setChartData(updatedChartData);
                 } catch (error) {
                     console.error("Error fetching user assets from Firestore:", error);
                 }
@@ -147,11 +157,6 @@ const Portfolio = () => {
         fetchUserAssets();
     }, []);
 
-    // Create the chart data based on userAssets
-    const chartData = [
-        { name: "Stocks", price: totalStockValue },
-        { name: "Cryptos", price: totalCryptoValue },
-    ];
     const chartConfig = {
         backgroundGradientFrom: "#fff",
         backgroundGradientTo: "#fff",
@@ -220,7 +225,7 @@ const Portfolio = () => {
                 absolute
             />
             <Text>Total Stock Assets: ${totalStockValue}</Text>
-            <Text>Total Crypotos Assets: ${totalStockValue}</Text>
+            <Text>Total Crypotos Assets: ${totalCryptoValue}</Text>
             <Text>{"\n"}</Text>
             <Text style={styles.totalValue}>
                 Total assets values: ${totalStockValue + totalCryptoValue}

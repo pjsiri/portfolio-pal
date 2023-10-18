@@ -217,7 +217,9 @@ const SearchStocks = ({
             <CryptoCard
               item={item}
               key={`browse-crypto-${item?.google_mid}`}
-              //handleNavigate={() => navigation.navigate("Overview", { item })}
+              handleNavigate={() =>
+                navigation.navigate("CryptoOverview", { item })
+              }
             />
           ))
         )}

@@ -45,11 +45,11 @@ const CryptoOverview = () => {
   const [imageUri, setImageUri] = useState(null);
   const [isHeartFilled, setIsHeartFilled] = useState(false);
 
-  let stockSymbol = item.symbol;
-  let stockName = (item.name || "").split(" ");
+  let stockSymbol = item.from_symbol;
+  let stockName = (item.from_currency_name || "").split(" ");
 
-  if ((item.symbol || "").includes(":")) {
-    const splittedSymbol = item.symbol.split(":");
+  if ((item.from_symbol || "").includes(":")) {
+    const splittedSymbol = item.from_symbol.split(":");
     stockSymbol = splittedSymbol[0];
   }
   if (stockName.length > 0) {
@@ -76,10 +76,10 @@ const CryptoOverview = () => {
     checkUris();
   }, [stockSymbol, stockName]);
 
-  const { data, isLoading, error, refetch } = useFetch("stock-overview", {
-    symbol: item.symbol,
-    language: "en",
-  });
+  // const { data, isLoading, error, refetch } = useFetch("stock-overview", {
+  //   symbol: item.symbol,
+  //   language: "en",
+  // });
 
   const containerStyle = [
     styles.appContainer,
@@ -101,20 +101,20 @@ const CryptoOverview = () => {
         <View style={styles.container}>
           <View style={styles.container}>
             <Text style={{ fontSize: 25, fontWeight: "bold" }}>
-              {data.name}
+              {stockName}
             </Text>
-            <Text style={{ fontSize: 15 }}>({data.symbol})</Text>
+            <Text style={{ fontSize: 15 }}>({stockSymbol})</Text>
             <Text style={{ fontSize: 60, fontWeight: "bold" }}>
-              ${formatNumber(data.price)}
+              ${formatNumber(item.exchange_rate)}
             </Text>
-            <View style={{ flexDirection: "row" }}>
+            {/* <View style={{ flexDirection: "row" }}>
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
                 ${formatNumber(data.change)}&nbsp;
               </Text>
               <Text style={{ fontSize: 20, fontWeight: "bold" }}>
                 ({formatNumber(data.change_percent)}%)
               </Text>
-            </View>
+            </View> */}
           </View>
 
           <View style={styles.graphContainer}>
@@ -142,7 +142,7 @@ const CryptoOverview = () => {
             <Text style={styles.buySellText}>Sell</Text>
           </TouchableOpacity>
 
-          <View style={styles.detailContainer}>
+          {/* <View style={styles.detailContainer}>
             <View style={styles.priceDetailContainer}>
               <Text>
                 Open:{" "}
@@ -184,8 +184,8 @@ const CryptoOverview = () => {
                 </Text>
               </Text>
             </View>
-          </View>
-          <Text>All prices {data.currency || "CNY"}.</Text>
+          </View> */}
+          <Text>All prices {item.to_symbol || "CNY"}.</Text>
           <Image
             source={
               imageUri ? { uri: imageUri } : require("../../assets/no-logo.png")
@@ -193,7 +193,7 @@ const CryptoOverview = () => {
             resizeMode="contain"
             style={styles.logoImage}
           />
-          <Text style={styles.aboutText}>{data.about}</Text>
+          {/* <Text style={styles.aboutText}>{data.about}</Text> */}
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -100,9 +100,9 @@ const BrowseStocks = () => {
             <CryptoCard
               item={item}
               key={`crypto-browse-${item?.google_mid}`}
-              // handleNavigate={() => {
-              //   navigation.navigate("CryptoOverview", { item });
-              // }}
+              handleNavigate={() => {
+                navigation.navigate("CryptoOverview", { item });
+              }}
             />
           ))
         )}

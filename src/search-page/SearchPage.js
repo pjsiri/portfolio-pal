@@ -10,7 +10,6 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
 } from "react-native";
-
 import styles from "./SearchPage.style";
 import SearchStocks from "./components/SearchStocks";
 import { FilterPopup } from "./components/FilterPopup";
@@ -72,9 +71,14 @@ const SearchPage = () => {
             placeholder="Search all investments"
             onChangeText={(text) => setSearchQuery(text)}
             onSubmitEditing={() => handleSearch(searchQuery)}
+            testID="search-input"
           />
         </View>
-        <TouchableOpacity style={styles.filterButton} onPress={onShowPopup}>
+        <TouchableOpacity
+          style={styles.filterButton}
+          onPress={onShowPopup}
+          accessibilityLabel="Open Filters"
+        >
           <Image
             style={styles.filterIcon}
             source={require("../../assets/filter-icon3.png")}
@@ -126,6 +130,12 @@ const SearchPage = () => {
           />
         </View>
       </ScrollView>
+
+      <View style={styles.unitTest}>
+        <Text testID="finalSearchQuery">{finalSearchQuery}</Text>
+        <Text testID="sortType">{sortType}</Text>
+        <Text testID="ascendOrder">{ascendOrder}</Text>
+      </View>
     </SafeAreaView>
   );
 };

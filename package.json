@@ -10,9 +10,13 @@
     "test": "jest"
   },
   "jest": {
-    "preset": "jest-expo",
+    "preset": "react-native",
+    "transform": {
+      "^.+\\.js$": "babel-jest",
+      "^.+\\.jsx$": "babel-jest"
+    },
     "transformIgnorePatterns": [
-      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@firebase|firebase/auth)"
+      "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg|@firebase|firebase/auth|firebase/firestore)"
     ],
     "moduleNameMapper": {
       "\\./src/home-page/components/BrowseStocks$": "<rootDir>/__mocks__/BrowseStocksMock.js"
@@ -54,8 +58,11 @@
     "react-test-renderer": "^18.2.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.20.0",
+    "@babel/core": "^7.23.2",
+    "@babel/preset-env": "^7.23.2",
+    "@babel/preset-react": "^7.22.15",
     "@testing-library/react-native": "^12.3.0",
+    "babel-jest": "^29.7.0",
     "dotenv-webpack": "^8.0.1"
   },
   "private": true

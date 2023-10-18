@@ -26,10 +26,6 @@ import { getAuth } from "firebase/auth";
 const Portfolio = () => {
     const { isDarkMode } = useDarkMode(); //dark mode
     const [isModalVisible, setIsModalVisible] = useState(false); // modal
-    const [assetName, setAssetName] = useState(""); //assetName
-    const [assetPrice, setAssetPrice] = useState(""); //assetPrice
-    const [assetQuantity, setAssetQuantity] = useState(""); //assetQuantity 
-    const [selectedValue, setSelectedValue] = useState("Stock"); //SelectedValue
     const [userAssets, setUserAssets] = useState([]); 
     const [totalStockValue, setTotalStockValue] = useState(0);
     const [totalCryptoValue, setTotalCryptoValue] = useState(0);
@@ -39,74 +35,12 @@ const Portfolio = () => {
     { name: "Stocks", price: 0 },
     { name: "Cryptos", price: 0 },
 ]);
-
-    // Helper function to calculate total asset price
-    const calculateTotalPrice = (price, quantity) => {
-        return price * quantity;
-    };
-
     const showModal = () => {
         setIsModalVisible(true);
     };
 
     const hideModal = () => {
         setIsModalVisible(false);
-    };
-
-    //Data saving to database 
-    const handleSave = async () => {
-        const newAsset = {
-            name: assetName,
-            price: parseFloat(assetPrice),
-            quantity: parseInt(assetQuantity),
-            type: selectedValue,
-        };
-
-        newAsset.totalPrice = calculateTotalPrice(newAsset.price, newAsset.quantity);
-
-        const db = getFirestore();
-        const auth = getAuth();
-        const user = auth.currentUser;
-
-        if (user) {
-            let userAssetRef;
-            if (selectedValue === "Stock") {
-                userAssetRef = collection(db, `userAssets/${user.uid}/Stocks`);
-            } else if (selectedValue === "Crypto") {
-                userAssetRef = collection(db, `userAssets/${user.uid}/Cryptos`);
-            } else {
-                console.error("Invalid asset type");
-                return;
-            }
-
-            try {
-                await addDoc(userAssetRef, newAsset);
-            } catch (error) {
-                console.error("Error adding asset to Firestore:", error);
-            }
-        } else {
-            console.log("No authenticated user found");
-        }
-
-        setUserAssets([...userAssets, newAsset]);
-
-        // Update total values based on the added asset
-        if (newAsset.type === "Stock") {
-            setTotalStockValue(totalStockValue + newAsset.totalPrice);
-        } else if (newAsset.type === "Crypto") {
-            const newCryptoAsset = {
-                name: assetName,
-                totalValue: newAsset.totalPrice,
-            };
-            setCryptoTotalValues([...cryptoTotalValues, newCryptoAsset]);
-        }
-
-        setAssetName("");
-        setAssetPrice("");
-        setAssetQuantity("");
-        setSelectedValue("Stock");
-
-        hideModal();
     };
 
     const screenWidth = Dimensions.get("window").width;

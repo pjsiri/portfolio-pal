@@ -6,24 +6,26 @@ export const fakeBuyStock = async (userId, symbol, quantity, price) => {
         const firestore = getFirestore();
         const userRef = doc(firestore, 'users', userId);
         const portfolioRef = collection(userRef, 'portfolio');
-    
+        // Calculate the total price for this transaction
+        const totalPrice = quantity * price;
         // Check if the user already owns this stock
         const existingStock = await getDocs(query(portfolioRef, where('symbol', '==', symbol)));
-    
         if (existingStock.size > 0) {
           // Update the quantity if the user already owns this stock
           const stockDoc = existingStock.docs[0];
           await updateDoc(stockDoc.ref, {
             quantity: stockDoc.data().quantity + quantity,
+            totalPrice
           });
         } else {
           // Add the stock to the user's portfolio if they don't already own it
           await addDoc(portfolioRef, {
             symbol,
             quantity,
+            totalPrice
           });
         }
-    
+      
         // Record the transaction
         const transactionsRef = collection(userRef, 'transactions');
         await addDoc(transactionsRef, {
@@ -31,9 +33,14 @@ export const fakeBuyStock = async (userId, symbol, quantity, price) => {
           symbol,
           quantity,
           price,
+          totalPrice,
           timestamp: new Date(),
         });
-    
+        const userDoc = await getDoc(userRef);
+        const currentPortfolioValue = userDoc.data().portfolioValue || 0;
+        const newPortfolioValue = currentPortfolioValue + totalPrice;
+        await updateDoc(userRef, { portfolioValue: newPortfolioValue });
+
         return true; // Success
       } catch (error) {
         console.error('Error buying stock:', error);

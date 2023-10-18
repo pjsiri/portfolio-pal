@@ -13,7 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import styles from "./Overview.style";
 import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
-import { getFirestore, collection, addDoc, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
+import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, getDoc, getDocs, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 import QuantityInputWithConfirmation from "./QuantityInputWithConfirmation";
 import { fakeBuyStock, fakeSellStock } from './stockActions';
@@ -67,6 +67,23 @@ const StockOverview = () => {
   if (stockName.length > 0) {
     stockName = stockName[0];
   }
+
+  const fetchUserBalance = async (userId) => {
+    try {
+      const userDocRef = doc(firestore, 'users', userId);
+      const userDocSnapshot = await getDoc(userDocRef);
+  
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+        const userBalance = userData.balance;
+        setBalance(userBalance);
+      } else {
+        console.log('User document does not exist.');
+      }
+    } catch (error) {
+      console.error('Error fetching user balance:', error);
+    }
+  };
 
   const bookmarkStock = async (name, symbol, price) => {
     const db = getFirestore();
@@ -144,7 +161,7 @@ const StockOverview = () => {
     };
 
     isStockBookmarked(); // Call the function
-
+    fetchUserBalance(userId);
     checkUris();
   }, [stockSymbol, stockName]);
 
@@ -169,11 +186,11 @@ const StockOverview = () => {
 
   const handleConfirmQuantity = async (quantity) => {
     setIsQuantityModalVisible(false);
-
+  
     if (quantity > 0) {
       if (isBuying) {
         const success = await fakeBuyStock(userId, stockSymbol, quantity, data.price);
-
+  
         if (success) {
           const totalPrice = quantity * data.price;
           const newBalance = balance - totalPrice;
@@ -183,6 +200,11 @@ const StockOverview = () => {
             'Buy Successful',
             `You have successfully bought ${quantity} shares of ${stockSymbol} for a total of $${totalPrice.toFixed(2)}.`
           );
+          // Update the user's balance in Firestore
+          const userDocRef = doc(firestore, 'users', userId);
+          await updateDoc(userDocRef, {
+            balance: newBalance
+          });
         } else {
           // Handle error
           console.log('Error buying stock');
@@ -190,7 +212,7 @@ const StockOverview = () => {
       } else { //Selling
         // Check if the user has this stock in their portfolio
         const hasStockInPortfolio = await fakeSellStock(userId, stockSymbol, quantity, data.price);
-
+  
         if (hasStockInPortfolio) {
           const totalPrice = quantity * data.price;
           const newBalance = balance + totalPrice;
@@ -200,6 +222,11 @@ const StockOverview = () => {
             'Sell Successful',
             `You have successfully sold ${quantity} shares of ${stockSymbol} for a total of $${totalPrice.toFixed(2)}.`
           );
+          // Update the user's balance in Firestore
+          const userDocRef = doc(firestore, 'users', userId);
+          await updateDoc(userDocRef, {
+            balance: newBalance
+          });
         } else {
           // Display error message for insufficient quantity or not owning the stock
           Alert.alert(
@@ -210,6 +237,7 @@ const StockOverview = () => {
       }
     }
   };
+  
 
   const containerStyle = [
     styles.appContainer,

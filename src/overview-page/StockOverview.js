@@ -15,7 +15,7 @@ import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
 import { getFirestore, collection, addDoc, deleteDoc, doc, getDocs, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import QuantityInput from "./QuantityInput";
+import QuantityInputWithConfirmation from "./QuantityInputWithConfirmation";
 import { fakeBuyStock, fakeSellStock } from './stockActions';
 
 const uriExists = async (uri) => {
@@ -49,6 +49,9 @@ const StockOverview = () => {
   const navigation = useNavigation();
   const [imageUri, setImageUri] = useState(null);
   const [isHeartFilled, setIsHeartFilled] = useState(false);
+  const [isQuantityModalVisible, setIsQuantityModalVisible] = useState(false);
+  const [isBuying, setIsBuying] = useState(true);
+  const [balance, setBalance] = useState(50000);
   const firestore = getFirestore();
   const auth = getAuth();
   const user = auth.currentUser;
@@ -154,47 +157,57 @@ const StockOverview = () => {
     language: "en",
   });
 
-  const handleBuy = async () => {
-    if (quantity > 0) {
-      const success = await fakeBuyStock(userId, stockSymbol, quantity, data.price);
-      
-      if (success) {
-        console.log('Buy successful!');
-      } else {
-        // Handle error
-        console.log('Error buying stock');
-      }
-    } 
-    else {
-      Alert.alert(
-        'Invalid Quantity',
-        'Quantity must be greater than 0',
-      );
-    }
+  const handleBuy = () => {
+    setIsBuying(true);
+    setIsQuantityModalVisible(true);
   };
 
-  const handleSell = async () => {
+  const handleSell = () => {
+    setIsBuying(false); 
+    setIsQuantityModalVisible(true);
+  };
+
+  const handleConfirmQuantity = async (quantity) => {
+    setIsQuantityModalVisible(false);
+
     if (quantity > 0) {
-      // Check if the user has this stock in their portfolio
-      const hasStockInPortfolio = await fakeSellStock(userId, stockSymbol, quantity, data.price);
-  
-      if (hasStockInPortfolio) {
-        console.log('Sell successful!');
-      } else {
-        // Display error message for insufficient quantity or not owning the stock
-        Alert.alert(
-          'Unable to Sell',
-          'You either do not own this stock or do not have enough quantity to sell.',
-          [{ text: 'OK', onPress: () => console.log('OK Pressed') }]
-        );
+      if (isBuying) {
+        const success = await fakeBuyStock(userId, stockSymbol, quantity, data.price);
+
+        if (success) {
+          const totalPrice = quantity * data.price;
+          const newBalance = balance - totalPrice;
+          setBalance(newBalance);
+          console.log('Buy successful!');
+          Alert.alert(
+            'Buy Successful',
+            `You have successfully bought ${quantity} shares of ${stockSymbol} for a total of $${totalPrice.toFixed(2)}.`
+          );
+        } else {
+          // Handle error
+          console.log('Error buying stock');
+        }
+      } else { //Selling
+        // Check if the user has this stock in their portfolio
+        const hasStockInPortfolio = await fakeSellStock(userId, stockSymbol, quantity, data.price);
+
+        if (hasStockInPortfolio) {
+          const totalPrice = quantity * data.price;
+          const newBalance = balance + totalPrice;
+          setBalance(newBalance);
+          console.log('Sell successful!');
+          Alert.alert(
+            'Sell Successful',
+            `You have successfully sold ${quantity} shares of ${stockSymbol} for a total of $${totalPrice.toFixed(2)}.`
+          );
+        } else {
+          // Display error message for insufficient quantity or not owning the stock
+          Alert.alert(
+            'Unable to Sell',
+            'You either do not own this stock or do not have enough quantity to sell.',
+          );
+        }
       }
-    } else {
-      // Display error message for invalid quantity
-      Alert.alert(
-        'Invalid Quantity',
-        'Quantity must be greater than 0',
-        [{ text: 'OK', onPress: () => console.log('OK Pressed') }]
-      );
     }
   };
 
@@ -266,7 +279,6 @@ const StockOverview = () => {
             />
             <Text style={textColor}>Add to watchlist</Text>
           </TouchableOpacity>
-          <QuantityInput quantity={quantity} setQuantity={setQuantity} />
           <TouchableOpacity onPress={handleBuy} style={styles.buyContainer}>
             <Text style={{ ...styles.buySellText, ...textColor }}>Buy</Text>
           </TouchableOpacity>
@@ -274,6 +286,14 @@ const StockOverview = () => {
           <TouchableOpacity onPress={handleSell} style={styles.sellContainer}>
             <Text style={{ ...styles.buySellText, ...textColor }}>Sell</Text>
           </TouchableOpacity>
+
+          <QuantityInputWithConfirmation
+            isVisible={isQuantityModalVisible}
+            onCancel={() => setIsQuantityModalVisible(false)}
+            onConfirm={handleConfirmQuantity}
+            balance={balance}
+            data={data}
+          />
 
           <View style={styles.detailContainer}>
             <View style={styles.priceDetailContainer}>

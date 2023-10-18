@@ -6,6 +6,7 @@ import {
   Image,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
@@ -154,23 +155,46 @@ const StockOverview = () => {
   });
 
   const handleBuy = async () => {
-    const success = await fakeBuyStock(userId, stockSymbol, quantity, data.price);
-    
-    if (success) {
-      console.log('Buy successful!');
-    } else {
-      // Handle error
-      console.log('Error buying stock');
+    if (quantity > 0) {
+      const success = await fakeBuyStock(userId, stockSymbol, quantity, data.price);
+      
+      if (success) {
+        console.log('Buy successful!');
+      } else {
+        // Handle error
+        console.log('Error buying stock');
+      }
+    } 
+    else {
+      Alert.alert(
+        'Invalid Quantity',
+        'Quantity must be greater than 0',
+      );
     }
   };
 
   const handleSell = async () => {
-    const success = await fakeSellStock(userId, stockSymbol, quantity, data.price);
-    if (success) {
-      console.log('Sell successful!');
+    if (quantity > 0) {
+      // Check if the user has this stock in their portfolio
+      const hasStockInPortfolio = await fakeSellStock(userId, stockSymbol, quantity, data.price);
+  
+      if (hasStockInPortfolio) {
+        console.log('Sell successful!');
+      } else {
+        // Display error message for insufficient quantity or not owning the stock
+        Alert.alert(
+          'Unable to Sell',
+          'You either do not own this stock or do not have enough quantity to sell.',
+          [{ text: 'OK', onPress: () => console.log('OK Pressed') }]
+        );
+      }
     } else {
-      // Handle error
-      console.log('Error selling stock');
+      // Display error message for invalid quantity
+      Alert.alert(
+        'Invalid Quantity',
+        'Quantity must be greater than 0',
+        [{ text: 'OK', onPress: () => console.log('OK Pressed') }]
+      );
     }
   };
 

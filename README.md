@@ -27,9 +27,7 @@ Portfoliopal is a mobile application developed by Team AIVestor that empowers us
 <div align="center">
   <img src="https://github.com/ErickLao123/2023-S2-51-AIVestor/assets/104670311/af619405-ce91-42a7-993d-5dc109e22870" alt="Login Page" width="300" height="550"/>
   <img src="https://github.com/ErickLao123/2023-S2-51-AIVestor/assets/104670311/733a7fb6-e7c2-4d2a-a186-7d866d32cfa8" alt="Home Page" width="300" height="550"/>
-  <img src="https://github.com/ErickLao123/2023-S2-51-AIVestor/assets/104670311/3b86ee80-4f8a-4734-9236-cd7c77a931e0" alt="Search Page" width="300" height="550"/>
 </div>
-
 
 
 

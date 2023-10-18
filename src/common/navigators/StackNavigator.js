@@ -6,6 +6,7 @@ import BottomTabNavigator from "./BottomTabNavigator.js";
 import SettingsPage from "../../settings-page/SettingsPage.js";
 import Education from "../../settings-page/Education.js";
 import StockOverview from "../../overview-page/StockOverview.js";
+import CryptoOverview from "../../overview-page/CryptoOverview.js";
 import Bookmark from "../../BookmarkPage.js";
 import ProfilePage from "../../settings-page/profileSettings.js";
 import Chat from "../../Chat.js";
@@ -44,6 +45,11 @@ const StackNavigator = () => {
       <Stack.Screen
         name="StockOverview"
         component={StockOverview}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="CryptoOverview"
+        component={CryptoOverview}
         options={{ headerShown: false }}
       />
       <Stack.Screen

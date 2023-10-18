@@ -61,5 +61,5 @@ Portfoliopal is a mobile application developed by Team AIVestor that empowers us
 
 ## License
 
-This project is licensed under the [MIT](https://choosealicense.com/licenses/mit/).
+This project is licensed under the [MIT](LICENSE).
 

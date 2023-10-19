@@ -45,10 +45,12 @@ Portfoliopal is a mobile application developed by Team AIVestor that empowers us
 3. Start the application via expo.
 
 ```bash
-  expo start 
+  npm start 
 ```
 
 4. Run on Emulator or Device.
+
+Note: Make sure you have Node.js installed on your system before proceeding with the installation. If not, you can download it from [here](https://nodejs.org/en).
     
 ## Technologies Used
 

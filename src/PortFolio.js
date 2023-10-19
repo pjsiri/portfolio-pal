@@ -8,7 +8,6 @@ import {
     Dimensions,
     StyleSheet,
     Modal,
-    button 
 } from "react-native";
 import { PieChart } from "react-native-chart-kit";
 import { StatusBar } from "react-native";
@@ -25,8 +24,57 @@ import { getAuth } from "firebase/auth";
 const Portfolio = () => {
     const { isDarkMode } = useDarkMode();
     const [userAssets, setUserAssets] = useState([]);
+    const [userCrypto, setUserCrypto] = useState([]);
     const [assetsTotal, setAssetsTotal] = useState(0); // Use state for assetsTotal
     const screenWidth = Dimensions.get("window").width;
+    const [assetName, setAssetName] = useState("");
+    const [assetPrice, setAssetPrice] = useState("");
+    const [assetQuantity, setAssetQuantity] = useState("");
+    const [isModalVisible, setIsModalVisible] = useState(false);
+
+    const showModal = () => {
+        setIsModalVisible(true);
+    };
+
+    const hideModal = () => {
+        setIsModalVisible(false);
+    };
+
+    const handleSave = async () => {
+        const newAsset = {
+            name: assetName,
+            price: parseFloat(assetPrice),
+            quantity: parseInt(assetQuantity),
+        };
+
+        newAsset.totalPrice = calculateTotalPrice(newAsset.price, newAsset.quantity);
+
+        const db = getFirestore();
+        const auth = getAuth();
+        const user = auth.currentUser;
+
+        if (user) {
+            let userCryptoRef;
+            userCryptoRef = collection(db, `users/${user.uid}/Crypto`);
+            try {
+                await addDoc(userCryptoRef, newAsset);
+            } catch (error) {
+                console.error("Error adding asset to Firestore:", error);
+            }
+        }
+        else {
+            console.log("No authenticated user found");
+        }
+
+        setUserCrypto([...userAssets, newAsset]);
+        setAssetName("");
+        setAssetPrice("");
+        setAssetQuantity("");
+        setSelectedValue("Stock");
+
+        hideModal();
+    };
+
 
     useEffect(() => {
         const fetchUserAssets = async () => {
@@ -83,6 +131,38 @@ const Portfolio = () => {
 
     return (
         <View style={containerStyle}>
+            <View style={styles.topBar}>
+                <Button title="Add" onPress={showModal} />
+            </View>
+            <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+                <View style={styles.modalContainer}>
+                    <View style={styles.modalContent}>
+                        <Text>Fill in the fields: </Text>
+                        <Text>{"\n"}</Text>
+                        <TextInput
+                            value={assetName}
+                            onChangeText={(text) => setAssetName(text)}
+                            placeholder="Enter the name of Crypto"
+                        />
+                        <TextInput
+                            value={assetPrice}
+                            onChangeText={(text) => setAssetPrice(text)}
+                            placeholder="Enter the price of Crypto"
+                            keyboardType="numeric"
+                        />
+                        <TextInput
+                            value={assetQuantity}
+                            onChangeText={(text) => setAssetQuantity(text)}
+                            placeholder="Enter the quantity of asset"
+                            keyboardType="numeric"
+                        />
+                        <View style={styles.buttonContainer}>
+                            <Button title="Save" onPress={handleSave} />
+                            <Button title="Close" onPress={hideModal} />
+                        </View>
+                    </View>
+                </View>
+            </Modal>
             <PieChart
                 data={chartData}
                 width={screenWidth}

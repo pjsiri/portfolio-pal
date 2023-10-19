@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    marginTop: 20,
+    marginTop: 50,
     marginBottom: 10,
     marginLeft: 30,
     alignSelf: "flex-start",

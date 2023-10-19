@@ -39,7 +39,6 @@ const LoginScreen = () => {
         await signInWithEmailAndPassword(auth, user, pass);
 
         navigation.navigate('HomeStack');
-        Alert.alert("Login Successful", "Welcome back, PortfolioPal!");
       } catch (error) {
         Alert.alert("Login Failed", error.message);
       }

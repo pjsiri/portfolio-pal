@@ -4,10 +4,10 @@ import {
     TouchableOpacity,
     View,
     TextInput,
-    Button,
     Dimensions,
     StyleSheet,
     Modal,
+    Button,
 } from "react-native";
 import { PieChart } from "react-native-chart-kit";
 import { StatusBar } from "react-native";
@@ -18,13 +18,24 @@ import {
     collection,
     getDocs,
     query,
+    addDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+
+// Define the calculateTotalPrice function
+function calculateTotalPrice(price, quantity) {
+    return price * quantity;
+}
+
+
 
 const Portfolio = () => {
     const { isDarkMode } = useDarkMode();
     const [userAssets, setUserAssets] = useState([]);
+    const [coinAssets, setCoinAssets] = useState([]);
     const [userCrypto, setUserCrypto] = useState([]);
+    const [crypto, setCrypto] = useState([]);
+    const [cryptoTotal, setCryptoTotal] = useState(0);
     const [assetsTotal, setAssetsTotal] = useState(0); // Use state for assetsTotal
     const screenWidth = Dimensions.get("window").width;
     const [assetName, setAssetName] = useState("");
@@ -33,6 +44,7 @@ const Portfolio = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const showModal = () => {
+        console.log("Add button pressed");
         setIsModalVisible(true);
     };
 
@@ -46,36 +58,33 @@ const Portfolio = () => {
             price: parseFloat(assetPrice),
             quantity: parseInt(assetQuantity),
         };
-
+    
         newAsset.totalPrice = calculateTotalPrice(newAsset.price, newAsset.quantity);
-
+    
         const db = getFirestore();
         const auth = getAuth();
         const user = auth.currentUser;
-
+    
         if (user) {
-            let userCryptoRef;
-            userCryptoRef = collection(db, `users/${user.uid}/Crypto`);
+            let userCryptoRef = collection(db, `users/${user.uid}/Crypto`); // Change the collection name to "Crypto"
             try {
+                // Use addDoc to add a document to the "Crypto" collection
                 await addDoc(userCryptoRef, newAsset);
             } catch (error) {
                 console.error("Error adding asset to Firestore:", error);
             }
-        }
-        else {
+        } else {
             console.log("No authenticated user found");
         }
-
-        setUserCrypto([...userAssets, newAsset]);
+    
+        setUserCrypto([...userCrypto, newAsset]); // Update userCrypto state
         setAssetName("");
         setAssetPrice("");
         setAssetQuantity("");
-        setSelectedValue("Stock");
-
         hideModal();
     };
-
-
+    
+    //Stocks
     useEffect(() => {
         const fetchUserAssets = async () => {
             const db = getFirestore(); // Initialize Firestore
@@ -111,8 +120,46 @@ const Portfolio = () => {
         fetchUserAssets();
     }, []);
 
+    //Cryptos
+    useEffect(() => {
+        const fetchUserAssets = async () => {
+            const db = getFirestore(); // Initialize Firestore
+            const auth = getAuth();
+            const user = auth.currentUser;
+
+            if (user) {
+                try {
+                    const cryptoRef = collection(db, `users/${user.uid}/Crypto`);
+                    const q = query(cryptoRef);
+                    const querySnapshot = await getDocs(q);
+                    const cts = [];
+                    let total = 0; // Initialize a total variable
+
+                    querySnapshot.forEach((doc) => {
+                        const cryptoData = doc.data();
+                        cts.push({
+                            price: cryptoData.totalPrice
+                        });
+                        total += cryptoData.totalPrice; // Accumulate the total
+                    });
+                    
+                    setCryptoTotal(total); // Update assetsTotal state
+                    setCoinAssets(cts);
+                } catch (error) {
+                    console.error("Error fetching user assets from Firestore: ", error);
+                }
+            } else {
+                console.log("No authenticated user found");
+            }
+        };
+
+        fetchUserAssets();
+    }, []);
+
+
     const chartData = [ // Create chart data based on fetched data
-        { name: "Stocks", price: assetsTotal }
+        { name: "Stocks", price: assetsTotal , color: "#FFD700"},
+        { name: "Cryptos", price: cryptoTotal, color: "#008000"}
     ];
 
     console.log("chartData:", chartData);
@@ -132,7 +179,7 @@ const Portfolio = () => {
     return (
         <View style={containerStyle}>
             <View style={styles.topBar}>
-                <Button title="Add" onPress={showModal} />
+            <Button title="Add" onPress={showModal} />
             </View>
             <Modal visible={isModalVisible} animationType="slide" transparent={true}>
                 <View style={styles.modalContainer}>
@@ -226,7 +273,7 @@ const styles = StyleSheet.create({
     },
     topBar: {
         position: "absolute",
-        top: 10,
+        top: 50,
         left: 10,
         flexDirection: "row",
     },

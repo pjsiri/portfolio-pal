@@ -13,6 +13,7 @@ import { PieChart } from "react-native-chart-kit";
 import { StatusBar } from "react-native";
 import { useIsFocused } from "@react-navigation/native";
 import { useDarkMode } from "./common/darkmode/DarkModeContext";
+import randomcolor from 'randomcolor';
 import { Picker } from "@react-native-picker/picker";
 import {
     getFirestore,
@@ -22,6 +23,8 @@ import {
     addDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+
+const getRandomColor = () => randomcolor();
 
 // Define the calculateTotalPrice function
 function calculateTotalPrice(price, quantity) {
@@ -43,6 +46,7 @@ const Portfolio = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [sortType, setSortType] = useState(0);
     const [ascendOrder, setAscendOrder] = useState(true);
+    const [companyData, setCompanyData] = useState([]);
     const isFocused = useIsFocused();
 
     const showModal = () => {
@@ -85,6 +89,7 @@ const Portfolio = () => {
         setAssetQuantity("");
         hideModal();
     };
+
     useEffect(() => {
         if (isFocused) {
             const fetchUserAssets = async () => {
@@ -97,19 +102,32 @@ const Portfolio = () => {
                         const holdingsRef = collection(db, `users/${user.uid}/holdings`); // Change collection to "holdings"
                         const q = query(holdingsRef);
                         const querySnapshot = await getDocs(q);
+                        const companies = {};
                         const assets = [];
                         let total = 0;
         
                         querySnapshot.forEach((doc) => {
                             const asset = doc.data();
-                            assets.push({
-                                price: asset.totalPrice
-                            });
+                            const companyName = asset.symbol; // Assuming there's a 'name' field for company names
+                            const totalValue = asset.totalPrice;
+              
+                            if (companies[companyName]) {
+                              companies[companyName] += totalValue;
+                            } else {
+                              companies[companyName] = totalValue;
+                            }
                             total += asset.totalPrice;
-                        });
+                          });
         
+                        const companyChartData = Object.entries(companies).map(([name, price], index) => ({
+                            name,
+                            price,
+                            color: getRandomColor(index), // Assuming you have a function to generate colors
+                        }));
+                        
                         setAssetsTotal(total);
-                        setUserAssets(assets);
+                        setCompanyData(companyChartData);
+
                     } catch (error) {
                         console.error("Error fetching user assets from Firestore:", error);
                     }
@@ -244,7 +262,7 @@ const Portfolio = () => {
                 </View>
             </Modal>
             <PieChart
-                data={chartData}
+                data={companyData}
                 width={screenWidth}
                 height={220}
                 chartConfig={chartConfig}

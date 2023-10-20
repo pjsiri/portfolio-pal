@@ -23,7 +23,7 @@ describe("SearchPage Component", () => {
     const { getByText, getByTestId } = render(<SearchPage />);
     const sortType = getByTestId("sortType");
 
-    const relevantSortButton = getByText("Relevent");
+    const relevantSortButton = getByText("Relevant");
     fireEvent.press(relevantSortButton);
     expect(sortType.props.children).toBe(0);
 

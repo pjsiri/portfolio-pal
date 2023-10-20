@@ -11,6 +11,7 @@ import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
 
 import styles from "./Overview.style";
+import StockChart from "./components/StockChart";
 import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
 
@@ -44,6 +45,7 @@ const CryptoOverview = () => {
   const navigation = useNavigation();
   const [imageUri, setImageUri] = useState(null);
   const [isHeartFilled, setIsHeartFilled] = useState(false);
+  const [period, setPeriod] = useState("1D");
 
   let stockSymbol = item.from_symbol;
   let stockName = (item.from_currency_name || "").split(" ");
@@ -118,7 +120,52 @@ const CryptoOverview = () => {
           </View>
 
           <View style={styles.graphContainer}>
-            <Text>Stock chart work in progress</Text>
+            <StockChart
+              endpoint={"currency-time-series"}
+              query={{
+                from_symbol: item.from_symbol,
+                to_symbol: item.to_symbol,
+                period: period,
+              }}
+            />
+            <View style={styles.graphButtonsContainer}>
+              <TouchableOpacity
+                style={styles.graphButton(period === "1D")}
+                onPress={() => setPeriod("1D")}
+              >
+                <Text style={styles.graphButtonText(period === "1D")}>1d</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.graphButton(period === "5D")}
+                onPress={() => setPeriod("5D")}
+              >
+                <Text style={styles.graphButtonText(period === "5D")}>5d</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.graphButton(period === "1M")}
+                onPress={() => setPeriod("1M")}
+              >
+                <Text style={styles.graphButtonText(period === "1M")}>1m</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.graphButton(period === "6M")}
+                onPress={() => setPeriod("6M")}
+              >
+                <Text style={styles.graphButtonText(period === "6M")}>6m</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.graphButton(period === "1Y")}
+                onPress={() => setPeriod("1Y")}
+              >
+                <Text style={styles.graphButtonText(period === "1Y")}>1y</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.graphButton(period === "5Y")}
+                onPress={() => setPeriod("5Y")}
+              >
+                <Text style={styles.graphButtonText(period === "5Y")}>5y</Text>
+              </TouchableOpacity>
+            </View>
           </View>
 
           <TouchableOpacity style={styles.bookmarkContainer}>

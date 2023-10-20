@@ -6,6 +6,7 @@ import {
   Image,
   SafeAreaView,
   TouchableOpacity,
+  ActivityIndicator,
   Alert,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
@@ -13,10 +14,22 @@ import { useNavigation } from "@react-navigation/native";
 import styles from "./Overview.style";
 import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
-import { getFirestore, collection, addDoc, deleteDoc, doc, updateDoc, getDoc, getDocs, query, where } from "firebase/firestore";
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
 import { getAuth } from "firebase/auth";
-import QuantityInputWithConfirmation from "./QuantityInputWithConfirmation";
-import { fakeBuyStock, fakeSellStock } from './stockActions';
+import StockChart from "./components/StockChart";
+import QuantityInputWithConfirmation from "./components/QuantityInputWithConfirmation";
+import { fakeBuyStock, fakeSellStock } from "./components/stockActions";
 
 const uriExists = async (uri) => {
   try {
@@ -49,6 +62,7 @@ const StockOverview = () => {
   const navigation = useNavigation();
   const [imageUri, setImageUri] = useState(null);
   const [isHeartFilled, setIsHeartFilled] = useState(false);
+  const [period, setPeriod] = useState("1D");
   const [isQuantityModalVisible, setIsQuantityModalVisible] = useState(false);
   const [isBuying, setIsBuying] = useState(true);
   const [balance, setBalance] = useState(50000);
@@ -70,18 +84,18 @@ const StockOverview = () => {
 
   const fetchUserBalance = async (userId) => {
     try {
-      const userDocRef = doc(firestore, 'users', userId);
+      const userDocRef = doc(firestore, "users", userId);
       const userDocSnapshot = await getDoc(userDocRef);
-  
+
       if (userDocSnapshot.exists()) {
         const userData = userDocSnapshot.data();
         const userBalance = userData.balance;
         setBalance(userBalance);
       } else {
-        console.log('User document does not exist.');
+        console.log("User document does not exist.");
       }
     } catch (error) {
-      console.error('Error fetching user balance:', error);
+      console.error("Error fetching user balance:", error);
     }
   };
 
@@ -149,7 +163,11 @@ const StockOverview = () => {
     const isStockBookmarked = async () => {
       try {
         const stocksRef = collection(firestore, "bookmarkedStocks");
-        const q = query(stocksRef, where("userId", "==", userId), where("symbol", "==", item.symbol));
+        const q = query(
+          stocksRef,
+          where("userId", "==", userId),
+          where("symbol", "==", item.symbol)
+        );
         const querySnapshot = await getDocs(q);
 
         if (!querySnapshot.empty) {
@@ -180,64 +198,78 @@ const StockOverview = () => {
   };
 
   const handleSell = () => {
-    setIsBuying(false); 
+    setIsBuying(false);
     setIsQuantityModalVisible(true);
   };
 
   const handleConfirmQuantity = async (quantity) => {
     setIsQuantityModalVisible(false);
-  
+
     if (quantity > 0) {
       if (isBuying) {
-        const success = await fakeBuyStock(userId, stockSymbol, quantity, data.price);
-  
+        const success = await fakeBuyStock(
+          userId,
+          stockSymbol,
+          quantity,
+          data.price
+        );
+
         if (success) {
           const totalPrice = quantity * data.price;
           const newBalance = balance - totalPrice;
           setBalance(newBalance);
-          console.log('Buy successful!');
+          console.log("Buy successful!");
           Alert.alert(
-            'Buy Successful',
-            `You have successfully bought ${quantity} shares of ${stockSymbol} for a total of $${totalPrice.toFixed(2)}.`
+            "Buy Successful",
+            `You have successfully bought ${quantity} shares of ${stockSymbol} for a total of $${totalPrice.toFixed(
+              2
+            )}.`
           );
           // Update the user's balance in Firestore
-          const userDocRef = doc(firestore, 'users', userId);
+          const userDocRef = doc(firestore, "users", userId);
           await updateDoc(userDocRef, {
-            balance: newBalance
+            balance: newBalance,
           });
         } else {
           // Handle error
-          console.log('Error buying stock');
+          console.log("Error buying stock");
         }
-      } else { //Selling
+      } else {
+        //Selling
         // Check if the user has this stock in their portfolio
-        const hasStockInPortfolio = await fakeSellStock(userId, stockSymbol, quantity, data.price);
-  
+        const hasStockInPortfolio = await fakeSellStock(
+          userId,
+          stockSymbol,
+          quantity,
+          data.price
+        );
+
         if (hasStockInPortfolio) {
           const totalPrice = quantity * data.price;
           const newBalance = balance + totalPrice;
           setBalance(newBalance);
-          console.log('Sell successful!');
+          console.log("Sell successful!");
           Alert.alert(
-            'Sell Successful',
-            `You have successfully sold ${quantity} shares of ${stockSymbol} for a total of $${totalPrice.toFixed(2)}.`
+            "Sell Successful",
+            `You have successfully sold ${quantity} shares of ${stockSymbol} for a total of $${totalPrice.toFixed(
+              2
+            )}.`
           );
           // Update the user's balance in Firestore
-          const userDocRef = doc(firestore, 'users', userId);
+          const userDocRef = doc(firestore, "users", userId);
           await updateDoc(userDocRef, {
-            balance: newBalance
+            balance: newBalance,
           });
         } else {
           // Display error message for insufficient quantity or not owning the stock
           Alert.alert(
-            'Unable to Sell',
-            'You either do not own this stock or do not have enough quantity to sell.',
+            "Unable to Sell",
+            "You either do not own this stock or do not have enough quantity to sell."
           );
         }
       }
     }
   };
-  
 
   const containerStyle = [
     styles.appContainer,
@@ -253,7 +285,7 @@ const StockOverview = () => {
           onPress={() => navigation.goBack()}
           style={[
             styles.backButton,
-            isDarkMode && { backgroundColor: '#404040' }, // Change background color in dark mode
+            isDarkMode && { backgroundColor: "#404040" }, // Change background color in dark mode
           ]}
         >
           <Image
@@ -264,118 +296,189 @@ const StockOverview = () => {
           />
           <Text style={{ ...styles.backButtonText, ...textColor }}>Back</Text>
         </TouchableOpacity>
-        <View style={styles.container}>
-          <View style={styles.container}>
-            <Text style={{ fontSize: 25, fontWeight: "bold", ...textColor }}>
-              {data.name}
-            </Text>
-            <Text style={{ fontSize: 15, ...textColor }}>({data.symbol})</Text>
-            <Text style={{ fontSize: 60, fontWeight: "bold", ...textColor }}>
-              ${formatNumber(data.price)}
-            </Text>
-            <View style={{ flexDirection: "row" }}>
-              <Text style={{ fontSize: 20, fontWeight: "bold", ...textColor }}>
-                ${formatNumber(data.change)}&nbsp;
-              </Text>
-              <Text style={{ fontSize: 20, fontWeight: "bold", ...textColor }}>
-                ({formatNumber(data.change_percent)}%)
-              </Text>
-            </View>
-          </View>
 
-          <View style={styles.graphContainer}>
-            <Text style={{ ...textColor }}>Stock chart work in progress</Text>
-          </View>
-          <TouchableOpacity
-            style={styles.bookmarkContainer}
-            onPress={() => {
-              if (isHeartFilled) {
-                handleDelete(item.symbol); // Delete only if it's heart-filled
-              } else {
-                handleBookmarkInOverview(); // Add to watchlist if it's not heart-filled
-              }
-            }}
-          >
+        {isLoading ? (
+          <ActivityIndicator size="large" />
+        ) : error ? (
+          <Text style={textStyles}>Something went wrong</Text>
+        ) : (
+          <View style={styles.container}>
+            <View style={styles.container}>
+              <Text style={{ fontSize: 25, fontWeight: "bold", ...textColor }}>
+                {data.name}
+              </Text>
+              <Text style={{ fontSize: 15, ...textColor }}>
+                ({data.symbol})
+              </Text>
+              <Text style={{ fontSize: 60, fontWeight: "bold", ...textColor }}>
+                ${formatNumber(data.price)}
+              </Text>
+              <View style={{ flexDirection: "row" }}>
+                <Text
+                  style={{ fontSize: 20, fontWeight: "bold", ...textColor }}
+                >
+                  ${formatNumber(data.change)}&nbsp;
+                </Text>
+                <Text
+                  style={{ fontSize: 20, fontWeight: "bold", ...textColor }}
+                >
+                  ({formatNumber(data.change_percent)}%)
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.graphContainer}>
+              <StockChart
+                endpoint={"stock-time-series"}
+                query={{ symbol: item.symbol, period: period }}
+              />
+              <View style={styles.graphButtonsContainer}>
+                <TouchableOpacity
+                  style={styles.graphButton(period === "1D")}
+                  onPress={() => setPeriod("1D")}
+                >
+                  <Text style={styles.graphButtonText(period === "1D")}>
+                    1d
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.graphButton(period === "5D")}
+                  onPress={() => setPeriod("5D")}
+                >
+                  <Text style={styles.graphButtonText(period === "5D")}>
+                    5d
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.graphButton(period === "1M")}
+                  onPress={() => setPeriod("1M")}
+                >
+                  <Text style={styles.graphButtonText(period === "1M")}>
+                    1m
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.graphButton(period === "6M")}
+                  onPress={() => setPeriod("6M")}
+                >
+                  <Text style={styles.graphButtonText(period === "6M")}>
+                    6m
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.graphButton(period === "1Y")}
+                  onPress={() => setPeriod("1Y")}
+                >
+                  <Text style={styles.graphButtonText(period === "1Y")}>
+                    1y
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.graphButton(period === "5Y")}
+                  onPress={() => setPeriod("5Y")}
+                >
+                  <Text style={styles.graphButtonText(period === "5Y")}>
+                    5y
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={styles.bookmarkContainer}
+              onPress={() => {
+                if (isHeartFilled) {
+                  handleDelete(item.symbol); // Delete only if it's heart-filled
+                } else {
+                  handleBookmarkInOverview(); // Add to watchlist if it's not heart-filled
+                }
+              }}
+            >
+              <Image
+                source={
+                  isHeartFilled
+                    ? require("../../assets/heart.png")
+                    : require("../../assets/heart_hollow.png")
+                }
+                resizeMode="contain"
+                style={styles.heartImage}
+              />
+              <Text style={textColor}>Add to watchlist</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={handleBuy} style={styles.buyContainer}>
+              <Text style={{ ...styles.buySellText, ...textColor }}>Buy</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={handleSell} style={styles.sellContainer}>
+              <Text style={{ ...styles.buySellText, ...textColor }}>Sell</Text>
+            </TouchableOpacity>
+
+            <QuantityInputWithConfirmation
+              isVisible={isQuantityModalVisible}
+              onCancel={() => setIsQuantityModalVisible(false)}
+              onConfirm={handleConfirmQuantity}
+              balance={balance}
+              data={data}
+            />
+
+            <View style={styles.detailContainer}>
+              <View style={styles.priceDetailContainer}>
+                <Text>
+                  Open:{" "}
+                  <Text style={{ fontWeight: "bold", ...textColor }}>
+                    ${formatNumber(data.open)}
+                  </Text>
+                </Text>
+                <Text>
+                  High:{" "}
+                  <Text style={{ fontWeight: "bold", ...textColor }}>
+                    ${formatNumber(data.high)}
+                  </Text>
+                </Text>
+                <Text>
+                  Low:{" "}
+                  <Text style={{ fontWeight: "bold", ...textColor }}>
+                    ${formatNumber(data.low)}
+                  </Text>
+                </Text>
+              </View>
+
+              <View style={styles.priceDetailContainer}>
+                <Text>
+                  Mkt cap:{" "}
+                  <Text style={{ fontWeight: "bold", ...textColor }}>
+                    ${formatNumberToBillion(data.company_market_cap || 0)}
+                  </Text>
+                </Text>
+                <Text>
+                  P/E ratio:{" "}
+                  <Text style={{ fontWeight: "bold", ...textColor }}>
+                    {formatNumber(data.company_pe_ratio)}
+                  </Text>
+                </Text>
+                <Text>
+                  Div yield:{" "}
+                  <Text style={{ fontWeight: "bold", ...textColor }}>
+                    {formatNumber(data.company_dividend_yield)}%
+                  </Text>
+                </Text>
+              </View>
+            </View>
+            <Text style={textColor}>All prices {data.currency || "CNY"}.</Text>
             <Image
               source={
-                isHeartFilled
-                  ? require("../../assets/heart.png")
-                  : require("../../assets/heart_hollow.png")
+                imageUri
+                  ? { uri: imageUri }
+                  : require("../../assets/no-logo.png")
               }
               resizeMode="contain"
-              style={styles.heartImage}
+              style={styles.logoImage}
             />
-            <Text style={textColor}>Add to watchlist</Text>
-          </TouchableOpacity>
-          <TouchableOpacity onPress={handleBuy} style={styles.buyContainer}>
-            <Text style={{ ...styles.buySellText, ...textColor }}>Buy</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity onPress={handleSell} style={styles.sellContainer}>
-            <Text style={{ ...styles.buySellText, ...textColor }}>Sell</Text>
-          </TouchableOpacity>
-
-          <QuantityInputWithConfirmation
-            isVisible={isQuantityModalVisible}
-            onCancel={() => setIsQuantityModalVisible(false)}
-            onConfirm={handleConfirmQuantity}
-            balance={balance}
-            data={data}
-          />
-
-          <View style={styles.detailContainer}>
-            <View style={styles.priceDetailContainer}>
-              <Text>
-                Open:{" "}
-                <Text style={{ fontWeight: "bold", ...textColor }}>
-                  ${formatNumber(data.open)}
-                </Text>
-              </Text>
-              <Text>
-                High:{" "}
-                <Text style={{ fontWeight: "bold", ...textColor }}>
-                  ${formatNumber(data.high)}
-                </Text>
-              </Text>
-              <Text>
-                Low:{" "}
-                <Text style={{ fontWeight: "bold", ...textColor }}>
-                  ${formatNumber(data.low)}
-                </Text>
-              </Text>
-            </View>
-
-            <View style={styles.priceDetailContainer}>
-              <Text>
-                Mkt cap:{" "}
-                <Text style={{ fontWeight: "bold", ...textColor }}>
-                  ${formatNumberToBillion(data.company_market_cap || 0)}
-                </Text>
-              </Text>
-              <Text>
-                P/E ratio:{" "}
-                <Text style={{ fontWeight: "bold", ...textColor }}>
-                  {formatNumber(data.company_pe_ratio)}
-                </Text>
-              </Text>
-              <Text>
-                Div yield:{" "}
-                <Text style={{ fontWeight: "bold", ...textColor }}>
-                  {formatNumber(data.company_dividend_yield)}%
-                </Text>
-              </Text>
-            </View>
+            <Text style={{ ...styles.aboutText, ...textColor }}>
+              {data.about}
+            </Text>
           </View>
-          <Text style={textColor}>All prices {data.currency || "CNY"}.</Text>
-          <Image
-            source={
-              imageUri ? { uri: imageUri } : require("../../assets/no-logo.png")
-            }
-            resizeMode="contain"
-            style={styles.logoImage}
-          />
-          <Text style={{ ...styles.aboutText, ...textColor }}>{data.about}</Text>
-        </View>
+        )}
       </ScrollView>
     </SafeAreaView>
   );

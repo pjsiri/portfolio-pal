@@ -82,22 +82,29 @@ const StockOverview = () => {
     stockName = stockName[0];
   }
 
-  const fetchUserBalance = async (userId) => {
-    try {
-      const userDocRef = doc(firestore, "users", userId);
-      const userDocSnapshot = await getDoc(userDocRef);
+const fetchUserBalance = async (userId) => {
+  try {
+    const userDocRef = doc(firestore, "users", userId);
+    const userDocSnapshot = await getDoc(userDocRef);
 
-      if (userDocSnapshot.exists()) {
-        const userData = userDocSnapshot.data();
-        const userBalance = userData.balance;
-        setBalance(userBalance);
+    if (userDocSnapshot.exists()) {
+      const userData = userDocSnapshot.data();
+      const userBalance = userData.balance;
+
+      // Check if balance exists, if not, create it with an initial value
+      if (userBalance === undefined) {
+        await updateDoc(userDocRef, { balance: 0 }); // You can set an initial value of your choice
+        setBalance(0); // Set the balance in your component state
       } else {
-        console.log("User document does not exist.");
+        setBalance(userBalance);
       }
-    } catch (error) {
-      console.error("Error fetching user balance:", error);
+    } else {
+      console.log("User document does not exist.");
     }
-  };
+  } catch (error) {
+    console.error("Error fetching user balance:", error);
+  }
+};
 
   const bookmarkStock = async (name, symbol, price) => {
     const db = getFirestore();

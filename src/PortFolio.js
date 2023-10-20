@@ -42,6 +42,8 @@ const Portfolio = () => {
     const [assetPrice, setAssetPrice] = useState("");
     const [assetQuantity, setAssetQuantity] = useState("");
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [sortType, setSortType] = useState(0);
+    const [ascendOrder, setAscendOrder] = useState(true);
 
     const showModal = () => {
         console.log("Add button pressed");
@@ -58,13 +60,13 @@ const Portfolio = () => {
             price: parseFloat(assetPrice),
             quantity: parseInt(assetQuantity),
         };
-    
+
         newAsset.totalPrice = calculateTotalPrice(newAsset.price, newAsset.quantity);
-    
+
         const db = getFirestore();
         const auth = getAuth();
         const user = auth.currentUser;
-    
+
         if (user) {
             let userCryptoRef = collection(db, `users/${user.uid}/Crypto`); // Change the collection name to "Crypto"
             try {
@@ -76,14 +78,14 @@ const Portfolio = () => {
         } else {
             console.log("No authenticated user found");
         }
-    
+
         setUserCrypto([...userCrypto, newAsset]); // Update userCrypto state
         setAssetName("");
         setAssetPrice("");
         setAssetQuantity("");
         hideModal();
     };
-    
+
     //Stocks
     useEffect(() => {
         const fetchUserAssets = async () => {
@@ -142,7 +144,7 @@ const Portfolio = () => {
                         });
                         total += cryptoData.totalPrice; // Accumulate the total
                     });
-                    
+
                     setCryptoTotal(total); // Update assetsTotal state
                     setCoinAssets(cts);
                 } catch (error) {
@@ -158,8 +160,8 @@ const Portfolio = () => {
 
 
     const chartData = [ // Create chart data based on fetched data
-        { name: "Stocks", price: assetsTotal , color: "#FFD700"},
-        { name: "Cryptos", price: cryptoTotal, color: "#008000"}
+        { name: "Stocks", price: assetsTotal, color: "#FFD700" },
+        { name: "Cryptos", price: cryptoTotal, color: "#008000" }
     ];
 
     console.log("chartData:", chartData);
@@ -175,11 +177,41 @@ const Portfolio = () => {
         styles.container,
         isDarkMode && styles.darkModeContainer,
     ];
-
+    const handleSort = (selectedSortType) => {
+        if (sortType === selectedSortType) {
+            setAscendOrder(!ascendOrder);
+        } else {
+            setAscendOrder(true);
+            setSortType(selectedSortType);
+        }
+    };
     return (
         <View style={containerStyle}>
             <View style={styles.topBar}>
-            <Button title="Add" onPress={showModal} />
+                <Button title="Add" onPress={showModal} />
+            </View>
+            <View style={styles.sortContainer}>
+                <View style={styles.sortBy}>
+                    <Text style={styles.sortText(false)}>Sort By:</Text>
+                </View>
+                <TouchableOpacity
+                    style={styles.sortButton(sortType === 0)}
+                    onPress={() => handleSort(0)}
+                >
+                    <Text style={styles.sortText(sortType === 0)}>Relevent</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.sortButton(sortType === 1)}
+                    onPress={() => handleSort(1)}
+                >
+                    <Text style={styles.sortText(sortType === 1)}>Name</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={styles.sortButton(sortType === 2)}
+                    onPress={() => handleSort(2)}
+                >
+                    <Text style={styles.sortText(sortType === 2)}>Price</Text>
+                </TouchableOpacity>
             </View>
             <Modal visible={isModalVisible} animationType="slide" transparent={true}>
                 <View style={styles.modalContainer}>
@@ -221,6 +253,7 @@ const Portfolio = () => {
                 absolute
             />
             <Text>Total Stock Assets: ${assetsTotal}</Text>
+            <Text>Total Crypto Assets: ${cryptoTotal}</Text>
         </View>
     );
 };
@@ -288,6 +321,37 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
         color: "blue",
     },
+    sortContainer: {
+        backgroundColor: "black",
+        flexDirection: "row",
+        position: 'absolute',  // Position the container at the top
+        top: 0,               // Top of the screen
+        width: "100%",
+        height: 53,
+        justifyContent: "space-around",
+        alignItems: "center",
+        paddingHorizontal: 15,
+        borderRadius: 25,
+        marginTop: 100,
+        marginBottom: 15,
+    },
+    sortBy: {
+        borderColor: "white",
+        paddingHorizontal: 15,
+    },
+    sortText: (selected) => ({
+        color: selected ? "black" : "white",
+        fontSize: 16,
+        fontWeight: "500",
+    }),
+    sortButton: (selected) => ({
+        backgroundColor: selected ? "white" : "black",
+        paddingHorizontal: 30,
+        marginHorizontal: 5,
+        height: "75%",
+        borderRadius: 20,
+        justifyContent: "center"
+    }),
 });
 
 export default Portfolio;

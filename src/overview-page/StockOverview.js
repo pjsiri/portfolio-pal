@@ -17,6 +17,7 @@ import { useDarkMode } from "../common/darkmode/DarkModeContext";
 import {
   getFirestore,
   collection,
+  setDoc,
   addDoc,
   deleteDoc,
   doc,
@@ -92,13 +93,14 @@ const fetchUserBalance = async (userId) => {
       const userBalance = userData.balance;
 
       if (userBalance === undefined) {
-        await updateDoc(userDocRef, { balance: 50000 });
+        await setDoc(userDocRef, { balance: 50000 }, { merge: true });
         setBalance(50000); 
       } else {
         setBalance(userBalance);
       }
     } else {
-      console.log("User document does not exist.");
+      await setDoc(userDocRef, { balance: 50000 }, { merge: true });
+      setBalance(50000); 
     }
   } catch (error) {
     console.error("Error fetching user balance:", error);

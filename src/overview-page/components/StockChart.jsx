@@ -3,20 +3,21 @@ import { Text, View, TouchableOpacity, ActivityIndicator } from "react-native";
 import useFetch from "../../../hook/useFetch";
 import { LineChart } from "react-native-chart-kit";
 
-const StockChart = ({ symbol, period }) => {
+const StockChart = ({ endpoint, query }) => {
   const [refresh, setRefresh] = useState(true);
-  const { data, isLoading, error, refetch } = useFetch("stock-time-series", {
-    symbol: symbol,
-    period: period,
-    language: "en",
-  });
+  const { data, isLoading, error, refetch } = useFetch(endpoint, query);
 
   let dateKeys = data?.time_series ? Object.keys(data.time_series) : [];
-  let priceData = dateKeys.map((date) => data?.time_series[date]?.price ?? 0);
+  let priceData = dateKeys.map(
+    (date) =>
+      (data?.time_series[date]?.price ||
+        data?.time_series[date]?.exchange_rate) ??
+      0
+  );
 
   useEffect(() => {
     refetch();
-  }, [period]);
+  }, [query]);
 
   return (
     <View style={{ justifyContent: "center", height: 220, marginTop: 15 }}>

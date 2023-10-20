@@ -328,7 +328,10 @@ const StockOverview = () => {
             </View>
 
             <View style={styles.graphContainer}>
-              <StockChart symbol={item.symbol} period={period} />
+              <StockChart
+                endpoint={"stock-time-series"}
+                query={{ symbol: item.symbol, period: period }}
+              />
               <View style={styles.graphButtonsContainer}>
                 <TouchableOpacity
                   style={styles.graphButton(period === "1D")}

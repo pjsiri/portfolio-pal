@@ -47,6 +47,7 @@
     "jest-expo": "^49.0.0",
     "link": "^2.1.0",
     "patch-package": "^8.0.0",
+    "randomcolor": "^0.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-native": "0.72.6",

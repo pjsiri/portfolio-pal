@@ -91,10 +91,9 @@ const fetchUserBalance = async (userId) => {
       const userData = userDocSnapshot.data();
       const userBalance = userData.balance;
 
-      // Check if balance exists, if not, create it with an initial value
       if (userBalance === undefined) {
-        await updateDoc(userDocRef, { balance: 0 }); // You can set an initial value of your choice
-        setBalance(0); // Set the balance in your component state
+        await updateDoc(userDocRef, { balance: 50000 });
+        setBalance(50000); 
       } else {
         setBalance(userBalance);
       }

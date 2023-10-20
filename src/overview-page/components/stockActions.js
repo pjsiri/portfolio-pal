@@ -36,11 +36,7 @@ export const fakeBuyStock = async (userId, symbol, quantity, price) => {
           totalPrice,
           timestamp: new Date(),
         });
-        const userDoc = await getDoc(userRef);
-        const currentPortfolioValue = userDoc.data().portfolioValue || 0;
-        const newPortfolioValue = currentPortfolioValue + totalPrice;
-        await updateDoc(userRef, { portfolioValue: newPortfolioValue });
-
+        
         return true; // Success
     } catch (error) {
         console.error('Error buying stock:', error);
@@ -75,11 +71,7 @@ export const fakeSellStock = async (userId, symbol, quantity, price) => {
                 timestamp: new Date(),
             });
 
-          const userDoc = await getDoc(userRef);
-          const currentPortfolioValue = userDoc.data().portfolioValue || 0;
-          const newPortfolioValue = currentPortfolioValue - totalPrice;
-          await updateDoc(userRef, { portfolioValue: newPortfolioValue });
-  
+          
             return true; // Success
         } else {
             return false; // User doesn't own enough of this stock

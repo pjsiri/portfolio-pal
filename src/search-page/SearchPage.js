@@ -101,7 +101,7 @@ const SearchPage = () => {
           style={styles.sortButton(sortType === 0)}
           onPress={() => handleSort(0)}
         >
-          <Text style={styles.sortText(sortType === 0)}>Relevent</Text>
+          <Text style={styles.sortText(sortType === 0)}>Relevant</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.sortButton(sortType === 1)}

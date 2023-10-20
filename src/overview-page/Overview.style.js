@@ -21,7 +21,6 @@ const styles = StyleSheet.create({
 
   container: {
     marginBottom: 10,
-    padding: 10,
     alignItems: "center",
   },
 
@@ -49,12 +48,40 @@ const styles = StyleSheet.create({
   },
 
   graphContainer: {
-    backgroundColor: "lightgrey",
+    alignItems: "center",
+    borderWidth: 5,
     width: "100%",
-    height: 250,
+    height: 270,
+  },
+
+  graphButtonsContainer: {
+    backgroundColor: "black",
+    flexDirection: "row",
+    alignSelf: "center",
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingHorizontal: 15,
+    width: "100%",
+    height: 50,
     justifyContent: "center",
     alignItems: "center",
+    top: -20,
   },
+
+  graphButton: (selected) => ({
+    backgroundColor: selected ? "white" : "black",
+    paddingHorizontal: 15,
+    marginHorizontal: 5,
+    height: "75%",
+    borderRadius: 20,
+    justifyContent: "center",
+  }),
+
+  graphButtonText: (selected) => ({
+    color: selected ? "black" : "white",
+    fontSize: 16,
+    fontWeight: "500",
+  }),
 
   bookmarkContainer: {
     padding: 10,

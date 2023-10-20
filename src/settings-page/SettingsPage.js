@@ -8,22 +8,17 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 const SettingsPage = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
   const navigation = useNavigation();
   /* const [selectedCurrency, setSelectedCurrency] = useState("NZD"); */
 
   useEffect(() => {
     const auth = getAuth();
 
-    // Listen for changes in the user's authentication state
     onAuthStateChanged(auth, (user) => {
       if (user) {
         // The user is signed in, and you can access the user's information, including the display name
         if (user.displayName) {
           setUsername(user.displayName);
-        }
-        if (user.email) {
-          setEmail(user.email);
         }
       }
     });
@@ -54,7 +49,7 @@ const SettingsPage = () => {
     navigation.navigate("Education");
   };
 
-  const handleProfileNavigation = () => {
+  const handleEditProfile = () => {
     navigation.navigate("Profile");
   };
 
@@ -63,21 +58,21 @@ const SettingsPage = () => {
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
         Profile
       </Text>
-      <TouchableOpacity onPress={handleProfileNavigation}>
-        <View style={[styles.profileContainer, isDarkMode && styles.darkModeContainer]}>
-          <View style={styles.profileImageContainer}>
-            <Image
-              source={{
-                uri:
-                  "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png",
-              }}
-              style={styles.profileImage}
-            />
-          </View>
-          <Text style={[styles.usernameText, isDarkMode && styles.darkModeText]}>Username: {username}</Text>
-          <Text style={[styles.usernameText, isDarkMode && styles.darkModeText]}>Email: {email}</Text>
+      <View style={styles.profileContainer}>
+        <View style={styles.profileImageContainer}>
+          <Image
+            source={{
+              uri:
+                "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png",
+            }}
+            style={styles.profileImage}
+          />
         </View>
-      </TouchableOpacity>
+        <Text style={[styles.usernameText, isDarkMode && styles.darkModeText]}>{username}</Text>
+        <TouchableOpacity style={styles.editProfileButton} onPress={handleEditProfile}>
+          <Text style={styles.editProfileText}>Edit Profile</Text>
+        </TouchableOpacity>
+      </View>
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
         Appearance
       </Text>
@@ -131,16 +126,16 @@ const SettingsPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop: 30,
     alignItems: "center",
   },
   profileContainer: {
     alignItems: "center",
     width: 350,
-    height: 250,
+    height: 280,
     borderColor: "gray",
     borderWidth: 1,
     paddingHorizontal: 10,
-    marginBottom: 5,
     borderRadius: 20,
   },
   appearanceContainer: {
@@ -158,7 +153,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    marginTop: 50,
+    marginTop: 20,
     marginBottom: 10,
     marginLeft: 30,
     alignSelf: "flex-start",
@@ -189,8 +184,7 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
   },
   usernameText: {
-    fontSize: 18,
-    marginLeft: 10,
+    fontSize: 20,
   },
   profileImageContainer: {
     width: 120,
@@ -204,6 +198,18 @@ const styles = StyleSheet.create({
   profileImage: {
     width: "100%",
     height: "100%",
+  },
+  editProfileButton: {
+    backgroundColor: "black",
+    padding: 10,
+    borderRadius: 20,
+    marginTop: 20,
+    width: "90%",
+    alignItems: "center",
+  },
+  editProfileText: {
+    color: "white",
+    fontSize: 16,
   },
 });
 

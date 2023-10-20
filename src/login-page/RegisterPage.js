@@ -75,8 +75,7 @@ const RegisterScreen = () => {
   };
 
   const handleBack = () => {
-    // Navigate back to the login screen
-    navigation.navigate('Login');
+    navigation.goBack();
   };
 
   const styles = {

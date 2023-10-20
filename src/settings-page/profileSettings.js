@@ -1,120 +1,32 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { View, Button, TextInput, Image, StyleSheet, TouchableOpacity } from "react-native";
-import { getAuth, updateProfile, updateEmail, updatePassword } from "firebase/auth";
-import { launchImageLibrary } from 'react-native-image-picker';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { getAuth, updateProfile } from "firebase/auth";
 
 const ProfileSettings = () => {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [image, setImage] = useState('');
-  const [newUsername, setNewUsername] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [newUsername, setNewUsername] = useState("");
+  const [newEmail, setNewEmail] = useState("");
   const navigation = useNavigation();
 
-  useEffect(() => {
+  const handleSave = async () => {
+    // Update the user's profile using Firebase Auth
     const auth = getAuth();
-
-    auth.onAuthStateChanged((user) => {
-      if (user) {
-        if (user.displayName) {
-          setUsername(user.displayName);
-          setNewUsername(user.displayName);
-        }
-        if (user.email) {
-          setEmail(user.email);
-          setNewEmail(user.email);
-        }
-        if (user.photoURL) {
-          setImage(user.photoURL);
-        }
-      }
-    });
-  }, []);
-
-  useEffect(() => {
-    setNewUsername(username);
-    setNewEmail(email);
-  }, [username, email]);
-
-  const handleChoosePhoto = () => {
-    launchImageLibrary({ noData: true }, (response) => {
-      if (response) {
-        uploadImage(response);
-      }
-    });
-  };
-
-  const uploadImage = async (response) => {
-    const storage = getStorage();
-    const storageRef = ref(storage, 'images/' + response.fileName);
-
-    const uploadTask = uploadBytesResumable(storageRef, response.uri);
-
-    uploadTask.on('state_changed',
-      (snapshot) => {
-        // Handle progress, success, and errors
-      },
-      (error) => {
-        // Handle unsuccessful uploads
-      },
-      () => {
-        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          setImage(downloadURL);
-        });
-      }
-    );
-  };
-
-  const handleUpdateUsername = () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (newUsername !== username) {
-      updateProfile(user, {
-        displayName: newUsername
-      }).then(() => {
-        setUsername(newUsername);
-      }).catch((error) => {
-        console.log(error);
+    try {
+      await updateProfile(auth.currentUser, {
+        displayName: newUsername,
+        email: newEmail,
       });
+      Alert.alert("Success", "Profile updated successfully");
+      navigation.navigate("Settings");
+    } catch (error) {
+      console.error("Error updating profile:", error);
+      Alert.alert("Error", "Profile update failed. Please try again.");
     }
-
-    user.reload();
-  };
-
-  const handleUpdateEmail = () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (newEmail !== email) {
-      updateEmail(user, newEmail).then(() => {
-        setEmail(newEmail);
-      }).catch((error) => {
-        console.log(error);
-      });
-    }
-
-    user.reload();
-  };
-
-  const handleUpdatePassword = () => {
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (newPassword) {
-      updatePassword(user, newPassword).catch((error) => {
-        console.log(error);
-      });
-    }
-
-    user.reload();
   };
 
   const handleBack = () => {
-    navigation.navigate('Settings');
+    navigation.navigate("Settings", { updatedUsername: newUsername });
   };
 
   return (
@@ -129,30 +41,23 @@ const ProfileSettings = () => {
           />
         </TouchableOpacity>
       </View>
-      {image && (
-        <Image source={{ uri: image }} style={styles.profileImage} />
-      )}
-      <Button title="Upload Photo" onPress={handleChoosePhoto} />
+      <Text style={styles.title}>Edit Profile</Text>
       <TextInput
+        style={styles.input}
+        placeholder="New Username"
         value={newUsername}
         onChangeText={setNewUsername}
-        placeholder="Username"
       />
-      <Button title="Update Username" onPress={handleUpdateUsername} />
       <TextInput
+        style={styles.input}
+        placeholder="New Email"
         value={newEmail}
         onChangeText={setNewEmail}
-        placeholder="Email"
       />
-      <Button title="Update Email" onPress={handleUpdateEmail} />
-      <TextInput
-        value={newPassword}
-        onChangeText={setNewPassword}
-        placeholder="New Password"
-        secureTextEntry
-      />
-      <Button title="Update Password" onPress={handleUpdatePassword} />
-    </View>
+      <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
+        <Text style={styles.saveButtonText}>Save</Text>
+      </TouchableOpacity>
+    </View >
   );
 };
 
@@ -162,11 +67,27 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  profileImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
-    marginBottom: 20,
+  title: {
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  input: {
+    width: 300,
+    height: 40,
+    borderWidth: 1,
+    margin: 10,
+    padding: 10,
+  },
+  saveButton: {
+    backgroundColor: "black",
+    padding: 10,
+    borderRadius: 20,
+    marginTop: 20,
+  },
+  saveButtonText: {
+    color: "white",
+    fontSize: 16,
+    textAlign: "center",
   },
   backButtonContainer: {
     position: 'absolute',

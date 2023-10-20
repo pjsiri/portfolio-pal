@@ -27,8 +27,6 @@ function calculateTotalPrice(price, quantity) {
     return price * quantity;
 }
 
-
-
 const Portfolio = () => {
     const { isDarkMode } = useDarkMode();
     const [userAssets, setUserAssets] = useState([]);
@@ -185,32 +183,33 @@ const Portfolio = () => {
             setSortType(selectedSortType);
         }
     };
+
+    const percentageStocks = (assetsTotal / (assetsTotal + cryptoTotal)) * 100
+    const percentageCryptos = (cryptoTotal / (assetsTotal + cryptoTotal)) * 100
+    const userTotalAssets = assetsTotal + cryptoTotal;
     return (
         <View style={containerStyle}>
-            <View style={styles.topBar}>
-                <Button title="Add" onPress={showModal} />
-            </View>
             <View style={styles.sortContainer}>
                 <View style={styles.sortBy}>
-                    <Text style={styles.sortText(false)}>Sort By:</Text>
+                    <Text style={styles.sortText(false)}>Menu:</Text>
                 </View>
                 <TouchableOpacity
                     style={styles.sortButton(sortType === 0)}
-                    onPress={() => handleSort(0)}
+                    onPress={showModal}
                 >
-                    <Text style={styles.sortText(sortType === 0)}>Relevent</Text>
+                <Text style={styles.sortText(sortType === 0)}>add</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.sortButton(sortType === 1)}
                     onPress={() => handleSort(1)}
                 >
-                    <Text style={styles.sortText(sortType === 1)}>Name</Text>
+                    <Text style={styles.sortText(sortType === 1)}>Assets detail</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.sortButton(sortType === 2)}
                     onPress={() => handleSort(2)}
                 >
-                    <Text style={styles.sortText(sortType === 2)}>Price</Text>
+                    <Text style={styles.sortText(sortType === 2)}>Summary</Text>
                 </TouchableOpacity>
             </View>
             <Modal visible={isModalVisible} animationType="slide" transparent={true}>
@@ -252,8 +251,19 @@ const Portfolio = () => {
                 paddingLeft="15"
                 absolute
             />
-            <Text>Total Stock Assets: ${assetsTotal}</Text>
-            <Text>Total Crypto Assets: ${cryptoTotal}</Text>
+            <View style={styles.assetContainer}>
+                <Text style={styles.headerText}>Asset Overview</Text>
+
+                <View style={styles.sectionContainer}>
+                    <Text style={styles.valueText}>Total Assets Value</Text>
+                    <Text style={styles.valueText}>${userTotalAssets.toFixed(2)}</Text>
+                </View>
+
+                <View style={styles.sectionContainer}>
+                    <Text style={styles.valueText}>Total Stock Assets: {percentageStocks.toFixed(0)}%</Text>
+                    <Text style={styles.valueText}>Total Crypto Assets: {percentageCryptos.toFixed(0)}%</Text>
+                </View>
+            </View>
         </View>
     );
 };
@@ -352,6 +362,40 @@ const styles = StyleSheet.create({
         borderRadius: 20,
         justifyContent: "center"
     }),
+    assetContainer: {
+        padding: 16,
+        backgroundColor: '#F0F0F0',
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+        margin: 16,
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 16,
+        color: '#007AFF',
+    },
+    sectionContainer: {
+        backgroundColor: 'white',
+        padding: 16,
+        marginBottom: 16,
+        borderRadius: 10,
+    },
+    valueText: {
+        fontSize: 18,
+        marginBottom: 8,
+    },
+    percentageText: {
+        fontSize: 18,
+        color: '#009933',
+    },
 });
 
 export default Portfolio;

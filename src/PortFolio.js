@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { PieChart } from "react-native-chart-kit";
 import { StatusBar } from "react-native";
+import { useIsFocused } from "@react-navigation/native";
 import { useDarkMode } from "./common/darkmode/DarkModeContext";
 import { Picker } from "@react-native-picker/picker";
 import {
@@ -42,6 +43,7 @@ const Portfolio = () => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [sortType, setSortType] = useState(0);
     const [ascendOrder, setAscendOrder] = useState(true);
+    const isFocused = useIsFocused();
 
     const showModal = () => {
         console.log("Add button pressed");
@@ -83,42 +85,42 @@ const Portfolio = () => {
         setAssetQuantity("");
         hideModal();
     };
-
-    //Stocks
     useEffect(() => {
-        const fetchUserAssets = async () => {
-            const db = getFirestore(); // Initialize Firestore
-            const auth = getAuth();
-            const user = auth.currentUser;
-
-            if (user) {
-                try {
-                    const userRef = collection(db, `users/${user.uid}/portfolio`);
-                    const q = query(userRef);
-                    const querySnapshot = await getDocs(q);
-                    const assets = [];
-                    let total = 0; // Initialize a total variable
-
-                    querySnapshot.forEach((doc) => {
-                        const asset = doc.data();
-                        assets.push({
-                            price: asset.totalPrice
+        if (isFocused) {
+            const fetchUserAssets = async () => {
+                const db = getFirestore();
+                const auth = getAuth();
+                const user = auth.currentUser;
+        
+                if (user) {
+                    try {
+                        const holdingsRef = collection(db, `users/${user.uid}/holdings`); // Change collection to "holdings"
+                        const q = query(holdingsRef);
+                        const querySnapshot = await getDocs(q);
+                        const assets = [];
+                        let total = 0;
+        
+                        querySnapshot.forEach((doc) => {
+                            const asset = doc.data();
+                            assets.push({
+                                price: asset.totalPrice
+                            });
+                            total += asset.totalPrice;
                         });
-                        total += asset.totalPrice; // Accumulate the total
-                    });
-
-                    setAssetsTotal(total); // Update assetsTotal state
-                    setUserAssets(assets);
-                } catch (error) {
-                    console.error("Error fetching user assets from Firestore:", error);
+        
+                        setAssetsTotal(total);
+                        setUserAssets(assets);
+                    } catch (error) {
+                        console.error("Error fetching user assets from Firestore:", error);
+                    }
+                } else {
+                    console.log("No authenticated user found");
                 }
-            } else {
-                console.log("No authenticated user found");
-            }
-        };
-
-        fetchUserAssets();
-    }, []);
+            };
+        
+            fetchUserAssets();
+        }
+    }, [isFocused]);
 
     //Cryptos
     useEffect(() => {

@@ -137,15 +137,15 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     width: "70%",
-    height: 300,
+    height: "20%",
     alignItems: "center",
-    marginTop: 100,
+    marginTop: 80,
   },
   saveButton: {
     backgroundColor: "black",
     padding: 10,
     borderRadius: 20,
-    marginTop: 20,
+    marginTop: 100,
     width: "50%",
   },
   saveButtonText: {

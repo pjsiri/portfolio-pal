@@ -25,7 +25,7 @@ const SettingsPage = () => {
         }
       });
     }
-    
+
   }, [isFocused]);
 
   const handleLogout = () => {
@@ -49,14 +49,6 @@ const SettingsPage = () => {
     );
   };
 
-  const handleEducationNavigation = () => {
-    navigation.navigate("Education");
-  };
-
-  const handleEditProfile = () => {
-    navigation.navigate("Profile");
-  };
-
   return (
     <View style={[styles.container, isDarkMode && styles.darkModeContainer]}>
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
@@ -73,7 +65,7 @@ const SettingsPage = () => {
           />
         </View>
         <Text style={[styles.usernameText, isDarkMode && styles.darkModeText]}>{username}</Text>
-        <TouchableOpacity style={styles.editProfileButton} onPress={handleEditProfile}>
+        <TouchableOpacity style={styles.editProfileButton} onPress={() => navigation.navigate("Profile")}>
           <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
       </View>
@@ -98,7 +90,7 @@ const SettingsPage = () => {
         Tutorials
       </Text>
       <View style={[styles.appearanceContainer, isDarkMode && styles.darkModeContainer]}>
-        <TouchableOpacity onPress={handleEducationNavigation}>
+        <TouchableOpacity onPress={() => navigation.navigate("Education")}>
           <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>
             Educational Videos
           </Text>

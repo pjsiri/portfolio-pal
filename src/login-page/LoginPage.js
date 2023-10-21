@@ -47,11 +47,6 @@ const LoginScreen = () => {
     }
   };
 
-  const handleSignUp = () => {
-    // Navigate to the "Register" screen when the button is pressed
-    navigation.navigate("Register");
-  };
-
   const handleShowPassword = () => {
     // Toggle the visibility of the password
     setIsPasswordVisible(!isPasswordVisible);
@@ -129,7 +124,7 @@ const LoginScreen = () => {
         </View>
         <View style={styles.signUpTextContainer}>
           <Text style={styles.signUpText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={handleSignUp}>
+          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
             <Text style={styles.signUpLink}>Sign up</Text>
           </TouchableOpacity>
         </View>

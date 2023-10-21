@@ -26,40 +26,39 @@ const RegisterScreen = () => {
   );
 
   const handleRegister = async () => {
-    if (email && pass && confirmPass && username && username.length >= 3) {
-      if (pass !== confirmPass) {
-        Alert.alert('Registration Failed', 'Password and confirmation password do not match.');
-        return;
-      }
-  
-      // Check if the username contains only letters and numbers
-      const usernameRegex = /^[A-Za-z0-9]+$/;
-      if (!usernameRegex.test(username)) {
-        Alert.alert('Registration Failed', 'Username can only contain letters and numbers.');
-        return;
-      }
-  
-      try {
-        const auth = getAuth();
-        await createUserWithEmailAndPassword(auth, email, pass);
-  
-        const user = auth.currentUser;
-        await updateProfile(user, { displayName: username });
-  
-        Alert.alert('Registration Successful', 'You have successfully registered!');
-        navigation.navigate('Login');
-      } catch (error) {
-        Alert.alert('Registration Failed', error.message);
-      }
-    } else {
-      if (username && username.length < 3) {
-        Alert.alert('Registration Failed', 'Username must be at least 3 characters long.');
-      } else {
-        Alert.alert('Registration Failed', 'Please provide valid information.');
-      }
+  if (email && pass && confirmPass && username && username.length >= 3) {
+    if (pass !== confirmPass) {
+      Alert.alert('Registration Failed', 'Password and confirmation password do not match.');
+      return;
     }
-  };
-  
+
+    // Check if the username contains only letters and numbers
+    const usernameRegex = /^[A-Za-z0-9]+$/;
+    if (!usernameRegex.test(username)) {
+      Alert.alert('Registration Failed', 'Username can only contain letters and numbers.');
+      return;
+    }
+
+    try {
+      const auth = getAuth();
+      await createUserWithEmailAndPassword(auth, email, pass);
+
+      const user = auth.currentUser;
+      await updateProfile(user, { displayName: username });
+
+      Alert.alert('Registration Successful', 'You have successfully registered!');
+      navigation.navigate('Login');
+    } catch (error) {
+      Alert.alert('Registration Failed', error.message);
+    }
+  } else {
+    if (username && username.length < 3) {
+      Alert.alert('Registration Failed', 'Username must be at least 3 characters long.');
+    } else {
+      Alert.alert('Registration Failed', 'Please provide valid information.');
+    }
+  }
+};
 
   const handleShowPassword = () => {
     // Toggle the visibility of the password

@@ -14,10 +14,6 @@ const PortfolioStocks = ({ investments }) => {
   const navigation = useNavigation();
   const { isDarkMode } = useDarkMode();
 
-  const { data, isLoading, error, refetch } = useFetch("market-trends", {
-    trend_type: trendType,
-  });
-
   useEffect(() => {
     refetch();
   }, []);
@@ -73,23 +69,13 @@ const PortfolioStocks = ({ investments }) => {
           />
         ) : error ? (
           <Text style={textStyles}>Something went wrong</Text>
-        ) : isStocks ? (
-          data?.trends?.slice(0, 5).map((item) => (
+        ) : (
+          investments.map((item) => (
             <StockCard
               item={item}
               key={`stock-browse${item?.google_mid}`}
               handleNavigate={() => {
                 navigation.navigate("StockOverview", { item });
-              }}
-            />
-          ))
-        ) : (
-          data?.trends?.slice(0, 5).map((item) => (
-            <CryptoCard
-              item={item}
-              key={`crypto-browse-${item?.google_mid}`}
-              handleNavigate={() => {
-                navigation.navigate("CryptoOverview", { item });
               }}
             />
           ))

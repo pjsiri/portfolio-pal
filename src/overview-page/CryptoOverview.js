@@ -245,7 +245,6 @@ const CryptoOverview = () => {
         }
       } else {
         //Selling
-        console.log(stockSymbol + quantity )
         // Check if the user has this stock in their portfolio
         const hasStockInPortfolio = await fakeSellStock(
           userId,

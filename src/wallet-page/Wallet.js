@@ -139,10 +139,7 @@ const Wallet = () => {
         }
     };
 
-    if (isFocused) {
-        fetchTransactions(); 
-    }
-
+    
     const handleWithdraw = async () => {
         try {
         // Show a confirmation dialog
@@ -201,7 +198,7 @@ const Wallet = () => {
             onChangeText={(text) => setTopUpAmount(text)}
             keyboardType="numeric"
         />
-        <TouchableOpacity style={styles.button} onPress={handleTopUp}>
+        <TouchableOpacity style={styles.button} onPress={handleTopUp} disabled={parseFloat(topUpAmount) <= 0}>
             <Text style={styles.buttonText}>Top Up</Text>
         </TouchableOpacity>
         <TextInput
@@ -211,7 +208,7 @@ const Wallet = () => {
             onChangeText={(text) => setWithdrawAmount(text)}
             keyboardType="numeric"
         />
-        <TouchableOpacity style={styles.button} onPress={handleWithdraw}>
+        <TouchableOpacity style={styles.button} onPress={handleWithdraw} disabled={parseFloat(withdrawAmount) <= 0}>
             <Text style={styles.buttonText}>Withdraw</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleNavigateToExchange}>

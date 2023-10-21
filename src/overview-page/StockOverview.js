@@ -209,17 +209,19 @@ const fetchUserBalance = async (userId) => {
     setIsBuying(false);
     setIsQuantityModalVisible(true);
   };
-
+  
   const handleConfirmQuantity = async (quantity) => {
     setIsQuantityModalVisible(false);
-
     if (quantity > 0) {
       if (isBuying) {
         const success = await fakeBuyStock(
           userId,
           stockSymbol,
           quantity,
-          data.price
+          data.price,
+          item.google_mid,
+          item.name,
+          item.currency,
         );
 
         if (success) {

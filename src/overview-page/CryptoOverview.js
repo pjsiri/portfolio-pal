@@ -6,6 +6,7 @@ import {
   Image,
   SafeAreaView,
   TouchableOpacity,
+  Alert,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
@@ -27,6 +28,7 @@ import styles from "./Overview.style";
 import StockChart from "./components/StockChart";
 import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
+import QuantityInputWithConfirmation from "./components/QuantityInputWithConfirmation";
 import { fakeBuyStock, fakeSellStock } from "./components/stockActions";
 
 const uriExists = async (uri) => {
@@ -206,6 +208,79 @@ const CryptoOverview = () => {
     setIsQuantityModalVisible(true);
   };
 
+  const handleConfirmQuantity = async (quantity) => {
+    setIsQuantityModalVisible(false);
+    if (quantity > 0) {
+      if (isBuying) {
+        const success = await fakeBuyStock(
+          userId,
+          stockSymbol,
+          quantity,
+          item.exchange_rate,
+          item.google_mid,
+          stockName,
+          item.to_symbol,
+          "crypto"
+        );
+
+        if (success) {
+          const totalPrice = quantity * item.exchange_rate;
+          const newBalance = balance - totalPrice;
+          setBalance(newBalance);
+          console.log("Buy successful!");
+          Alert.alert(
+            "Buy Successful",
+            `You have successfully bought ${quantity} shares of ${stockSymbol} for a total of $${totalPrice.toFixed(
+              2
+            )}.`
+          );
+          // Update the user's balance in Firestore
+          const userDocRef = doc(firestore, "users", userId);
+          await updateDoc(userDocRef, {
+            balance: newBalance,
+          });
+        } else {
+          // Handle error
+          console.log("Error buying stock");
+        }
+      } else {
+        //Selling
+        console.log(stockSymbol + quantity )
+        // Check if the user has this stock in their portfolio
+        const hasStockInPortfolio = await fakeSellStock(
+          userId,
+          stockSymbol,
+          quantity,
+          item.exchange_rate
+        );
+
+        if (hasStockInPortfolio) {
+          const totalPrice = quantity * item.exchange_rate;
+          const newBalance = balance + totalPrice;
+          setBalance(newBalance);
+          console.log("Sell successful!");
+          Alert.alert(
+            "Sell Successful",
+            `You have successfully sold ${quantity} shares of ${stockSymbol} for a total of $${totalPrice.toFixed(
+              2
+            )}.`
+          );
+          // Update the user's balance in Firestore
+          const userDocRef = doc(firestore, "users", userId);
+          await updateDoc(userDocRef, {
+            balance: newBalance,
+          });
+        } else {
+          // Display error message for insufficient quantity or not owning the stock
+          Alert.alert(
+            "Unable to Sell",
+            "You either do not own this stock or do not have enough quantity to sell."
+          );
+        }
+      }
+    }
+  };
+
 
   const containerStyle = [
     styles.appContainer,
@@ -314,13 +389,21 @@ const CryptoOverview = () => {
             <Text>Add to watchlist</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.buyContainer}>
+          <TouchableOpacity onPress={handleBuy} style={styles.buyContainer}>
             <Text style={styles.buySellText}>Buy</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.sellContainer}>
+          <TouchableOpacity onPress={handleSell} style={styles.sellContainer}>
             <Text style={styles.buySellText}>Sell</Text>
           </TouchableOpacity>
+
+          <QuantityInputWithConfirmation
+              isVisible={isQuantityModalVisible}
+              onCancel={() => setIsQuantityModalVisible(false)}
+              onConfirm={handleConfirmQuantity}
+              balance={balance}
+              data={item.exchange_rate}
+            />
 
           {/* <View style={styles.detailContainer}>
             <View style={styles.priceDetailContainer}>

@@ -221,7 +221,8 @@ const StockOverview = () => {
           data.price,
           item.google_mid,
           item.name,
-          item.currency
+          item.currency,
+          "stocks"
         );
 
         if (success) {
@@ -428,7 +429,7 @@ const StockOverview = () => {
               onCancel={() => setIsQuantityModalVisible(false)}
               onConfirm={handleConfirmQuantity}
               balance={balance}
-              data={data}
+              data={data.price}
             />
 
             <View style={styles.detailContainer}>

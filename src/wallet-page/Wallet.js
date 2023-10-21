@@ -21,6 +21,9 @@ import {
 import { getAuth } from "firebase/auth";
 import styles from "./Wallet.style";
 import { useIsFocused } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import ExchangePage from './ExchangePage';
 
 const Wallet = () => {
     const [topUpAmount, setTopUpAmount] = useState("");
@@ -29,12 +32,16 @@ const Wallet = () => {
     const [balance, setBalance] = useState(0);
     const [walletActivity, setWalletActivity] = useState([]);
     const isFocused = useIsFocused();
-    
+    const navigation = useNavigation();
     const auth = getAuth();
     const user = auth.currentUser;
     const userId = user.uid;
     const firestore = getFirestore();
     const walletActivityRef = collection(firestore, "wallet-activity");
+
+    const handleNavigateToExchange = () => {
+        navigation.navigate("ExchangePage");
+      };
 
     const fetchWalletActivity = async () => {
         try {
@@ -207,6 +214,9 @@ const Wallet = () => {
         <TouchableOpacity style={styles.button} onPress={handleWithdraw}>
             <Text style={styles.buttonText}>Withdraw</Text>
         </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={handleNavigateToExchange}>
+            <Text style={styles.buttonText}>Exchange Currency</Text>
+        </TouchableOpacity>
         <Text style={styles.transactionHistory}>Transactions History:</Text>
         <FlatList
             data={combinedActivities}
@@ -215,6 +225,7 @@ const Wallet = () => {
             if (item.hasOwnProperty('amount')) {
                 return (
                 <View style={styles.transactionItem}>
+                    <Ionicons name="push-outline" size={24} color="black" />
                     <Text>Type: {item.type}</Text>
                     <Text>Amount: ${item.amount.toFixed(2)}</Text>
                 </View>

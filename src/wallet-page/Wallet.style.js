@@ -27,6 +27,7 @@ const styles = StyleSheet.create({
   transactionItem: {
     marginBottom: 10,
     padding: 10,
+    borderRadius: 10,
     borderWidth: 1,
     borderColor: "#ccc",
   },
@@ -55,7 +56,7 @@ const styles = StyleSheet.create({
   transactionHistory: {
     fontSize: 17,
     fontWeight: 'bold',
-    marginBottom: 3,
+    marginBottom: 10,
   },
   balance: {
     fontSize: 17,

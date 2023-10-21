@@ -290,7 +290,7 @@ const Portfolio = () => {
 
         <View style={styles.investmentCardsContainer}>
           <Text style={styles.headerText}>Current Investments</Text>
-          {/* <PortfolioStocks investments={userInvestments} /> */}
+          <PortfolioStocks investments={userInvestments} />
         </View>
       </ScrollView>
     </SafeAreaView>

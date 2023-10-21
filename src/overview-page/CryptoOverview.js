@@ -9,11 +9,25 @@ import {
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
-
+import {
+  getFirestore,
+  collection,
+  setDoc,
+  addDoc,
+  deleteDoc,
+  doc,
+  updateDoc,
+  getDoc,
+  getDocs,
+  query,
+  where,
+} from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 import styles from "./Overview.style";
 import StockChart from "./components/StockChart";
 import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
+import { fakeBuyStock, fakeSellStock } from "./components/stockActions";
 
 const uriExists = async (uri) => {
   try {
@@ -46,6 +60,13 @@ const CryptoOverview = () => {
   const [imageUri, setImageUri] = useState(null);
   const [isHeartFilled, setIsHeartFilled] = useState(false);
   const [period, setPeriod] = useState("1D");
+  const [isQuantityModalVisible, setIsQuantityModalVisible] = useState(false);
+  const [isBuying, setIsBuying] = useState(true);
+  const [balance, setBalance] = useState(50000);
+  const firestore = getFirestore();
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const userId = user.uid;
 
   let stockSymbol = item.from_symbol;
   let stockName = (item.from_currency_name || "").split(" ");
@@ -57,6 +78,74 @@ const CryptoOverview = () => {
   if (stockName.length > 0) {
     stockName = stockName[0];
   }
+
+  const fetchUserBalance = async (userId) => {
+    try {
+      const userDocRef = doc(firestore, "users", userId);
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+        const userBalance = userData.balance;
+
+        if (userBalance === undefined) {
+          await setDoc(userDocRef, { balance: 50000 }, { merge: true });
+          setBalance(50000);
+        } else {
+          setBalance(userBalance);
+        }
+      } else {
+        await setDoc(userDocRef, { balance: 50000 }, { merge: true });
+        setBalance(50000);
+      }
+    } catch (error) {
+      console.error("Error fetching user balance:", error);
+    }
+  };
+
+  const bookmarkCrypto = async (from_currency_name, from_symbol, exchange_rate) => {
+    const db = getFirestore();
+    const stocksRef = collection(db, "bookmarkedCryptos");
+
+    try {
+      await addDoc(stocksRef, {
+        from_currency_name,
+        from_symbol,
+        exchange_rate,
+        timestamp: new Date(),
+        userId: user.uid,
+        type: "crypto",
+      });
+      console.log("Crypto bookmarked successfully!");
+      setIsHeartFilled(true);
+    } catch (error) {
+      console.error("Error bookmarking stock:", error);
+    }
+  };
+
+  const handleDelete = async (from_symbol) => {
+    try {
+      const db = getFirestore();
+      const stocksRef = collection(db, "bookmarkedCryptos");
+      const q = query(
+        stocksRef,
+        where("from_symbol", "==", from_symbol.toLowerCase()),
+        where("userId", "==", user.uid)
+      );
+
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach(async (doc) => {
+        await deleteDoc(doc.ref);
+      });
+
+      console.log("Crypto bookmark removed!");
+      setIsHeartFilled(false);
+    } catch (error) {
+      console.error("Error deleting bookmarked stock:", error);
+    }
+  };
+
 
   useEffect(() => {
     async function checkUris() {
@@ -75,6 +164,26 @@ const CryptoOverview = () => {
       }
     }
 
+    // Function to check if a stock is bookmarked
+    const isStockBookmarked = async () => {
+      try {
+        const stocksRef = collection(firestore, "bookmarkedCryptos");
+        const q = query(
+          stocksRef,
+          where("userId", "==", userId),
+          where("from_symbol", "==", item.from_symbol.toLowerCase())
+        );
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          setIsHeartFilled(true);
+        }
+      } catch (error) {
+        console.error("Error checking if stock is bookmarked:", error);
+      }
+    };
+
+    isStockBookmarked(); // Call the function
+    fetchUserBalance(userId);
     checkUris();
   }, [stockSymbol, stockName]);
 
@@ -82,6 +191,21 @@ const CryptoOverview = () => {
   //   symbol: item.symbol,
   //   language: "en",
   // });
+
+  const handleBookmarkInOverview = () => {
+    bookmarkCrypto(stockName, item.from_symbol.toLowerCase(), item.exchange_rate);
+  };
+
+  const handleBuy = () => {
+    setIsBuying(true);
+    setIsQuantityModalVisible(true);
+  };
+
+  const handleSell = () => {
+    setIsBuying(false);
+    setIsQuantityModalVisible(true);
+  };
+
 
   const containerStyle = [
     styles.appContainer,
@@ -168,16 +292,25 @@ const CryptoOverview = () => {
             </View>
           </View>
 
-          <TouchableOpacity style={styles.bookmarkContainer}>
-            <Image
-              source={
-                isHeartFilled
-                  ? require("../../assets/heart.png")
-                  : require("../../assets/heart_hollow.png")
-              }
-              resizeMode="contain"
-              style={styles.heartImage}
-            />
+          <TouchableOpacity
+              style={styles.bookmarkContainer}
+              onPress={() => {
+                if (isHeartFilled) {
+                  handleDelete(stockSymbol); // Delete only if it's heart-filled
+                } else {
+                  handleBookmarkInOverview(); // Add to watchlist if it's not heart-filled
+                }
+              }}
+            >
+              <Image
+                source={
+                  isHeartFilled
+                    ? require("../../assets/heart.png")
+                    : require("../../assets/heart_hollow.png")
+                }
+                resizeMode="contain"
+                style={styles.heartImage}
+              />
             <Text>Add to watchlist</Text>
           </TouchableOpacity>
 

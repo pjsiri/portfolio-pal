@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, PureComponent } from "react";
 import {
   View,
   Text,
@@ -24,6 +24,34 @@ import { useIsFocused } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import ExchangePage from './ExchangePage';
+
+class TransactionItem extends PureComponent {
+    render() {
+        const { item } = this.props;
+        if (item.hasOwnProperty('amount')) {
+            return (
+                <View style={styles.transactionItem}>
+                    <Ionicons name="push-outline" size={24} color="black" />
+                    <Text>Type: {item.type}</Text>
+                    <Text>Amount: ${item.amount.toFixed(2)}</Text>
+                </View>
+            );
+        } else {
+            return (
+                <View style={styles.transactionCard}>
+                    <View style={styles.transactionDetails}>
+                        <Text style={styles.transactionType}>{item.type}</Text>
+                        <Text>Symbol: {item.symbol}</Text>
+                        <Text>Quantity: {item.quantity}</Text>
+                        <Text>Price: ${item.price}</Text>
+                        <Text>Total Price: ${item.totalPrice}</Text>
+                        <Text>Timestamp: {item.timestamp.toDate().toLocaleString()}</Text>
+                    </View>
+                </View>
+            );
+        }
+    }
+}
 
 const Wallet = () => {
     const [topUpAmount, setTopUpAmount] = useState("");
@@ -100,84 +128,93 @@ const Wallet = () => {
 
     const handleTopUp = async () => {
         try {
-        // Show a confirmation dialog
-        Alert.alert(
-            "Confirm Top Up",
-            `Are you sure you want to top up $${topUpAmount}?`,
-            [
-            {
-                text: "Cancel",
-                style: "cancel",
-            },
-            {
-                text: "OK",
-                onPress: async () => {
-                const newBalance = balance + parseFloat(topUpAmount);
-                await setDoc(
-                    doc(firestore, "users", userId),
-                    { balance: newBalance },
-                    { merge: true }
-                );
-                await addDoc(walletActivityRef, {
-                    type: "top_up",
-                    amount: parseFloat(topUpAmount),
-                    timestamp: new Date(),
-                    userId: userId,
-                });
-                setBalance(newBalance);
-                setTopUpAmount("");
-                fetchWalletActivity(); // Fetch transactions after top-up
-
-                // Display success message
-                Alert.alert("Success", `You have successfully topped up $${topUpAmount}`);
+            if (topUpAmount === "" || parseFloat(topUpAmount) <= 0) {
+                Alert.alert("Error", "Please enter a valid top-up amount.");
+                return;
+            }
+            
+            Alert.alert(
+                "Confirm Top Up",
+                `Are you sure you want to top up $${topUpAmount}?`,
+                [
+                {
+                    text: "Cancel",
+                    style: "cancel",
                 },
-            },
-            ]
-        );
+                {
+                    text: "OK",
+                    onPress: async () => {
+                    const newBalance = balance + parseFloat(topUpAmount);
+                    await setDoc(
+                        doc(firestore, "users", userId),
+                        { balance: newBalance },
+                        { merge: true }
+                    );
+                    await addDoc(walletActivityRef, {
+                        type: "top_up",
+                        amount: parseFloat(topUpAmount),
+                        timestamp: new Date(),
+                        userId: userId,
+                    });
+                    setBalance(newBalance);
+                    setTopUpAmount("");
+                    fetchWalletActivity(); // Fetch transactions after top-up
+    
+                    // Display success message
+                    Alert.alert("Success", `You have successfully topped up $${topUpAmount}`);
+                    },
+                },
+                ]
+            );
+            
+    
         } catch (error) {
-        console.error("Error topping up:", error);
+            console.error("Error topping up:", error);
         }
     };
-
     
     const handleWithdraw = async () => {
-        try {
-        // Show a confirmation dialog
-        Alert.alert(
-            "Confirm Withdraw",
-            `Are you sure you want to withdraw $${withdrawAmount}?`,
-            [
-            {
-                text: "Cancel",
-                style: "cancel",
-            },
-            {
-                text: "OK",
-                onPress: async () => {
-                const newBalance = balance - parseFloat(withdrawAmount);
-                if (newBalance < 0) {
-                    alert("Insufficient balance for withdrawal.");
-                    return;
-                }
-                await setDoc(
-                    doc(firestore, "users", userId),
-                    { balance: newBalance },
-                    { merge: true }
-                );
-                await addDoc(walletActivityRef, {
-                    type: "withdrawal",
-                    amount: parseFloat(withdrawAmount),
-                    timestamp: new Date(),
-                    userId: userId,
-                });
-                setBalance(newBalance);
-                setWithdrawAmount("");
-                fetchWalletActivity(); // Fetch transactions after withdrawal
-
-                // Display success message
-                Alert.alert("Success", `You have successfully withdrawn $${withdrawAmount}`);
+        try 
+        {
+            if (withdrawAmount === "" || parseFloat(withdrawAmount) <= 0) {
+                Alert.alert("Error", "Please enter a valid withdrawl amount.");
+                return;
+            }
+            Alert.alert(
+                "Confirm Withdraw",
+                `Are you sure you want to withdraw $${withdrawAmount}?`,
+                [
+                {
+                    text: "Cancel",
+                    style: "cancel",
                 },
-            },
+                {
+                    text: "OK",
+                    onPress: async () => {
+                    const newBalance = balance - parseFloat(withdrawAmount);
+                    if (newBalance < 0) {
+                        alert("Insufficient balance for withdrawal.");
+                        return;
+                    }
+                    await setDoc(
+                        doc(firestore, "users", userId),
+                        { balance: newBalance },
+                        { merge: true }
+                    );
+                    await addDoc(walletActivityRef, {
+                        type: "withdrawal",
+                        amount: parseFloat(withdrawAmount),
+                        timestamp: new Date(),
+                        userId: userId,
+                    });
+                    setBalance(newBalance);
+                    setWithdrawAmount("");
+                    fetchWalletActivity(); // Fetch transactions after withdrawal
+
+                    // Display success message
+                    Alert.alert("Success", `You have successfully withdrawn $${withdrawAmount}`);
+                    },
+                },
             ]
         );
         } catch (error) {
@@ -198,7 +235,7 @@ const Wallet = () => {
             onChangeText={(text) => setTopUpAmount(text)}
             keyboardType="numeric"
         />
-        <TouchableOpacity style={styles.button} onPress={handleTopUp} disabled={parseFloat(topUpAmount) <= 0}>
+        <TouchableOpacity style={styles.button} onPress={handleTopUp} >
             <Text style={styles.buttonText}>Top Up</Text>
         </TouchableOpacity>
         <TextInput
@@ -208,7 +245,7 @@ const Wallet = () => {
             onChangeText={(text) => setWithdrawAmount(text)}
             keyboardType="numeric"
         />
-        <TouchableOpacity style={styles.button} onPress={handleWithdraw} disabled={parseFloat(withdrawAmount) <= 0}>
+        <TouchableOpacity style={styles.button} onPress={handleWithdraw}>
             <Text style={styles.buttonText}>Withdraw</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={handleNavigateToExchange}>
@@ -218,31 +255,8 @@ const Wallet = () => {
         <FlatList
             data={combinedActivities}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => {
-            if (item.hasOwnProperty('amount')) {
-                return (
-                <View style={styles.transactionItem}>
-                    <Ionicons name="push-outline" size={24} color="black" />
-                    <Text>Type: {item.type}</Text>
-                    <Text>Amount: ${item.amount.toFixed(2)}</Text>
-                </View>
-                );
-            } else {
-                return (
-                <View style={styles.transactionCard}>
-                    <View style={styles.transactionDetails}>
-                    <Text style={styles.transactionType}>{item.type}</Text>
-                    <Text>Symbol: {item.symbol}</Text>
-                    <Text>Quantity: {item.quantity}</Text>
-                    <Text>Price: ${item.price}</Text>
-                    <Text>Total Price: ${item.totalPrice}</Text>
-                    <Text>Timestamp: {item.timestamp.toDate().toLocaleString()}</Text>
-                    </View>
-                </View>
-                );
-            }
-        }}
-    />
+            renderItem={({ item }) => <TransactionItem item={item} />}
+        />
         </View>
     );
     };

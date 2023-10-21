@@ -29,9 +29,9 @@ const styles = StyleSheet.create({
       appContainer: {
         flex: 1,
         padding: 15,
-        paddingTop: 50,
+        paddingTop: 60,
         width: "100%",
-        backgroundColor: "white", // whote
+        backgroundColor: "white", 
       },
       header: {
         fontWeight: "bold",

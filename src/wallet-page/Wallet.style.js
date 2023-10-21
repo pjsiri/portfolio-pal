@@ -37,6 +37,21 @@ const styles = StyleSheet.create({
   transactionAmount: {
     fontSize: 16,
   },
+  transactionCard: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 10,
+    padding: 10,
+    marginBottom: 10,
+  },
+  transactionDetails: {
+  },
+  transactionType: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
 });
 
 export default styles;

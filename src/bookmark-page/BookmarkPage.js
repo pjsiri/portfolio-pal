@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image, SafeAreaView, ScrollView } from 'react-native';
-import { getFirestore, collection, getDocs, query, orderBy, where, deleteDoc } from 'firebase/firestore';
-import StockCard from './common/cards/StockCard'; 
-import CryptoCard from './common/cards/CryptoCard'; 
-import cardStyles from './common/cards/Cards.style'; 
+import { View, Text, FlatList, TouchableOpacity, Image, SafeAreaView } from 'react-native';
+import { getFirestore, collection, getDocs, query, where } from 'firebase/firestore';
+import StockCard from '../common/cards/StockCard'; 
+import CryptoCard from '../common/cards/CryptoCard'; 
 import { useNavigation } from '@react-navigation/native';
-import Homestyles from "./home-page/HomePage.style";
 import { getAuth } from 'firebase/auth';
-import { useDarkMode } from './common/darkmode/DarkModeContext'; 
+// import { useDarkMode } from '../common/darkmode/DarkModeContext'; 
+import styles from "./BookmarkPage.style";
+import { onSnapshot } from 'firebase/firestore';
 
 const BookmarkedStocksPage = () => {
   const [bookmarkedItems, setBookmarkedItems] = useState([]);
   const navigation = useNavigation();
-  const { isDarkMode } = useDarkMode(); 
   const [activeTab, setActiveTab] = useState('stock');
   const filteredItems = bookmarkedItems.filter(item => item.type === activeTab);
 
@@ -32,7 +31,7 @@ const BookmarkedStocksPage = () => {
 
         const stocksQuery = query(stocksRef, where('userId', '==', user.uid));
         const cryptosQuery = query(cryptosRef, where('userId', '==', user.uid));
-
+        
         try {
           const stocksSnapshot = await getDocs(stocksQuery);
           const cryptosSnapshot = await getDocs(cryptosQuery);
@@ -41,6 +40,26 @@ const BookmarkedStocksPage = () => {
           const cryptos = cryptosSnapshot.docs.map(doc => ({ ...doc.data(), type: 'crypto' }));
 
           setBookmarkedItems([...stocks, ...cryptos]);
+          
+          const unsubscribeStocks = onSnapshot(stocksRef, (snapshot) => {
+            const updatedStocks = snapshot.docs
+              .filter(doc => doc.data().userId === user.uid) // Check if userId matches
+              .map(doc => ({ ...doc.data(), type: 'stock' }));
+            setBookmarkedItems(prevState => [...updatedStocks, ...prevState.filter(item => item.type !== 'stock')]);
+          });
+          
+          const unsubscribeCryptos = onSnapshot(cryptosRef, (snapshot) => {
+            const updatedCryptos = snapshot.docs
+              .filter(doc => doc.data().userId === user.uid) // Check if userId matches
+              .map(doc => ({ ...doc.data(), type: 'crypto' }));
+            setBookmarkedItems(prevState => [...updatedCryptos, ...prevState.filter(item => item.type !== 'crypto')]);
+          });
+          
+          return () => {
+            unsubscribeStocks(); 
+            unsubscribeCryptos(); 
+          };
+
         } catch (error) {
           console.error('Error fetching bookmarked items:', error);
         }
@@ -51,74 +70,6 @@ const BookmarkedStocksPage = () => {
 
     fetchBookmarkedItems();
   }, []);
-
-
-  const styles = {
-    container: {
-      width: "100%",
-      alignItems: "center",
-      justifyContent: "flex-start",
-    },
-    inputIcon: {
-      width: 24,
-      height: 24,
-      marginRight: 8,
-    },
-    backButtonContainer: {
-      position: 'absolute',
-      top: 80,
-      left: 20,
-    },
-    backButton: {
-      width: 30,
-      height: 30,
-      tintColor: isDarkMode ? "white" : "black",
-    },
-    title: {
-      fontSize: 24,
-      marginBottom: 15,
-      color: isDarkMode ? "white" : "black",
-    },
-    appContainer: {
-      flex: 1,
-      padding: 15,
-      paddingTop: 50,
-      width: "100%",
-      backgroundColor: isDarkMode ? "#333" : "White",
-    },
-    header: {
-      fontWeight: "bold",
-      fontSize: 30,
-      paddingTop: 20,
-      paddingBottom: 20,
-      color: isDarkMode ? "White" : "Black",
-    },
-    stocks: {
-      paddingTop: 20,
-      paddingBottom: 20,
-    },
-    tabButtons: {
-      flexDirection: 'row',
-      justifyContent: 'center',
-      marginBottom: 10,
-    },
-    tabButton: {
-      paddingVertical: 8,
-      paddingHorizontal: 16,
-      marginHorizontal: 8,
-      borderWidth: 1,
-      borderColor: '#ccc',
-      borderRadius: 5,
-    },
-    activeTabButton: {
-      backgroundColor: '#007bff',
-      borderColor: '#007bff',
-    },
-    tabButtonText: {
-      color: '#333',
-      fontWeight: 'bold',
-    },
-  };
   
   return (
     <SafeAreaView style={[styles.appContainer]}>

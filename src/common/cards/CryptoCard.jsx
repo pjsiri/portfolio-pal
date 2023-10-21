@@ -206,7 +206,7 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
             ]}
             numberOfLines={1}
           >
-            ${formatNumber(item.exchange_rate)}&nbsp;{item.to_symbol}
+            ${formatNumber(item.exchange_rate)}&nbsp;{item.to_symbol || "USD"}
           </Text>
         </View>
       </View>

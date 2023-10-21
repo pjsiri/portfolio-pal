@@ -5,6 +5,7 @@ import HomePage from "../../home-page/HomePage.js";
 import PortfolioPage from "../../portfolio-page/PortFolio.js";
 import SettingsPage from "../../settings-page/SettingsPage.js";
 import SearchPage from "../../search-page/SearchPage.js";
+import Wallet from "../../wallet-page/Wallet.js"
 
 const TabIcon = ({ name, color, size }) => {
   return <Ionicons name={name} color={color} size={size} />;
@@ -52,6 +53,16 @@ const BottomTabNavigator = () => {
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <TabIcon name="cog-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Wallet"
+        component={Wallet}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <TabIcon name="wallet-outline" color={color} size={size} />
           ),
         }}
       />

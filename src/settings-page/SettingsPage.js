@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Switch, StyleSheet, TouchableOpacity, Alert, Image } from "react-native";
+import { View, Text, Switch, StyleSheet, TouchableOpacity, Alert, Image, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
@@ -46,7 +46,7 @@ const SettingsPage = () => {
   };
 
   return (
-    <View style={[styles.container, isDarkMode && styles.darkModeContainer]}>
+    <ScrollView contentContainerStyle={[styles.container, isDarkMode && styles.darkModeContainer]}>
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
         Profile
       </Text>
@@ -68,7 +68,7 @@ const SettingsPage = () => {
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
         Security
       </Text>
-      <TouchableOpacity style={styles.optionBubble}>
+      <TouchableOpacity style={styles.optionBubble} onPress={() => navigation.navigate("ChangeEmail")}>
         <Image
           source={{
             uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/email.png",
@@ -77,7 +77,7 @@ const SettingsPage = () => {
         />
         <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Change Email</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.optionBubble}>
+      <TouchableOpacity style={styles.optionBubble} onPress={() => navigation.navigate("ChangePassword")}>
         <Image
           source={{
             uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
@@ -105,6 +105,7 @@ const SettingsPage = () => {
           </Text>
           <Switch
             value={isDarkMode}
+            onValueChange={toggleDarkMode}
             trackColor={{ false: "#767577", true: "#81b0ff" }}
             thumbColor={isDarkMode ? "#f5dd4b" : "#f4f3f4"}
             ios_backgroundColor="#3e3e3e"
@@ -115,7 +116,7 @@ const SettingsPage = () => {
         Tutorials
       </Text>
       <TouchableOpacity onPress={() => navigation.navigate("Education")}>
-        <View style={[styles.optionBubble, isDarkMode && styles.darkModeContainer]}>
+        <View style={styles.optionBubble}>
           <Image
             source={{
               uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/Video_icon.png",
@@ -126,19 +127,22 @@ const SettingsPage = () => {
         </View>
       </TouchableOpacity>
       <TouchableOpacity onPress={handleLogout}>
-        <Text style={styles.logoutButton}>
-          Logout
-        </Text>
+        <View style={styles.logoutButton}>
+          <Text style={styles.logoutText}>
+            Logout
+          </Text>
+        </View>
       </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     marginTop: 30,
     alignItems: "center",
+    paddingBottom: 50,
   },
   profileContainer: {
     alignItems: "center",
@@ -179,7 +183,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 20,
-    marginTop: 20,
+    marginTop: 15,
     marginBottom: 10,
     marginLeft: 30,
     alignSelf: "flex-start",
@@ -198,11 +202,19 @@ const styles = StyleSheet.create({
     width: 285,
   },
   logoutButton: {
-    marginTop: 50,
-    fontSize: 18,
-    color: "red",
-    textDecorationLine: "underline",
+    width: 150,
+    height: 50,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+    marginTop: 25,
+    backgroundColor: "red",
+    alignItems: "center",
+    justifyContent: "center",
   },
+  logoutText: {
+    color: "white",
+    fontSize: 18,
+  },  
   optionBubble: {
     flexDirection: "row",
     alignItems: "center",

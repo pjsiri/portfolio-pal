@@ -107,7 +107,6 @@ const LoginScreen = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.loginButtonContainer}>
-          {/* Use TouchableOpacity for custom button styling */}
           <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
             <Text style={styles.loginButtonText}>Login</Text>
           </TouchableOpacity>
@@ -131,7 +130,6 @@ const LoginScreen = () => {
       </View>
   );
 };
-
 
 const styles = {
   container: {

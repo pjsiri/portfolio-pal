@@ -13,6 +13,8 @@ const BookmarkedStocksPage = () => {
   const [bookmarkedItems, setBookmarkedItems] = useState([]);
   const navigation = useNavigation();
   const { isDarkMode } = useDarkMode(); 
+  const [activeTab, setActiveTab] = useState('stock');
+  const filteredItems = bookmarkedItems.filter(item => item.type === activeTab);
 
   const handleBack = () => {
     navigation.navigate('HomeStack'); // Navigate back to the previous screen
@@ -95,12 +97,47 @@ const BookmarkedStocksPage = () => {
       paddingTop: 20,
       paddingBottom: 20,
     },
+    tabButtons: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      marginBottom: 10,
+    },
+    tabButton: {
+      paddingVertical: 8,
+      paddingHorizontal: 16,
+      marginHorizontal: 8,
+      borderWidth: 1,
+      borderColor: '#ccc',
+      borderRadius: 5,
+    },
+    activeTabButton: {
+      backgroundColor: '#007bff',
+      borderColor: '#007bff',
+    },
+    tabButtonText: {
+      color: '#333',
+      fontWeight: 'bold',
+    },
   };
-
+  
   return (
     <SafeAreaView style={[styles.appContainer]}>
       <View style={styles.container}>
         <Text style={[styles.title, { fontSize: 28, fontWeight: "900"}]}>Bookmark Page</Text>
+      </View>
+      <View style={styles.tabButtons}>
+        <TouchableOpacity
+          style={[styles.tabButton, activeTab === 'stock' && styles.activeTabButton]}
+          onPress={() => setActiveTab('stock')}
+        >
+          <Text style={styles.tabButtonText}>Stocks</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.tabButton, activeTab === 'crypto' && styles.activeTabButton]}
+          onPress={() => setActiveTab('crypto')}
+        >
+          <Text style={styles.tabButtonText}>Cryptos</Text>
+        </TouchableOpacity>
       </View>
       <View>
         <View style={styles.header}>
@@ -113,24 +150,26 @@ const BookmarkedStocksPage = () => {
             />
           </TouchableOpacity>
         </View>
-        <FlatList style={styles.stocks}
-          data={bookmarkedItems}
+        
+        <FlatList
+          style={styles.stocks}
+          data={filteredItems}
           keyExtractor={(item) => item.type + '-' + (item.symbol || item.from_symbol)}
-          renderItem={({ item }) => (
-            item.type === 'crypto' || 'stocks' ? (
-              <StockCard
-                item={item}
-                handleNavigate={() => {}}
-                isBookedMarked={true}
-              />
-            ) : (
-              <CryptoCard
-                item={item}
-                handleNavigate={() => {}}
-                isBookedMarked={true}
-              />
-            )
-          )}
+          renderItem={({ item }) => {
+            return (
+              item.type === 'crypto' ? (
+                <CryptoCard
+                  item={item}
+                  isBookedMarked={true}
+                />
+              ) : (
+                <StockCard
+                  item={item}
+                  isBookedMarked={true}
+                />
+              )
+            );
+          }}
         />
       </View>
     </SafeAreaView>

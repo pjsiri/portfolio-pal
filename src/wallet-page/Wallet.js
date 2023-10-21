@@ -21,6 +21,9 @@ import {
 import { getAuth } from "firebase/auth";
 import styles from "./Wallet.style";
 import { useIsFocused } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import ExchangePage from './ExchangePage';
 
 const Wallet = () => {
     const [topUpAmount, setTopUpAmount] = useState("");
@@ -29,18 +32,23 @@ const Wallet = () => {
     const [balance, setBalance] = useState(0);
     const [walletActivity, setWalletActivity] = useState([]);
     const isFocused = useIsFocused();
-    
+    const navigation = useNavigation();
     const auth = getAuth();
     const user = auth.currentUser;
     const userId = user.uid;
     const firestore = getFirestore();
     const walletActivityRef = collection(firestore, "wallet-activity");
 
+    const handleNavigateToExchange = () => {
+        navigation.navigate("ExchangePage");
+      };
+
     const fetchWalletActivity = async () => {
         try {
         const q = query(walletActivityRef, where("userId", "==", userId));
         const querySnapshot = await getDocs(q);
         const walletActivityData = querySnapshot.docs.map((doc) => doc.data());
+        walletActivityData.sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis()); // Sort wallet activity by timestamp (most recent first)
         setWalletActivity(walletActivityData);
         } catch (error) {
         console.error("Error fetching wallet activity:", error);
@@ -53,6 +61,7 @@ const Wallet = () => {
           const transactionsRef = collection(userRef, 'transactions');
           const querySnapshot = await getDocs(transactionsRef);
           const transactionData = querySnapshot.docs.map(doc => doc.data());
+          transactionData.sort((a, b) => b.timestamp.toMillis() - a.timestamp.toMillis()); // Sort wallet activity by timestamp (most recent first)
           setTransactions(transactionData);
         } catch (error) {
           console.error("Error fetching transactions:", error);
@@ -118,6 +127,9 @@ const Wallet = () => {
                 setBalance(newBalance);
                 setTopUpAmount("");
                 fetchWalletActivity(); // Fetch transactions after top-up
+
+                // Display success message
+                Alert.alert("Success", `You have successfully topped up $${topUpAmount}`);
                 },
             },
             ]
@@ -164,6 +176,9 @@ const Wallet = () => {
                 setBalance(newBalance);
                 setWithdrawAmount("");
                 fetchWalletActivity(); // Fetch transactions after withdrawal
+
+                // Display success message
+                Alert.alert("Success", `You have successfully withdrawn $${withdrawAmount}`);
                 },
             },
             ]
@@ -173,9 +188,12 @@ const Wallet = () => {
         }
     };
 
+    const combinedActivities = [...walletActivity, ...transactions];
+    combinedActivities.sort((a, b) => b.timestamp - a.timestamp);
+
     return (
         <View style={styles.container}>
-        <Text>Balance: ${balance.toFixed(2)}</Text>
+        <Text style={styles.balance}>Balance: ${balance.toFixed(2)}</Text>
         <TextInput
             style={styles.input}
             placeholder="Top Up Amount"
@@ -196,32 +214,36 @@ const Wallet = () => {
         <TouchableOpacity style={styles.button} onPress={handleWithdraw}>
             <Text style={styles.buttonText}>Withdraw</Text>
         </TouchableOpacity>
-        <Text>Transactions:</Text>
+        <TouchableOpacity style={styles.button} onPress={handleNavigateToExchange}>
+            <Text style={styles.buttonText}>Exchange Currency</Text>
+        </TouchableOpacity>
+        <Text style={styles.transactionHistory}>Transactions History:</Text>
         <FlatList
-        data={[...walletActivity, ...transactions]}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => {
-        if (item.hasOwnProperty('amount')) {
-            return (
-            <View style={styles.transactionItem}>
-                <Text>Type: {item.type}</Text>
-                <Text>Amount: ${item.amount.toFixed(2)}</Text>
-            </View>
-            );
-        } else {
-            return (
-            <View style={styles.transactionCard}>
-                <View style={styles.transactionDetails}>
-                <Text style={styles.transactionType}>{item.type}</Text>
-                <Text>Symbol: {item.symbol}</Text>
-                <Text>Quantity: {item.quantity}</Text>
-                <Text>Price: ${item.price}</Text>
-                <Text>Total Price: ${item.totalPrice}</Text>
-                <Text>Timestamp: {item.timestamp.toDate().toLocaleString()}</Text>
+            data={combinedActivities}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => {
+            if (item.hasOwnProperty('amount')) {
+                return (
+                <View style={styles.transactionItem}>
+                    <Ionicons name="push-outline" size={24} color="black" />
+                    <Text>Type: {item.type}</Text>
+                    <Text>Amount: ${item.amount.toFixed(2)}</Text>
                 </View>
-            </View>
-            );
-        }
+                );
+            } else {
+                return (
+                <View style={styles.transactionCard}>
+                    <View style={styles.transactionDetails}>
+                    <Text style={styles.transactionType}>{item.type}</Text>
+                    <Text>Symbol: {item.symbol}</Text>
+                    <Text>Quantity: {item.quantity}</Text>
+                    <Text>Price: ${item.price}</Text>
+                    <Text>Total Price: ${item.totalPrice}</Text>
+                    <Text>Timestamp: {item.timestamp.toDate().toLocaleString()}</Text>
+                    </View>
+                </View>
+                );
+            }
         }}
     />
         </View>

@@ -7,7 +7,7 @@ const QuantityInputWithConfirmation = ({ isVisible, onCancel, onConfirm, balance
   const handleConfirm = () => {
     const enteredQuantity = Number(quantity);
     
-    if (enteredQuantity > 0 && enteredQuantity * data.price <= balance) {
+    if (enteredQuantity > 0 || enteredQuantity * data <= balance) {
       onConfirm(enteredQuantity);
       setQuantity("");
     } else {

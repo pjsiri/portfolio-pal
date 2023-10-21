@@ -83,29 +83,29 @@ const StockOverview = () => {
     stockName = stockName[0];
   }
 
-const fetchUserBalance = async (userId) => {
-  try {
-    const userDocRef = doc(firestore, "users", userId);
-    const userDocSnapshot = await getDoc(userDocRef);
+  const fetchUserBalance = async (userId) => {
+    try {
+      const userDocRef = doc(firestore, "users", userId);
+      const userDocSnapshot = await getDoc(userDocRef);
 
-    if (userDocSnapshot.exists()) {
-      const userData = userDocSnapshot.data();
-      const userBalance = userData.balance;
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+        const userBalance = userData.balance;
 
-      if (userBalance === undefined) {
-        await setDoc(userDocRef, { balance: 50000 }, { merge: true });
-        setBalance(50000); 
+        if (userBalance === undefined) {
+          await setDoc(userDocRef, { balance: 50000 }, { merge: true });
+          setBalance(50000);
+        } else {
+          setBalance(userBalance);
+        }
       } else {
-        setBalance(userBalance);
+        await setDoc(userDocRef, { balance: 50000 }, { merge: true });
+        setBalance(50000);
       }
-    } else {
-      await setDoc(userDocRef, { balance: 50000 }, { merge: true });
-      setBalance(50000); 
+    } catch (error) {
+      console.error("Error fetching user balance:", error);
     }
-  } catch (error) {
-    console.error("Error fetching user balance:", error);
-  }
-};
+  };
 
   const bookmarkStock = async (name, symbol, price) => {
     const db = getFirestore();
@@ -192,7 +192,7 @@ const fetchUserBalance = async (userId) => {
   }, [stockSymbol, stockName]);
 
   const handleBookmarkInOverview = () => {
-    bookmarkStock(item.name, item.symbol, item.price);
+    bookmarkStock(item.name, item.symbol, data.price);
   };
 
   const { data, isLoading, error, refetch } = useFetch("stock-overview", {
@@ -209,7 +209,7 @@ const fetchUserBalance = async (userId) => {
     setIsBuying(false);
     setIsQuantityModalVisible(true);
   };
-  
+
   const handleConfirmQuantity = async (quantity) => {
     setIsQuantityModalVisible(false);
     if (quantity > 0) {
@@ -222,6 +222,7 @@ const fetchUserBalance = async (userId) => {
           item.google_mid,
           item.name,
           item.currency,
+          "stocks"
         );
 
         if (success) {
@@ -428,7 +429,7 @@ const fetchUserBalance = async (userId) => {
               onCancel={() => setIsQuantityModalVisible(false)}
               onConfirm={handleConfirmQuantity}
               balance={balance}
-              data={data}
+              data={data.price}
             />
 
             <View style={styles.detailContainer}>

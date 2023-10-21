@@ -12,6 +12,7 @@ import ProfilePage from "../../settings-page/profileSettings.js";
 import Chat from "../../Chat.js";
 import VideoDetail from "../../settings-page/VideoDetail.js";
 import Wallet from "../../wallet-page/Wallet.js"
+import ExchangePage from "../../wallet-page/ExchangePage.js"
 
 const Stack = createStackNavigator();
 
@@ -76,6 +77,11 @@ const StackNavigator = () => {
       <Stack.Screen
         name="Wallet"
         component={Wallet}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ExchangePage"
+        component={ExchangePage}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

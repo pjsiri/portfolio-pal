@@ -36,7 +36,7 @@ function calculateTotalPrice(price, quantity) {
 
 const Portfolio = () => {
   const { isDarkMode } = useDarkMode();
-  const [graphType, setGraphType] = useState("All");
+  const [graphType, setGraphType] = useState("All"); //graph type 
   const [userAssets, setUserAssets] = useState([]);
   const [coinAssets, setCoinAssets] = useState([]);
   const [userCrypto, setUserCrypto] = useState([]);
@@ -97,6 +97,7 @@ const Portfolio = () => {
     hideModal();
   };
 
+  //Stocks
   useEffect(() => {
     if (isFocused) {
       const fetchUserAssets = async () => {
@@ -167,6 +168,7 @@ const Portfolio = () => {
             const cryptoData = doc.data();
             cts.push({
               price: cryptoData.totalPrice,
+              name: cryptoData.name,
             });
             total += cryptoData.totalPrice; // Accumulate the total
           });
@@ -184,17 +186,58 @@ const Portfolio = () => {
     fetchUserAssets();
   }, []);
 
-  const chartData = [
-    // Create chart data based on fetched data
-    { name: "Stocks", price: assetsTotal, color: "#FFD700" },
-    { name: "Cryptos", price: cryptoTotal, color: "#008000" },
-  ];
-
-  //   console.log("chartData:", chartData);
+  // Define data sources based on graphType
+  let data = [];
+  let stocksList = [];
+  let graphTypeText = '';
+  if (graphType === 'All') {
+    data = [
+      ...companyData.map((company) => ({
+        name: company.name,
+        price: company.price,
+        color: company.color,
+      })),
+      ...coinAssets.map((crypto) => ({
+        name: crypto.name,
+        price: crypto.price,
+        color: getRandomColor(),
+      })),
+    ];
+    stocksList = [
+      ...companyData.map((company) => company.name),
+      ...coinAssets.map((crypto) => crypto.name),
+    ];
+    graphTypeText = 'All';
+  } else if (graphType === 'Stock') {
+    data = companyData.map((company) => ({
+      name: company.name,
+      price: company.price,
+      color: company.color,
+    }));
+    stocksList = companyData.map((company) => company.name);
+    graphTypeText = 'Stock';
+  } else if (graphType === 'Crypto') {
+    data = coinAssets.map((crypto) => ({
+      name: crypto.name,
+      price: crypto.price,
+      color: getRandomColor(),
+    }));
+    stocksList = coinAssets.map((crypto) => crypto.name);
+    graphTypeText = 'Crypto';
+  } else if (graphType === 'S:C') {
+    const percentageStocks = ((assetsTotal / (assetsTotal + cryptoTotal)) * 100).toFixed(2);
+    const percentageCryptos = ((cryptoTotal / (assetsTotal + cryptoTotal)) * 100).toFixed(2);
+    data = [
+      { name: 'Stocks', price: assetsTotal, color: '#FFD700' },
+      { name: 'Cryptos', price: cryptoTotal, color: '#008000' },
+    ];
+    stocksList = companyData.map((company) => company.name);
+    graphTypeText = 'S:C';
+  }
 
   const chartConfig = {
-    backgroundGradientFrom: "#fff",
-    backgroundGradientTo: "#fff",
+    backgroundGradientFrom: '#fff',
+    backgroundGradientTo: '#fff',
     color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
   };
 
@@ -206,6 +249,9 @@ const Portfolio = () => {
       setSortType(selectedSortType);
     }
   };
+
+
+
 
   const percentageStocks = (assetsTotal / (assetsTotal + cryptoTotal)) * 100;
   const percentageCryptos = (cryptoTotal / (assetsTotal + cryptoTotal)) * 100;
@@ -221,17 +267,17 @@ const Portfolio = () => {
         </TouchableOpacity>
 
         <View style={styles.portfolioTitleContainer}>
-          <Text style={{ fontSize: 20, fontWeight: "500" }}>
+          <Text style={{ fontSize: 20, fontWeight: '500' }}>
             PORTFOLIO VALUE (USD)
           </Text>
-          <Text style={{ fontSize: 44, fontWeight: "bold" }}>
+          <Text style={{ fontSize: 44, fontWeight: 'bold' }}>
             ${userTotalAssets.toFixed(2)}
           </Text>
         </View>
 
         <View style={styles.graphContainer}>
           <PieChart
-            data={companyData}
+            data={data}
             width={screenWidth - 20}
             height={220}
             chartConfig={chartConfig}
@@ -242,56 +288,77 @@ const Portfolio = () => {
           />
           <View style={styles.graphButtonsContainer}>
             <TouchableOpacity
-              style={styles.graphButton(graphType === "All")}
-              onPress={() => setGraphType("All")}
+              style={styles.graphButton(graphType === 'All')}
+              onPress={() => setGraphType('All')}
             >
-              <Text style={styles.graphButtonText(graphType === "All")}>
-                All
-              </Text>
+              <Text style={styles.graphButtonText(graphType === 'All')}>All</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.graphButton(graphType === "Stock")}
-              onPress={() => setGraphType("Stock")}
+              style={styles.graphButton(graphType === 'Stock')}
+              onPress={() => setGraphType('Stock')}
             >
-              <Text style={styles.graphButtonText(graphType === "Stock")}>
-                Stock
-              </Text>
+              <Text style={styles.graphButtonText(graphType === 'Stock')}>Stock</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.graphButton(graphType === "Crypto")}
-              onPress={() => setGraphType("Crypto")}
+              style={styles.graphButton(graphType === 'Crypto')}
+              onPress={() => setGraphType('Crypto')}
             >
-              <Text style={styles.graphButtonText(graphType === "Crypto")}>
-                Crypto
-              </Text>
+              <Text style={styles.graphButtonText(graphType === 'Crypto')}>Crypto</Text>
             </TouchableOpacity>
             <TouchableOpacity
-              style={styles.graphButton(graphType === "S:C")}
-              onPress={() => setGraphType("S:C")}
+              style={styles.graphButton(graphType === 'S:C')}
+              onPress={() => setGraphType('S:C')}
             >
-              <Text style={styles.graphButtonText(graphType === "S:C")}>
-                S:C
-              </Text>
+              <Text style={styles.graphButtonText(graphType === 'S:C')}>S:C</Text>
             </TouchableOpacity>
           </View>
         </View>
 
         <View style={styles.assetContainer}>
-          <Text style={styles.headerText}>Asset Overview</Text>
+          <Text style={styles.headerText}>Asset Overview - {graphTypeText}</Text>
+          {graphType === 'All' && (
+            <View style={styles.sectionContainer}>
+              <Text style={styles.valueText}>Total Assets Value</Text>
+              <Text style={styles.valueText}>${userTotalAssets.toFixed(2)}</Text>
+            </View>
+          )}
 
-          <View style={styles.sectionContainer}>
-            <Text style={styles.valueText}>Total Assets Value</Text>
-            <Text style={styles.valueText}>${userTotalAssets.toFixed(2)}</Text>
-          </View>
+          {graphType === 'Stock' && (
+            <View style={styles.sectionContainer}>
+              <Text style={styles.valueText}>Total Stock Assets Value</Text>
+              <Text style={styles.valueText}>${assetsTotal.toFixed(2)}</Text>
+            </View>
+          )}
 
-          <View style={styles.sectionContainer}>
-            <Text style={styles.valueText}>
-              Total Stock Assets: {percentageStocks.toFixed(0)}%
-            </Text>
-            <Text style={styles.valueText}>
-              Total Crypto Assets: {percentageCryptos.toFixed(0)}%
-            </Text>
-          </View>
+          {graphType === 'Crypto' && (
+            <View style={styles.sectionContainer}>
+              <Text style={styles.valueText}>Total Crypto Assets Value</Text>
+              <Text style={styles.valueText}>${cryptoTotal.toFixed(2)}</Text>
+            </View>
+          )}
+
+          {graphType === 'S:C' && (
+            <View style={styles.sectionContainer}>
+              <Text style={styles.valueText}>
+                Total Stock and Crypto Assets Value
+              </Text>
+              <Text style={styles.valueText}>${userTotalAssets.toFixed(2)}</Text>
+            </View>
+          )}
+        </View>
+
+        <View style={styles.pieChartContainer}>
+          <Text style={styles.pieChartHeaderText}>Asset Distribution</Text>
+          <PieChart
+            data={data}
+            width={screenWidth - 20}
+            height={220}
+            chartConfig={chartConfig}
+            accessor="price"
+            backgroundColor="transparent"
+            paddingLeft="15"
+            absolute
+          />
         </View>
 
         <View style={styles.investmentCardsContainer}>

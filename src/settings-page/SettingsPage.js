@@ -4,25 +4,31 @@ import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useIsFocused } from "@react-navigation/native";
 
 const SettingsPage = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
   const [username, setUsername] = useState('');
   const navigation = useNavigation();
+  const auth = getAuth();
+  const isFocused = useIsFocused();
+  const user = auth.currentUser;
   /* const [selectedCurrency, setSelectedCurrency] = useState("NZD"); */
 
   useEffect(() => {
-    const auth = getAuth();
 
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // The user is signed in, and you can access the user's information, including the display name
-        if (user.displayName) {
-          setUsername(user.displayName);
+    if (isFocused) {
+      onAuthStateChanged(auth, (user) => {
+        if (user) {
+          // The user is signed in, and you can access the user's information, including the display name
+          if (user.displayName) {
+            setUsername(user.displayName);
+          }
         }
-      }
-    });
-  }, []);
+      });
+    }
+    
+  }, [isFocused]);
 
   const handleLogout = () => {
     Alert.alert(

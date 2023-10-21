@@ -37,9 +37,9 @@ const ProfileSettings = () => {
       await updateProfile(user, {
         displayName: newUsername,
       });
-
+      navigation.goBack();
       Alert.alert("Success", "Profile updated successfully");
-      navigation.navigate("Settings");
+      
     } catch (error) {
       console.error("Error updating profile:", error);
       Alert.alert("Error", "Profile update failed. Please try again: " + error.message);
@@ -53,7 +53,7 @@ const ProfileSettings = () => {
   return (
     <View style={styles.container}>
       <View style={styles.backButtonContainer}>
-        <TouchableOpacity onPress={handleBack}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
             source={{
               uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",

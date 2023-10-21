@@ -1,7 +1,7 @@
 import { getFirestore, collection, addDoc, updateDoc, doc, getDocs, getDoc, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-export const fakeBuyStock = async (userId, symbol, quantity, price, google_mid, name, currency) => {
+export const fakeBuyStock = async (userId, symbol, quantity, price, google_mid, name, currency, type) => {
     try {
         const firestore = getFirestore();
         const userRef = doc(firestore, 'users', userId);
@@ -26,6 +26,7 @@ export const fakeBuyStock = async (userId, symbol, quantity, price, google_mid, 
             google_mid,
             name,
             currency,
+            type
           });
         }
       

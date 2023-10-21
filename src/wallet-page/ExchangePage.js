@@ -111,11 +111,12 @@ const ExchangePage = () => {
                 </TouchableOpacity>
             </View>
             <View>
-                <Text style={styles.balance}>Balance: ${balance.toFixed(2)}</Text>
+                <Text>Work in progress.</Text>
+                <Text style={styles.balance}>Balance: ${balance.toFixed(2)} USD</Text>
             </View>
             <TextInput
                 style={styles.input}
-                placeholder="Amount to Exchange"
+                placeholder="Amount to Exchange (NZD)"
                 value={fromAmount}
                 onChangeText={text => setFromAmount(text)}
                 keyboardType="numeric"

@@ -39,15 +39,11 @@ const ProfileSettings = () => {
       });
       navigation.goBack();
       Alert.alert("Success", "Profile updated successfully");
-      
+
     } catch (error) {
       console.error("Error updating profile:", error);
       Alert.alert("Error", "Profile update failed. Please try again: " + error.message);
     }
-  };
-
-  const handleBack = () => {
-    navigation.navigate("Settings", { updatedUsername: newUsername });
   };
 
   return (
@@ -73,10 +69,10 @@ const ProfileSettings = () => {
         />
       </View>
       <View style={styles.detailsContainer}>
+        <View style={styles.labelContainer}>
+          <Text style={styles.label}>Username: </Text>
+        </View>
         <View style={styles.inputContainer}>
-          <View style={styles.labelContainer}>
-            <Text style={styles.label}>Username: </Text>
-          </View>
           <TextInput
             style={styles.inputText}
             value={newUsername}
@@ -126,17 +122,18 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
   },
   inputContainer: {
-    flexDirection: "column",
-    alignItems: "flex-start",
+    flexDirection: "row",
+    alignItems: "center",
     width: "100%",
+    height: 50,
+    borderColor: "gray",
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 10,
     marginBottom: 20,
   },
   inputText: {
-    width: "100%",
-    height: 40,
-    borderWidth: 1,
-    padding: 10,
-    borderRadius: 10,
+    flex: 1,
   },
   detailsContainer: {
     width: "70%",

@@ -1,7 +1,14 @@
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { Text, View, TextInput, TouchableOpacity, Alert, Image } from "react-native";
-import { getAuth, createUserWithEmailAndPassword, sendEmailVerification, updateProfile } from "firebase/auth";
+import {
+  Text,
+  View,
+  TextInput,
+  TouchableOpacity,
+  Alert,
+  Image,
+} from "react-native";
+import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 
 const RegisterScreen = () => {
   const [email, setEmail] = useState('');
@@ -11,37 +18,48 @@ const RegisterScreen = () => {
   const navigation = useNavigation();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
-  const [imageSource, setImageSource] = useState("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png");
-  const [imageSource2, setImageSource2] = useState("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png");
+  const [imageSource, setImageSource] = useState(
+    "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
+  );
+  const [imageSource2, setImageSource2] = useState(
+    "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
+  );
 
   const handleRegister = async () => {
-    if (email && pass && pass === confirmPass && username.length >= 3) {
-      // Validate the username to contain only letters and numbers
-      const regex = /^[A-Za-z0-9]+$/;
-      if (!regex.test(username)) {
-        Alert.alert("Registration Failed", "Username can only contain letters and numbers.");
+    if (email && pass && confirmPass && username && username.length >= 3) {
+      if (pass !== confirmPass) {
+        Alert.alert('Registration Failed', 'Password and confirmation password do not match.');
         return;
       }
-
+  
+      // Check if the username contains only letters and numbers
+      const usernameRegex = /^[A-Za-z0-9]+$/;
+      if (!usernameRegex.test(username)) {
+        Alert.alert('Registration Failed', 'Username can only contain letters and numbers.');
+        return;
+      }
+  
       try {
         const auth = getAuth();
-        const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
-        const user = userCredential.user;
-
-        // Update the display name
+        await createUserWithEmailAndPassword(auth, email, pass);
+  
+        const user = auth.currentUser;
         await updateProfile(user, { displayName: username });
-
-        // Send a verification email
-        await sendEmailVerification(user);
-        Alert.alert('Registration Successful', 'A verification email has been sent to your email address. Please verify your email before logging in.');
+  
+        Alert.alert('Registration Successful', 'You have successfully registered!');
         navigation.navigate('Login');
       } catch (error) {
         Alert.alert('Registration Failed', error.message);
       }
     } else {
-      Alert.alert('Registration Failed', 'Please provide valid information.');
+      if (username && username.length < 3) {
+        Alert.alert('Registration Failed', 'Username must be at least 3 characters long.');
+      } else {
+        Alert.alert('Registration Failed', 'Please provide valid information.');
+      }
     }
   };
+  
 
   const handleShowPassword = () => {
     // Toggle the visibility of the password
@@ -51,7 +69,9 @@ const RegisterScreen = () => {
     if (!isPasswordVisible) {
       setImageSource("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_visible.png");
     } else {
-      setImageSource("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png");
+      setImageSource(
+        "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
+      );
     }
   };
 
@@ -61,89 +81,20 @@ const RegisterScreen = () => {
 
     // Toggle the image source
     if (!isConfirmPasswordVisible) {
-      setImageSource2("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_visible.png");
+      setImageSource2(
+        "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_visible.png"
+      );
     } else {
-      setImageSource2("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png");
+      setImageSource2(
+        "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
+      );
     }
-  };
-
-  const handleBack = () => {
-    navigation.goBack();
-  };
-
-  const styles = {
-    container: {
-      flex: 1,
-      width: "100%",
-      alignItems: "center",
-      justifyContent: "flex-start",
-    },
-    title: {
-      fontSize: 24,
-      marginBottom: 15,
-    },
-    subtitle: {
-      fontSize: 18,
-      marginBottom: 40,
-    },
-    inputContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      width: 330,
-      height: 50,
-      borderColor: "gray",
-      borderWidth: 1,
-      paddingHorizontal: 10,
-      borderRadius: 10,
-      marginBottom: 20,
-    },
-    input: {
-      flex: 1,
-    },
-    inputIcon: {
-      width: 24,
-      height: 24,
-      marginRight: 8,
-    },
-    appLogo: {
-      width: 100,
-      height: 100,
-      resizeMode: "contain",
-      alignItems: "flex-start",
-      marginBottom: 20,
-    },
-    registerButtonContainer: {
-      width: 330,
-      height: 50,
-      marginTop: 30,
-    },
-    registerButton: {
-      width: "100%",
-      height: "100%",
-      backgroundColor: "black",
-      justifyContent: "center",
-      borderRadius: 10,
-    },
-    registerButtonText: {
-      color: "white",
-      textAlign: "center",
-      fontSize: 18,
-    },
-    backButtonContainer: {
-      position: 'absolute',
-      top: 80,
-      left: 20,
-    },
-    backButton: {
-      width: 30,
-      height: 30,
-    },
   };
 
   return (
     <View style={styles.container}>
       <View style={styles.backButtonContainer}>
-        <TouchableOpacity onPress={handleBack}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
             source={{
               uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",
@@ -238,6 +189,75 @@ const RegisterScreen = () => {
       </View>
     </View>
   );
+};
+
+const styles = {
+  container: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  title: {
+    fontSize: 24,
+    marginBottom: 15,
+  },
+  subtitle: {
+    fontSize: 18,
+    marginBottom: 40,
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: 330,
+    height: 50,
+    borderColor: "gray",
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  input: {
+    flex: 1,
+  },
+  inputIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 8,
+  },
+  appLogo: {
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
+    alignItems: "flex-start",
+    marginBottom: 20,
+  },
+  registerButtonContainer: {
+    width: 330,
+    height: 50,
+    marginTop: 30,
+  },
+  registerButton: {
+    width: "100%",
+    height: "100%",
+    backgroundColor: "black",
+    justifyContent: "center",
+    borderRadius: 10,
+  },
+  registerButtonText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 18,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    top: 80,
+    left: 20,
+  },
+  backButton: {
+    width: 30,
+    height: 30,
+  },
 };
 
 export default RegisterScreen;

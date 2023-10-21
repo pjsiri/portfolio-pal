@@ -12,8 +12,6 @@ const SettingsPage = () => {
   const navigation = useNavigation();
   const auth = getAuth();
   const isFocused = useIsFocused();
-  const user = auth.currentUser;
-  /* const [selectedCurrency, setSelectedCurrency] = useState("NZD"); */
 
   useEffect(() => {
 
@@ -96,20 +94,6 @@ const SettingsPage = () => {
           />
         </View>
       </View>
-      {/* <View style={styles.setting}>
-        <Text style={[styles.settingText, isDarkMode && styles.darkModeText]}>
-          Currency
-        </Text>
-        <Picker
-          selectedValue={selectedCurrency}
-          style={{ height: 50, width: 150 }}
-          onValueChange={(itemValue) => setSelectedCurrency(itemValue)}
-        >
-          <Picker.Item label="NZD" value="NZD" />
-          <Picker.Item label="USD" value="USD" />
-          <Picker.Item label="EUR" value="EUR" />
-        </Picker>
-      </View> */}
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
         Tutorials
       </Text>

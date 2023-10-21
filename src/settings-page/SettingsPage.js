@@ -14,18 +14,15 @@ const SettingsPage = () => {
   const isFocused = useIsFocused();
 
   useEffect(() => {
-
     if (isFocused) {
       onAuthStateChanged(auth, (user) => {
         if (user) {
-          // The user is signed in, and you can access the user's information, including the display name
           if (user.displayName) {
             setUsername(user.displayName);
           }
         }
       });
     }
-
   }, [isFocused]);
 
   const handleLogout = () => {
@@ -40,7 +37,6 @@ const SettingsPage = () => {
         {
           text: "Logout",
           onPress: () => {
-            // Perform logout action here
             navigation.navigate("Login");
           },
         },
@@ -55,7 +51,7 @@ const SettingsPage = () => {
         Profile
       </Text>
       <View style={styles.profileContainer}>
-        <View style={styles.profileImageContainer}>
+        <View style={styles.profileImageBorder}>
           <Image
             source={{
               uri:
@@ -70,32 +66,65 @@ const SettingsPage = () => {
         </TouchableOpacity>
       </View>
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
+        Security
+      </Text>
+      <TouchableOpacity style={styles.optionBubble}>
+        <Image
+          source={{
+            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/email.png",
+          }}
+          style={styles.bubbleIcon}
+        />
+        <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Change Email</Text>
+      </TouchableOpacity>
+      <TouchableOpacity style={styles.optionBubble}>
+        <Image
+          source={{
+            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
+          }}
+          style={styles.bubbleIcon}
+        />
+        <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Change Password</Text>
+      </TouchableOpacity>
+      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
         Appearance
       </Text>
-      <View style={[styles.appearanceContainer, isDarkMode && styles.darkModeContainer]}>
-        <View style={styles.setting}>
-          <Text style={[styles.settingText, isDarkMode && styles.darkModeText]}>
+      <View style={styles.optionBubble}>
+        <Image
+          source={{
+            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/dark-mode-icon.png",
+          }}
+          style={styles.bubbleIcon}
+        />
+        <TouchableOpacity
+          onPress={toggleDarkMode}
+          style={styles.toggleButton}
+        >
+          <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>
             Dark Mode
           </Text>
           <Switch
             value={isDarkMode}
-            onValueChange={toggleDarkMode}
             trackColor={{ false: "#767577", true: "#81b0ff" }}
             thumbColor={isDarkMode ? "#f5dd4b" : "#f4f3f4"}
             ios_backgroundColor="#3e3e3e"
           />
-        </View>
+        </TouchableOpacity>
       </View>
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
         Tutorials
       </Text>
-      <View style={[styles.appearanceContainer, isDarkMode && styles.darkModeContainer]}>
-        <TouchableOpacity onPress={() => navigation.navigate("Education")}>
-          <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>
-            Educational Videos
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={() => navigation.navigate("Education")}>
+        <View style={[styles.optionBubble, isDarkMode && styles.darkModeContainer]}>
+          <Image
+            source={{
+              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/Video_icon.png",
+            }}
+            style={styles.bubbleIcon}
+          />
+          <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Educational Videos</Text>
+        </View>
+      </TouchableOpacity>
       <TouchableOpacity onPress={handleLogout}>
         <Text style={styles.logoutButton}>
           Logout
@@ -120,55 +149,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 20,
   },
-  appearanceContainer: {
-    alignItems: "center",
-    width: 350,
-    height: 50,
-    borderColor: "gray",
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    marginBottom: 5,
-    borderRadius: 20,
-  },
-  darkModeContainer: {
-    backgroundColor: "#333",
-  },
-  title: {
-    fontSize: 20,
-    marginTop: 20,
-    marginBottom: 10,
-    marginLeft: 30,
-    alignSelf: "flex-start",
-    fontWeight: "bold",
-  },
-  darkModeText: {
-    color: "#fff",
-  },
-  setting: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    width: 200,
-  },
-  settingText: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  logoutButton: {
-    marginTop: 50,
-    fontSize: 18,
-    color: "red",
-    textDecorationLine: "underline",
-  },
-  educationLink: {
-    fontSize: 18,
-    marginVertical: 10,
-    textDecorationLine: "underline",
-  },
-  usernameText: {
-    fontSize: 20,
-  },
-  profileImageContainer: {
+  profileImageBorder: {
     width: 120,
     height: 120,
     borderRadius: 60,
@@ -192,6 +173,55 @@ const styles = StyleSheet.create({
   editProfileText: {
     color: "white",
     fontSize: 16,
+  },
+  usernameText: {
+    fontSize: 20,
+  },
+  title: {
+    fontSize: 20,
+    marginTop: 20,
+    marginBottom: 10,
+    marginLeft: 30,
+    alignSelf: "flex-start",
+    fontWeight: "bold",
+  },
+  darkModeContainer: {
+    backgroundColor: "#333",
+  },
+  darkModeText: {
+    color: "#fff",
+  },
+  toggleButton: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: 285,
+  },
+  logoutButton: {
+    marginTop: 50,
+    fontSize: 18,
+    color: "red",
+    textDecorationLine: "underline",
+  },
+  optionBubble: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: 350,
+    height: 50,
+    borderColor: "gray",
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    marginBottom: 5,
+    borderRadius: 20,
+  },
+  bubbleIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 8,
+  },
+  bubbleText: {
+    fontSize: 16,
+    marginLeft: 10,
   },
 });
 

@@ -2,53 +2,44 @@ import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
-import styles from "./Browse.style";
+import styles from "./PortfolioStocks.style";
 import StockCard from "../../common/cards/StockCard";
 import CryptoCard from "../../common/cards/CryptoCard";
 import useFetch from "../../../hook/useFetch";
 import { useDarkMode } from "../../common/darkmode/DarkModeContext";
 
-// Define a functional component called BrowseStocks
-const BrowseStocks = () => {
-  // Initialize state variables for trendType and isStocks
+const PortfolioStocks = ({ investments }) => {
   const [trendType, setTrendType] = useState("MOST_ACTIVE");
   const [isStocks, setIsStocks] = useState(true);
-  // Access the navigation object from a custom hook (useNavigation)
   const navigation = useNavigation();
   const { isDarkMode } = useDarkMode();
 
-  // Fetch data, loading state, and error from an API using a custom hook (useFetch)
   const { data, isLoading, error, refetch } = useFetch("market-trends", {
     trend_type: trendType,
   });
 
-  // Define a function to toggle between stock and crypto trends
-  const handleBrowseType = () => {
-    // Update trendType and isStocks based on the current values
-    setTrendType((prevTrendType) =>
-      prevTrendType === "MOST_ACTIVE" ? "CRYPTO" : "MOST_ACTIVE"
-    );
-    setIsStocks(!isStocks);
-  };
-
-  // Trigger a data refetch when the component mounts
   useEffect(() => {
     refetch();
   }, []);
 
-  // Trigger a data refetch when the isStocks state changes
-  useEffect(() => {
-    refetch();
-  }, [isStocks]);
+  //   useEffect(() => {
+  //     refetch();
+  //   }, [isStocks]);
+
+  //   const handleBrowseType = () => {
+  //     setTrendType((prevTrendType) =>
+  //       prevTrendType === "MOST_ACTIVE" ? "CRYPTO" : "MOST_ACTIVE"
+  //     );
+  //     setIsStocks(!isStocks);
+  //   };
 
   const textStyles = {
     color: isDarkMode ? "white" : "black",
   };
 
-  // Return the JSX for the BrowseStocks component
   return (
     <View style={styles.container}>
-      {isStocks ? (
+      {/* {isStocks ? (
         // Display trending stocks section
         <View style={styles.header}>
           <Text style={{ ...styles.headerTitle, ...textStyles }}>
@@ -72,7 +63,7 @@ const BrowseStocks = () => {
             </Text>
           </TouchableOpacity>
         </View>
-      )}
+      )} */}
 
       <View style={styles.cardsContainer}>
         {isLoading ? (
@@ -83,7 +74,6 @@ const BrowseStocks = () => {
         ) : error ? (
           <Text style={textStyles}>Something went wrong</Text>
         ) : isStocks ? (
-          // Display stock cards when isStocks is true
           data?.trends?.slice(0, 5).map((item) => (
             <StockCard
               item={item}
@@ -94,7 +84,6 @@ const BrowseStocks = () => {
             />
           ))
         ) : (
-          // Display crypto cards when isStocks is false
           data?.trends?.slice(0, 5).map((item) => (
             <CryptoCard
               item={item}
@@ -110,4 +99,4 @@ const BrowseStocks = () => {
   );
 };
 
-export default BrowseStocks;
+export default PortfolioStocks;

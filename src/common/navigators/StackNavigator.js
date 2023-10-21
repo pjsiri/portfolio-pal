@@ -7,7 +7,7 @@ import SettingsPage from "../../settings-page/SettingsPage.js";
 import Education from "../../settings-page/Education.js";
 import StockOverview from "../../overview-page/StockOverview.js";
 import CryptoOverview from "../../overview-page/CryptoOverview.js";
-import Bookmark from "../../BookmarkPage.js";
+import Bookmark from "../../bookmark-page/BookmarkPage.js";
 import ProfilePage from "../../settings-page/profileSettings.js";
 import Chat from "../../Chat.js";
 import VideoDetail from "../../settings-page/VideoDetail.js";

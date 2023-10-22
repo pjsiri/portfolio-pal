@@ -9,7 +9,7 @@ import StockOverview from "../../overview-page/StockOverview.js";
 import CryptoOverview from "../../overview-page/CryptoOverview.js";
 import Bookmark from "../../bookmark-page/BookmarkPage.js";
 import ProfilePage from "../../settings-page/ProfileSettings.js";
-import Bot from "../../Bot.js";
+import Bot from "../../settings-page/Bot.js";
 import VideoDetail from "../../settings-page/VideoDetail.js";
 import ChangePassword from "../../settings-page/ChangePassword.js";
 import Wallet from "../../wallet-page/Wallet.js";

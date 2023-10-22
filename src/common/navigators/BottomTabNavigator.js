@@ -27,7 +27,7 @@ const BottomTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="SearchPage"
+        name="Search"
         component={SearchPage}
         options={{
           headerShown: false,

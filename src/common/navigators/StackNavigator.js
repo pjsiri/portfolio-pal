@@ -11,15 +11,15 @@ import Bookmark from "../../bookmark-page/BookmarkPage.js";
 import ProfilePage from "../../settings-page/profileSettings.js";
 import Chat from "../../Chat.js";
 import VideoDetail from "../../settings-page/VideoDetail.js";
-import ChangePassword from "../../settings-page/ChangePassword.js"
-import Wallet from "../../wallet-page/Wallet.js"
-import ExchangePage from "../../wallet-page/ExchangePage.js"
+import ChangePassword from "../../settings-page/ChangePassword.js";
+import Wallet from "../../wallet-page/Wallet.js";
+import ExchangePage from "../../wallet-page/ExchangePage.js";
 
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="HomeStack">
+    <Stack.Navigator initialRouteName="Login">
       <Stack.Screen
         name="Login"
         component={LoginScreen}

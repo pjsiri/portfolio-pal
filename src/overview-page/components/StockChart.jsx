@@ -4,7 +4,6 @@ import useFetch from "../../../hook/useFetch";
 import { LineChart } from "react-native-chart-kit";
 
 const StockChart = ({ endpoint, query }) => {
-  const [refresh, setRefresh] = useState(true);
   const { data, isLoading, error, refetch } = useFetch(endpoint, query);
 
   let dateKeys = data?.time_series ? Object.keys(data.time_series) : [];
@@ -28,7 +27,6 @@ const StockChart = ({ endpoint, query }) => {
       ) : (
         <LineChart
           data={{
-            // labels: dateKeys,
             datasets: [
               {
                 data: priceData,

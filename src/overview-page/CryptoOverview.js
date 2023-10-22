@@ -24,9 +24,9 @@ import {
   where,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import useFetch from "../../hook/useFetch";
 import styles from "./Overview.style";
 import StockChart from "./components/StockChart";
-import useFetch from "../../hook/useFetch";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
 import QuantityInputWithConfirmation from "./components/QuantityInputWithConfirmation";
 import { fakeBuyStock, fakeSellStock } from "./components/stockActions";
@@ -70,11 +70,22 @@ const CryptoOverview = () => {
   const user = auth.currentUser;
   const userId = user.uid;
 
-  let stockSymbol = item.from_symbol;
-  let stockName = (item.from_currency_name || "").split(" ");
+  let cryptoName = item?.from_currency_name ?? item?.name;
+  let cryptoSymbol = item?.from_symbol ?? item?.symbol;
+  let cryptoExchangeCurrency = item?.to_symbol ?? item?.currency ?? "USD";
 
-  if ((item.from_symbol || "").includes(":")) {
-    const splittedSymbol = item.from_symbol.split(":");
+  const { data } = useFetch("currency-exchange-rate", {
+    from_symbol: cryptoSymbol,
+    to_symbol: cryptoExchangeCurrency,
+  });
+
+  let cryptoPrice = item?.exchange_rate ?? data?.exchange_rate;
+
+  let stockSymbol = cryptoSymbol;
+  let stockName = (cryptoName || "").split(" ");
+
+  if ((cryptoSymbol || "").includes(":")) {
+    const splittedSymbol = cryptoSymbol.split(":");
     stockSymbol = splittedSymbol[0];
   }
   if (stockName.length > 0) {
@@ -105,7 +116,11 @@ const CryptoOverview = () => {
     }
   };
 
-  const bookmarkCrypto = async (from_currency_name, from_symbol, exchange_rate) => {
+  const bookmarkCrypto = async (
+    from_currency_name,
+    from_symbol,
+    exchange_rate
+  ) => {
     const db = getFirestore();
     const stocksRef = collection(db, "bookmarkedCryptos");
 
@@ -148,7 +163,6 @@ const CryptoOverview = () => {
     }
   };
 
-
   useEffect(() => {
     async function checkUris() {
       const symbolUri = `https://api.twelvedata.com/logo/${stockSymbol}.com`;
@@ -173,7 +187,7 @@ const CryptoOverview = () => {
         const q = query(
           stocksRef,
           where("userId", "==", userId),
-          where("from_symbol", "==", item.from_symbol.toLowerCase())
+          where("from_symbol", "==", cryptoSymbol.toLowerCase())
         );
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
@@ -189,13 +203,8 @@ const CryptoOverview = () => {
     checkUris();
   }, [stockSymbol, stockName]);
 
-  // const { data, isLoading, error, refetch } = useFetch("stock-overview", {
-  //   symbol: item.symbol,
-  //   language: "en",
-  // });
-
   const handleBookmarkInOverview = () => {
-    bookmarkCrypto(stockName, item.from_symbol.toLowerCase(), item.exchange_rate);
+    bookmarkCrypto(stockName, cryptoSymbol.toLowerCase(), cryptoPrice);
   };
 
   const handleBuy = () => {
@@ -216,15 +225,15 @@ const CryptoOverview = () => {
           userId,
           stockSymbol,
           quantity,
-          item.exchange_rate,
+          cryptoPrice,
           item.google_mid,
           stockName,
-          item.to_symbol,
+          cryptoExchangeCurrency,
           false
         );
 
         if (success) {
-          const totalPrice = quantity * item.exchange_rate;
+          const totalPrice = quantity * cryptoPrice;
           const newBalance = balance - totalPrice;
           setBalance(newBalance);
           console.log("Buy successful!");
@@ -250,11 +259,11 @@ const CryptoOverview = () => {
           userId,
           stockSymbol,
           quantity,
-          item.exchange_rate
+          cryptoPrice
         );
 
         if (hasStockInPortfolio) {
-          const totalPrice = quantity * item.exchange_rate;
+          const totalPrice = quantity * cryptoPrice;
           const newBalance = balance + totalPrice;
           setBalance(newBalance);
           console.log("Sell successful!");
@@ -280,7 +289,6 @@ const CryptoOverview = () => {
     }
   };
 
-
   const containerStyle = [
     styles.appContainer,
     isDarkMode && styles.darkModeContainer,
@@ -305,24 +313,16 @@ const CryptoOverview = () => {
             </Text>
             <Text style={{ fontSize: 15 }}>({stockSymbol})</Text>
             <Text style={{ fontSize: 60, fontWeight: "bold" }}>
-              ${formatNumber(item.exchange_rate)}
+              ${formatNumber(cryptoPrice)}
             </Text>
-            {/* <View style={{ flexDirection: "row" }}>
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                ${formatNumber(data.change)}&nbsp;
-              </Text>
-              <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-                ({formatNumber(data.change_percent)}%)
-              </Text>
-            </View> */}
           </View>
 
           <View style={styles.graphContainer}>
             <StockChart
               endpoint={"currency-time-series"}
               query={{
-                from_symbol: item.from_symbol,
-                to_symbol: item.to_symbol,
+                from_symbol: cryptoSymbol,
+                to_symbol: cryptoExchangeCurrency,
                 period: period,
               }}
             />
@@ -367,24 +367,24 @@ const CryptoOverview = () => {
           </View>
 
           <TouchableOpacity
-              style={styles.bookmarkContainer}
-              onPress={() => {
-                if (isHeartFilled) {
-                  handleDelete(stockSymbol); // Delete only if it's heart-filled
-                } else {
-                  handleBookmarkInOverview(); // Add to watchlist if it's not heart-filled
-                }
-              }}
-            >
-              <Image
-                source={
-                  isHeartFilled
-                    ? require("../../assets/heart.png")
-                    : require("../../assets/heart_hollow.png")
-                }
-                resizeMode="contain"
-                style={styles.heartImage}
-              />
+            style={styles.bookmarkContainer}
+            onPress={() => {
+              if (isHeartFilled) {
+                handleDelete(stockSymbol); // Delete only if it's heart-filled
+              } else {
+                handleBookmarkInOverview(); // Add to watchlist if it's not heart-filled
+              }
+            }}
+          >
+            <Image
+              source={
+                isHeartFilled
+                  ? require("../../assets/heart.png")
+                  : require("../../assets/heart_hollow.png")
+              }
+              resizeMode="contain"
+              style={styles.heartImage}
+            />
             <Text>Add to watchlist</Text>
           </TouchableOpacity>
 
@@ -397,57 +397,14 @@ const CryptoOverview = () => {
           </TouchableOpacity>
 
           <QuantityInputWithConfirmation
-              isVisible={isQuantityModalVisible}
-              onCancel={() => setIsQuantityModalVisible(false)}
-              onConfirm={handleConfirmQuantity}
-              balance={balance}
-              data={item.exchange_rate}
-            />
+            isVisible={isQuantityModalVisible}
+            onCancel={() => setIsQuantityModalVisible(false)}
+            onConfirm={handleConfirmQuantity}
+            balance={balance}
+            data={cryptoPrice}
+          />
 
-          {/* <View style={styles.detailContainer}>
-            <View style={styles.priceDetailContainer}>
-              <Text>
-                Open:{" "}
-                <Text style={{ fontWeight: "bold" }}>
-                  ${formatNumber(data.open)}
-                </Text>
-              </Text>
-              <Text>
-                High:{" "}
-                <Text style={{ fontWeight: "bold" }}>
-                  ${formatNumber(data.high)}
-                </Text>
-              </Text>
-              <Text>
-                Low:{" "}
-                <Text style={{ fontWeight: "bold" }}>
-                  ${formatNumber(data.low)}
-                </Text>
-              </Text>
-            </View>
-
-            <View style={styles.priceDetailContainer}>
-              <Text>
-                Mkt cap:{" "}
-                <Text style={{ fontWeight: "bold" }}>
-                  ${formatNumberToBillion(data.company_market_cap || 0)}
-                </Text>
-              </Text>
-              <Text>
-                P/E ratio:{" "}
-                <Text style={{ fontWeight: "bold" }}>
-                  {formatNumber(data.company_pe_ratio)}
-                </Text>
-              </Text>
-              <Text>
-                Div yield:{" "}
-                <Text style={{ fontWeight: "bold" }}>
-                  {formatNumber(data.company_dividend_yield)}%
-                </Text>
-              </Text>
-            </View>
-          </View> */}
-          <Text>All prices {item.to_symbol || "CNY"}.</Text>
+          <Text>All prices {cryptoExchangeCurrency || "CNY"}.</Text>
           <Image
             source={
               imageUri ? { uri: imageUri } : require("../../assets/no-logo.png")
@@ -455,7 +412,6 @@ const CryptoOverview = () => {
             resizeMode="contain"
             style={styles.logoImage}
           />
-          {/* <Text style={styles.aboutText}>{data.about}</Text> */}
         </View>
       </ScrollView>
     </SafeAreaView>

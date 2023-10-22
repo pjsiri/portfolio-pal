@@ -9,6 +9,7 @@ import {
   Image,
   Modal,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
@@ -239,15 +240,15 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     width: "70%",
-    height: "20%",
+    height: "25%",
     alignItems: "center",
-    marginTop: 70,
+    marginTop: 40,
   },
   saveButton: {
     backgroundColor: "black",
     padding: 10,
     borderRadius: 20,
-    marginTop: 100,
+    marginTop: 40,
     width: "70%",
   },
   saveButtonText: {

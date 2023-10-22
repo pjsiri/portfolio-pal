@@ -122,7 +122,7 @@ const SettingsPage = () => {
         </View>
       </TouchableOpacity>
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>Support</Text>
-      <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
+      <TouchableOpacity onPress={() => navigation.navigate("Bot")}>
         <View style={styles.optionBubble}>
           <Image
             source={{

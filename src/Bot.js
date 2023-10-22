@@ -12,7 +12,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { CHAT_API_KEY } from "../apikey";
-import { useDarkMode } from '../src/common/darkmode/DarkModeContext';
+import { useDarkMode } from './common/darkmode/DarkModeContext';
 
 const Chat = () => {
   const navigation = useNavigation();

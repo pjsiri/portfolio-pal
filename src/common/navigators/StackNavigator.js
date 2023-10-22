@@ -7,17 +7,19 @@ import SettingsPage from "../../settings-page/SettingsPage.js";
 import Education from "../../settings-page/Education.js";
 import StockOverview from "../../overview-page/StockOverview.js";
 import CryptoOverview from "../../overview-page/CryptoOverview.js";
-import Bookmark from "../../BookmarkPage.js";
+import Bookmark from "../../bookmark-page/BookmarkPage.js";
 import ProfilePage from "../../settings-page/profileSettings.js";
 import Chat from "../../Chat.js";
 import VideoDetail from "../../settings-page/VideoDetail.js";
 import ChangePassword from "../../settings-page/ChangePassword.js"
+import Wallet from "../../wallet-page/Wallet.js"
+import ExchangePage from "../../wallet-page/ExchangePage.js"
 
 const Stack = createStackNavigator();
 
 const StackNavigator = () => {
   return (
-    <Stack.Navigator initialRouteName="HomeStack">
+    <Stack.Navigator initialRouteName="LoginScreen">
       <Stack.Screen
         name="Login"
         component={LoginScreen}
@@ -73,9 +75,19 @@ const StackNavigator = () => {
         component={VideoDetail}
         options={{ headerShown: false }}
       />
-        <Stack.Screen
+      <Stack.Screen
         name="ChangePassword"
         component={ChangePassword}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="Wallet"
+        component={Wallet}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ExchangePage"
+        component={ExchangePage}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

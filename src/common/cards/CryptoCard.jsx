@@ -62,7 +62,7 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
         const stocksRef = collection(db, "bookmarkedCryptos");
         const q = query(
           stocksRef,
-          where("symbol", "==", cryptoSymbol),
+          where("from_symbol", "==", cryptoSymbol),
           where("userId", "==", user.uid)
         );
         const querySnapshot = await getDocs(q);
@@ -79,7 +79,7 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
       const stocksRef = collection(db, "bookmarkedCryptos");
       const q = query(
         stocksRef,
-        where("symbol", "==", cryptoSymbol),
+        where("from_symbol", "==", cryptoSymbol),
         where("userId", "==", user.uid)
       );
       const querySnapshot = await getDocs(q);
@@ -96,22 +96,36 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
     if (user) {
       const db = getFirestore();
       const stocksRef = collection(db, "bookmarkedCryptos");
-      try {
-        await addDoc(stocksRef, {
-          name: item.from_currency_name,
-          symbol: cryptoSymbol,
-          price: item.exchange_rate,
-          timestamp: new Date(),
-          userId: user.uid,
-          type: "crypto",
-        });
-        console.log("Crypto bookmarked successfully!");
-        setIsBookmarked(true);
-      } catch (error) {
-        console.error("Error bookmarking crypto:", error);
+  
+      const queryRef = query(
+        stocksRef,
+        where("from_symbol", "==", cryptoSymbol),
+        where("userId", "==", user.uid)
+      );
+  
+      const querySnapshot = await getDocs(queryRef);
+  
+      if (querySnapshot.size === 0) {
+        try {
+          await addDoc(stocksRef, {
+            from_currency_name: item.from_currency_name,
+            from_symbol: cryptoSymbol,
+            exchange_rate: item.exchange_rate,
+            timestamp: new Date(),
+            userId: user.uid,
+            type: "crypto",
+          });
+          console.log("Crypto bookmarked successfully!");
+          setIsBookmarked(true);
+        } catch (error) {
+          console.error("Error bookmarking crypto:", error);
+        }
+      } else {
+        console.log("Crypto already bookmarked!");
       }
     }
   };
+  
 
   // Get the dark mode state
   const { isDarkMode } = useDarkMode();
@@ -192,7 +206,7 @@ const CryptoCard = ({ item, handleNavigate, isBookedMarked }) => {
             ]}
             numberOfLines={1}
           >
-            ${formatNumber(item.exchange_rate)}&nbsp;{item.to_symbol}
+            ${formatNumber(item.exchange_rate)}&nbsp;{item.to_symbol || "USD"}
           </Text>
         </View>
       </View>

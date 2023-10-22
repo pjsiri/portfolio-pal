@@ -64,6 +64,18 @@ const SettingsPage = () => {
     );
   };
 
+  const handleEducationNavigation = () => {
+    navigation.navigate("Education");
+  };
+
+  const handleProfileNavigation = () => {
+    navigation.navigate("Profile");
+  };
+
+    const handleChatNavigation = () => {
+    navigation.navigate("Chat");
+  };
+
   return (
     <ScrollView contentContainerStyle={[styles.container, isDarkMode && styles.darkModeContainer]}>
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>Profile</Text>
@@ -123,12 +135,33 @@ const SettingsPage = () => {
           <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Educational Videos</Text>
         </View>
       </TouchableOpacity>
+        </View>
+      </View>
+      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
+        Tutorials
+      </Text>
+      <View style={[styles.appearanceContainer, isDarkMode && styles.darkModeContainer]}>
+      <TouchableOpacity onPress={handleEducationNavigation}>
+        <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>
+          Educational Videos
+        </Text>
+      </TouchableOpacity>
+      {}
+      <TouchableOpacity onPress={handleChatNavigation}>
+        <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>
+          AIVestor
+        </Text>
+      </TouchableOpacity>
+    </View>
+    <View style={{ marginTop: 30 }}>
       <TouchableOpacity onPress={handleLogout}>
         <View style={styles.logoutButton}>
           <Text style={styles.logoutText}>Logout</Text>
         </View>
       </TouchableOpacity>
     </ScrollView>
+    </View>
+  </View>
   );
 };
 

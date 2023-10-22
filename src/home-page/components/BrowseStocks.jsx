@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
-import { useRouter } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
 
 import styles from "./Browse.style";

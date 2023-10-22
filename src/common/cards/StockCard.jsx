@@ -67,7 +67,7 @@ const StockCard = ({ item, handleNavigate, isBookedMarked }) => {
 
   useEffect(() => {
     async function checkBookmarkStatus() {
-      if (user) {
+      if (user && item.symbol) {
         const db = getFirestore();
         const stocksRef = collection(db, "bookmarkedStocks");
         const q = query(

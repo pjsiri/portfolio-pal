@@ -26,7 +26,7 @@ const useFetch = (endpoint, query) => {
       setIsLoading(false);
     } catch (error) {
       setError(error);
-      alert("Request error...");
+      alert("Stock/Crypto API Request Error...");
       console.error(error);
     } finally {
       setIsLoading(false);

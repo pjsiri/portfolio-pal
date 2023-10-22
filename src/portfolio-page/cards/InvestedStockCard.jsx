@@ -54,6 +54,14 @@ const InvestedStockCard = ({ item }) => {
   // Get the dark mode state
   const { isDarkMode } = useDarkMode();
 
+  function navigateOverview() {
+    if (item.isStocks) {
+      navigation.navigate("StockOverview", { item });
+    } else {
+      navigation.navigate("CryptoOverview", { item });
+    }
+  }
+
   return (
     <TouchableOpacity
       style={[
@@ -64,7 +72,7 @@ const InvestedStockCard = ({ item }) => {
         },
       ]}
       onPress={() => {
-        navigation.navigate("StockOverview", { item });
+        navigateOverview();
       }}
     >
       <TouchableOpacity style={styles.logoContainer}>

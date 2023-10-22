@@ -84,12 +84,9 @@ const Portfolio = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUserBalance(userId);
-  }, [userId]);
-
   //Stocks
   useEffect(() => {
+    fetchUserBalance(userId);
     if (isFocused) {
       const fetchUserAssets = async () => {
         const db = getFirestore();
@@ -184,7 +181,7 @@ const Portfolio = () => {
   const chartConfig = {
     backgroundGradientFrom: "#fff",
     backgroundGradientTo: "#fff",
-    color: (opacity = 1) => color,
+    color: (opacity = 1) => getRandomColor(),
   };
 
   const handleSort = (selectedSortType) => {

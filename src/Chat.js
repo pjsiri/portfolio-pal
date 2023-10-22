@@ -144,8 +144,8 @@ const Chat = () => {
       </View>
 
       <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
+      <TextInput
+          style={isDarkMode ? styles.inputDark : styles.input}
           placeholder="Send a message..."
           value={inputText}
           onChangeText={setInputText}
@@ -155,6 +155,7 @@ const Chat = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -165,7 +166,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
-    backgroundColor: "#222", // Dark mode background color
+    backgroundColor: "#333", 
   },
   userMessage: {
     alignSelf: "flex-end",
@@ -176,11 +177,11 @@ const styles = StyleSheet.create({
   },
   userMessageDark: {
     alignSelf: "flex-end",
-    backgroundColor: "#333", // Dark mode user message background color
+    backgroundColor: "#444", 
     padding: 10,
     margin: 5,
     borderRadius: 10,
-    color: "white", // Text color in dark mode
+    color: "white",
   },
   aiMessage: {
     alignSelf: "flex-start",
@@ -191,11 +192,11 @@ const styles = StyleSheet.create({
   },
   aiMessageDark: {
     alignSelf: "flex-start",
-    backgroundColor: "#444", // Dark mode AI message background color
+    backgroundColor: "#444", 
     padding: 10,
     margin: 5,
     borderRadius: 10,
-    color: "white", // Text color in dark mode
+    color: "white",
   },
   header: {
     flexDirection: "row",
@@ -203,7 +204,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 20,
     marginTop: 100,
-    color: "black", // Default text color in light mode
+    color: "black", 
   },
   backButtonContainer: {
     position: "absolute",
@@ -216,12 +217,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "black", // Default text color in light mode
+    color: "black", 
   },
   titleDark: {
     fontSize: 28,
     fontWeight: "bold",
-    color: "white", // Text color in dark mode
+    color: "white", 
   },
   chatContainer: {
     flexGrow: 1,
@@ -241,7 +242,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     height: 40,
-    color: "black", // Default text color in both light and dark mode
+    color: "black", 
+  },
+  inputDark: {
+    flex: 4,
+    borderColor: "gray",
+    borderWidth: 1,
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    height: 40,
+    color: "white", 
   },
   predefinedQuestionsContainer: {
     flexDirection: "row",
@@ -257,7 +267,7 @@ const styles = StyleSheet.create({
   },
   predefinedQuestionText: {
     fontSize: 12,
-    color: "black", // Default text color in both light and dark mode
+    color: "black",
   },
 });
 

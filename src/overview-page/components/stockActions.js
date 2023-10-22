@@ -6,8 +6,23 @@ export const fakeBuyStock = async (userId, symbol, quantity, price, google_mid, 
         const firestore = getFirestore();
         const userRef = doc(firestore, 'users', userId);
         const holdingsRef = collection(userRef, 'holdings');
+        const userDoc = await getDoc(userRef);
+        const userBalance = userDoc.data().balance;
+
         // Calculate the total price for this transaction
         const totalPrice = quantity * price;
+
+        // Check if user has enough balance
+        if (userBalance < totalPrice) {
+          alert('Error buying stock. Insufficient balance.');
+          return false; // Insufficient balance
+        }
+
+        if(!currency)
+        {
+          currency = "USD";
+        }
+
         // Check if the user already owns this stock
         const existingHoldings = await getDocs(query(holdingsRef, where('symbol', '==', symbol)));
         if (existingHoldings.size > 0) {
@@ -43,6 +58,7 @@ export const fakeBuyStock = async (userId, symbol, quantity, price, google_mid, 
         
         return true; // Success
     } catch (error) {
+
         console.error('Error buying stock:', error);
         return false; // Error occurred
     }

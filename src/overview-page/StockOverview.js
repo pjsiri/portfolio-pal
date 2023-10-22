@@ -222,7 +222,7 @@ const StockOverview = () => {
           item.google_mid,
           item.name,
           item.currency,
-          "stocks"
+          true
         );
 
         if (success) {

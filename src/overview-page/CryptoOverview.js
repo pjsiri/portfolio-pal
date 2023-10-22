@@ -220,7 +220,7 @@ const CryptoOverview = () => {
           item.google_mid,
           stockName,
           item.to_symbol,
-          "crypto"
+          false
         );
 
         if (success) {

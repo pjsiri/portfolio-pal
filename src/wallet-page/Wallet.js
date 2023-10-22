@@ -71,6 +71,10 @@ const Wallet = () => {
         navigation.navigate("ExchangePage");
       };
 
+    const handleGoBack = () => {
+        navigation.goBack(); 
+    };
+
     const fetchWalletActivity = async () => {
         try {
         const q = query(walletActivityRef, where("userId", "==", userId));
@@ -227,36 +231,41 @@ const Wallet = () => {
 
     return (
         <View style={styles.container}>
-        <Text style={styles.balance}>Balance: ${balance.toFixed(2)}</Text>
-        <TextInput
-            style={styles.input}
-            placeholder="Top Up Amount"
-            value={topUpAmount}
-            onChangeText={(text) => setTopUpAmount(text)}
-            keyboardType="numeric"
-        />
-        <TouchableOpacity style={styles.button} onPress={handleTopUp} >
-            <Text style={styles.buttonText}>Top Up</Text>
-        </TouchableOpacity>
-        <TextInput
-            style={styles.input}
-            placeholder="Withdraw Amount"
-            value={withdrawAmount}
-            onChangeText={(text) => setWithdrawAmount(text)}
-            keyboardType="numeric"
-        />
-        <TouchableOpacity style={styles.button} onPress={handleWithdraw}>
-            <Text style={styles.buttonText}>Withdraw</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handleNavigateToExchange}>
-            <Text style={styles.buttonText}>Exchange Currency</Text>
-        </TouchableOpacity>
-        <Text style={styles.transactionHistory}>Transactions History:</Text>
-        <FlatList
-            data={combinedActivities}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item }) => <TransactionItem item={item} />}
-        />
+            <View style={styles.topRow}>
+                <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
+                    <Ionicons name="chevron-back-outline" size={42} color="black" />
+                </TouchableOpacity>
+            </View>
+            <Text style={styles.balance}>Balance: ${balance.toFixed(2)}</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="Top Up Amount"
+                value={topUpAmount}
+                onChangeText={(text) => setTopUpAmount(text)}
+                keyboardType="numeric"
+            />
+            <TouchableOpacity style={styles.button} onPress={handleTopUp} >
+                <Text style={styles.buttonText}>Top Up</Text>
+            </TouchableOpacity>
+            <TextInput
+                style={styles.input}
+                placeholder="Withdraw Amount"
+                value={withdrawAmount}
+                onChangeText={(text) => setWithdrawAmount(text)}
+                keyboardType="numeric"
+            />
+            <TouchableOpacity style={styles.button} onPress={handleWithdraw}>
+                <Text style={styles.buttonText}>Withdraw</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button} onPress={handleNavigateToExchange}>
+                <Text style={styles.buttonText}>Exchange Currency</Text>
+            </TouchableOpacity>
+            <Text style={styles.transactionHistory}>Transactions History:</Text>
+            <FlatList
+                data={combinedActivities}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={({ item }) => <TransactionItem item={item} />}
+            />
         </View>
     );
     };

@@ -11,16 +11,17 @@ import {
   Button,
 } from "react-native";
 import { PieChart } from "react-native-chart-kit";
-import { StatusBar } from "react-native";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
 import randomcolor from "randomcolor";
-import { Picker } from "@react-native-picker/picker";
 import {
   getFirestore,
   collection,
   getDocs,
   query,
+  doc,
+  getDoc,
+  setDoc,
   addDoc,
 } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
@@ -38,7 +39,7 @@ const Portfolio = () => {
   const { isDarkMode } = useDarkMode();
   const [graphType, setGraphType] = useState("All"); //graph type
   const [userInvestments, setUserInvestments] = useState([]);
-  const [assetsTotal, setAssetsTotal] = useState(0); // Use state for assetsTotal
+  const [balance, setBalance] = useState(0);
   const screenWidth = Dimensions.get("window").width;
   const [sortType, setSortType] = useState(0);
   const [ascendOrder, setAscendOrder] = useState(true);
@@ -50,10 +51,42 @@ const Portfolio = () => {
   let cryptos = []; // Declare 'cryptos' outside of the useEffect
   const [totalStocks, setTotalStocks] = useState(0);
   const [totalCryptos, setTotalCryptos] = useState(0);
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const userId = user.uid;
+  const firestore = getFirestore();
 
   const handleNavigateToWallet = () => {
     navigation.navigate("Wallet");
   };
+
+  const fetchUserBalance = async (userId) => {
+    try {
+      const userDocRef = doc(firestore, "users", userId);
+      const userDocSnapshot = await getDoc(userDocRef);
+
+      if (userDocSnapshot.exists()) {
+        const userData = userDocSnapshot.data();
+        const userBalance = userData.balance;
+
+        if (userBalance === undefined) {
+          await setDoc(userDocRef, { balance: 0 }, { merge: true });
+          setBalance(0);
+        } else {
+          setBalance(userBalance);
+        }
+      } else {
+        await setDoc(userDocRef, { balance: 0 }, { merge: true });
+        setBalance(0);
+      }
+    } catch (error) {
+      console.error("Error fetching user balance:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserBalance(userId);
+  }, [userId]);
 
   //Stocks
   useEffect(() => {
@@ -73,19 +106,23 @@ const Portfolio = () => {
             const cryptos = [];
             let totalStocks = 0;
             let totalCryptos = 0;
+            let investments = [];
 
             querySnapshot.forEach((doc) => {
               const assetData = doc.data();
+              investments.push(assetData);
               if (assetData.isStocks) {
                 stocks.push({
                   price: assetData.totalPrice,
                   name: assetData.name,
+                  color: getRandomColor(),
                 });
                 totalStocks += assetData.totalPrice;
               } else {
                 cryptos.push({
                   price: assetData.totalPrice,
                   name: assetData.name,
+                  color: getRandomColor(),
                 });
                 totalCryptos += assetData.totalPrice;
               }
@@ -104,11 +141,10 @@ const Portfolio = () => {
                 color: getRandomColor(index),
               })
             );
-            
-            setUserInvestments(stocks);
+
+            setUserInvestments(investments);
             setTotalCryptos(totalCryptos);
             setTotalStocks(totalStocks);
-            setAssetsTotal(totalStocks + totalCryptos);
             setAssets(companyChartData); // Update the 'assets' state variable
             setUserStocks(stocks);
             setUserCryptos(cryptos);
@@ -127,30 +163,23 @@ const Portfolio = () => {
   const userTotalAssets = totalStocks + totalCryptos;
   const percentageStocks = ((totalStocks / userTotalAssets) * 100).toFixed(2);
   const percentageCryptos = ((totalCryptos / userTotalAssets) * 100).toFixed(2);
-  
+
   // Modify the data sources based on graphType
   let data = [];
-  let graphTypeText = "";
 
   if (graphType === "All") {
-    data = assets.concat(cryptos),
-    color = getRandomColor(),
-    graphTypeText = "All";
+    data = assets.concat(cryptos);
   } else if (graphType === "Stock") {
     data = userStocks;
-    graphTypeText = "Stock";
   } else if (graphType === "Crypto") {
     data = userCryptos;
-    graphTypeText = "Crypto";
   } // Inside the useEffect where you set the data for the pie chart
   if (graphType === "S:C") {
     data = [
       { name: "Stocks", price: totalStocks, color: getRandomColor() },
       { name: "Cryptos", price: totalCryptos, color: getRandomColor() },
     ];
-    graphTypeText = "S:C";
   }
-  
 
   const chartConfig = {
     backgroundGradientFrom: "#fff",
@@ -172,9 +201,12 @@ const Portfolio = () => {
       style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
-        <TouchableOpacity style={styles.walletButton} onPress={handleNavigateToWallet} >
-          <Text style={styles.walletButtonText}>My Wallet</Text>
-          <Text style={styles.walletButtonText}>$50,000</Text>
+        <TouchableOpacity
+          style={styles.walletButton}
+          onPress={handleNavigateToWallet}
+        >
+          <Text style={styles.walletButtonText}>My Wallet (USD)</Text>
+          <Text style={styles.walletButtonText}>${balance.toFixed(2)}</Text>
         </TouchableOpacity>
 
         <View style={styles.portfolioTitleContainer}>
@@ -234,9 +266,7 @@ const Portfolio = () => {
         </View>
 
         <View style={styles.assetContainer}>
-          <Text style={styles.headerText}>
-            Asset Overview - {graphTypeText}
-          </Text>
+          <Text style={styles.headerText}>Asset Overview - {graphType}</Text>
           {graphType === "All" && (
             <View style={styles.sectionContainer}>
               <Text style={styles.valueText}>Total Assets Value</Text>
@@ -265,9 +295,7 @@ const Portfolio = () => {
               <Text style={styles.valueText}>
                 Total Stock and Crypto Assets Value
               </Text>
-              <Text style={styles.valueText}>
-                Stocks: {percentageStocks}%
-              </Text>
+              <Text style={styles.valueText}>Stocks: {percentageStocks}%</Text>
               <Text style={styles.valueText}>
                 Cryptos: {percentageCryptos}%
               </Text>

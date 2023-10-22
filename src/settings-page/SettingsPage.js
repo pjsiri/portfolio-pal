@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, Switch, StyleSheet, TouchableOpacity, Alert, Image, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Switch,
+  StyleSheet,
+  TouchableOpacity,
+  Alert,
+  Image,
+  ScrollView,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Picker } from "@react-native-picker/picker";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
@@ -8,7 +17,8 @@ import { useIsFocused } from "@react-navigation/native";
 
 const SettingsPage = () => {
   const { isDarkMode, toggleDarkMode } = useDarkMode();
-  const [username, setUsername] = useState('');
+  const [username, setUsername] = useState("");
+  const [userProfileImage, setUserProfileImage] = useState(null);
   const navigation = useNavigation();
   const auth = getAuth();
   const isFocused = useIsFocused();
@@ -19,6 +29,11 @@ const SettingsPage = () => {
         if (user) {
           if (user.displayName) {
             setUsername(user.displayName);
+          }
+
+          // Set the user's profile image
+          if (user.photoURL) {
+            setUserProfileImage(user.photoURL);
           }
         }
       });
@@ -37,7 +52,7 @@ const SettingsPage = () => {
         {
           text: "Logout",
           onPress: () => {
-            navigation.navigate("Login")
+            navigation.navigate("Login");
             navigation.reset({
               index: 0,
               routes: [{ name: "Login" }],
@@ -51,14 +66,12 @@ const SettingsPage = () => {
 
   return (
     <ScrollView contentContainerStyle={[styles.container, isDarkMode && styles.darkModeContainer]}>
-      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
-        Profile
-      </Text>
+      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>Profile</Text>
       <View style={styles.profileContainer}>
         <View style={styles.profileImageBorder}>
           <Image
             source={{
-              uri:
+              uri: userProfileImage ||
                 "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png",
             }}
             style={styles.profileImage}
@@ -69,18 +82,7 @@ const SettingsPage = () => {
           <Text style={styles.editProfileText}>Edit Profile</Text>
         </TouchableOpacity>
       </View>
-      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
-        Security
-      </Text>
-      {/* <TouchableOpacity style={styles.optionBubble} onPress={() => navigation.navigate("ChangeEmail")}>
-        <Image
-          source={{
-            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/email.png",
-          }}
-          style={styles.bubbleIcon}
-        />
-        <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Change Email</Text>
-      </TouchableOpacity> */}
+      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>Security</Text>
       <TouchableOpacity style={styles.optionBubble} onPress={() => navigation.navigate("ChangePassword")}>
         <Image
           source={{
@@ -90,9 +92,7 @@ const SettingsPage = () => {
         />
         <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Change Password</Text>
       </TouchableOpacity>
-      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
-        Appearance
-      </Text>
+      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>Appearance</Text>
       <View style={styles.optionBubble}>
         <Image
           source={{
@@ -100,13 +100,8 @@ const SettingsPage = () => {
           }}
           style={styles.bubbleIcon}
         />
-        <TouchableOpacity
-          onPress={toggleDarkMode}
-          style={styles.toggleButton}
-        >
-          <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>
-            Dark Mode
-          </Text>
+        <TouchableOpacity onPress={toggleDarkMode} style={styles.toggleButton}>
+          <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Dark Mode</Text>
           <Switch
             value={isDarkMode}
             onValueChange={toggleDarkMode}
@@ -116,9 +111,7 @@ const SettingsPage = () => {
           />
         </TouchableOpacity>
       </View>
-      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
-        Tutorials
-      </Text>
+      <Text style={[styles.title, isDarkMode && styles.darkModeText]}>Tutorials</Text>
       <TouchableOpacity onPress={() => navigation.navigate("Education")}>
         <View style={styles.optionBubble}>
           <Image
@@ -132,14 +125,12 @@ const SettingsPage = () => {
       </TouchableOpacity>
       <TouchableOpacity onPress={handleLogout}>
         <View style={styles.logoutButton}>
-          <Text style={styles.logoutText}>
-            Logout
-          </Text>
+          <Text style={styles.logoutText}>Logout</Text>
         </View>
       </TouchableOpacity>
     </ScrollView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {

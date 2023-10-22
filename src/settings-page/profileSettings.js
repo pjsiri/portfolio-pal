@@ -1,14 +1,34 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  Image,
+  Modal,
+  TouchableWithoutFeedback,
+} from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
-import { ref, getDownloadURL, put } from 'firebase/storage';
-import { launchImageLibrary } from 'react-native-image-picker';
+
+const presetProfilePictures = [
+  "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PP_1.jpg",
+  "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PP_2.jpg",
+  "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PP_3.jpg",
+  "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PP_4.jpg",
+  "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PP_5.jpg",
+  "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PP_6.jpg",
+  "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PP_7.jpg",
+];
 
 const ProfileSettings = () => {
   const [newUsername, setNewUsername] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [profileImageUri, setProfileImageUri] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false); // To control the visibility of the profile picture options modal
+  const [selectedProfilePictureIndex, setSelectedProfilePictureIndex] = useState(null);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -17,40 +37,36 @@ const ProfileSettings = () => {
     if (auth.currentUser) {
       setNewUsername(auth.currentUser.displayName || "");
       setNewEmail(auth.currentUser.email || "");
+      setProfileImageUri(auth.currentUser.photoURL || null);
     }
   }, []);
 
   const handleSave = async () => {
-    // Check if the new username is at least 3 characters long
     if (newUsername.length < 3) {
       Alert.alert("Error", "Username must be at least 3 characters long.");
       return;
     }
 
-    // Check if the username contains only letters and numbers
-    const usernameRegex = /^[A-Za-z0-9]+$/; // Only letters and numbers allowed
+    const usernameRegex = /^[A-Za-z0-9]+$/;
     if (!usernameRegex.test(newUsername)) {
       Alert.alert("Error", "Username can only contain letters and numbers.");
       return;
     }
 
-    // Check if the email address is valid
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(newEmail) || !newEmail.endsWith(".com")) {
       Alert.alert("Error", "Please enter a valid email address.");
       return;
     }
 
-    // Update the user's profile using Firebase Auth
     const auth = getAuth();
     const user = auth.currentUser;
     try {
-      // Update the display name
       await updateProfile(user, {
         displayName: newUsername,
+        photoURL: profileImageUri,
       });
 
-      // Update the email
       await updateEmail(user, newEmail);
 
       Alert.alert("Success", "Profile updated successfully");
@@ -61,24 +77,23 @@ const ProfileSettings = () => {
     }
   };
 
-  const selectProfilePicture = () => {
-    const options = {
-      title: 'Select Profile Picture',
-      storageOptions: {
-        skipBackup: true,
-        path: 'images',
-      },
-    };
+  const openProfilePictureOptions = () => {
+    setIsModalVisible(true); 
+  };
 
-    launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.error('ImagePicker Error: ', response.error);
-      } else if (response.uri) {
-        setProfileImageUri(response.uri);
-      }
-    });
+  const closeProfilePictureOptions = () => {
+    setIsModalVisible(false);
+  };
+
+  const selectProfilePicture = (index) => {
+    const selectedImageUri = presetProfilePictures[index];
+    setProfileImageUri(selectedImageUri);
+    setSelectedProfilePictureIndex(index);
+    closeProfilePictureOptions();
+  };
+
+  const handleRemoveProfilePicture = () => {
+    setProfileImageUri("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png");
   };
 
   return (
@@ -94,7 +109,7 @@ const ProfileSettings = () => {
         </TouchableOpacity>
       </View>
       <Text style={styles.title}>Edit Profile</Text>
-      <TouchableOpacity onPress={selectProfilePicture}>
+      <TouchableOpacity onPress={openProfilePictureOptions}>
         <View style={styles.profileImageContainer}>
           <Image
             source={{
@@ -105,6 +120,38 @@ const ProfileSettings = () => {
           <Text style={styles.plusSign}>+</Text>
         </View>
       </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.removeProfilePictureButton}
+        onPress={handleRemoveProfilePicture}
+      >
+        <Text style={styles.saveButtonText}>Remove</Text>
+      </TouchableOpacity>
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={closeProfilePictureOptions}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Select a profile picture</Text>
+            <View style={styles.profilePictureOptionsContainer}>
+              {presetProfilePictures.map((uri, index) => (
+                <TouchableOpacity
+                  key={index}
+                  style={styles.profilePictureOption}
+                  onPress={() => selectProfilePicture(index)}
+                >
+                  <Image source={{ uri }} style={styles.profilePictureOptionImage} />
+                </TouchableOpacity>
+              ))}
+            </View>
+            <TouchableOpacity style={styles.profilePictureOption} onPress={closeProfilePictureOptions}>
+              <Text style={styles.profilePictureOptionText}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <View style={styles.detailsContainer}>
         <View style={styles.labelContainer}>
           <Text style={styles.label}>Username: </Text>
@@ -123,7 +170,7 @@ const ProfileSettings = () => {
           <TextInput
             style={styles.inputText}
             value={newEmail}
-            editable={false} // Non-editable for now
+            editable={false}
           />
         </View>
       </View>
@@ -201,7 +248,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 20,
     marginTop: 100,
-    width: "50%",
+    width: "70%",
   },
   saveButtonText: {
     color: "white",
@@ -217,6 +264,54 @@ const styles = StyleSheet.create({
     width: 30,
     height: 30,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    width: "80%",
+    alignItems: "center",
+  },
+  profilePictureOption: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    overflow: "hidden",
+    margin: 5,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  profilePictureOptionImage: {
+    width: "100%",
+    height: "100%",
+  },
+  profilePictureOptionText: {
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  profilePictureOptionsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  removeProfilePictureButton: {
+    backgroundColor: "black",
+    padding: 10,
+    borderRadius: 30,
+    marginTop: 10,
+    width: "35%",
+  },
+
 });
 
 export default ProfileSettings;

@@ -39,12 +39,18 @@ const LoginScreen = () => {
         await signInWithEmailAndPassword(auth, user, pass);
 
         navigation.navigate('HomeStack');
+        Alert.alert("Login Successful", "Welcome back, PortfolioPal!");
       } catch (error) {
         Alert.alert("Login Failed", error.message);
       }
     } else {
       Alert.alert("Login Failed", "Please provide valid username and password.");
     }
+  };
+
+  const handleSignUp = () => {
+    // Navigate to the "Register" screen when the button is pressed
+    navigation.navigate("Register");
   };
 
   const handleShowPassword = () => {
@@ -61,7 +67,91 @@ const LoginScreen = () => {
     }
   };
 
+  const styles = {
+    container: {
+      flex: 1,
+      width: "100%",
+      alignItems: "center",
+      justifyContent: "flex-start",
+    },
+    title: {
+      fontSize: 24,
+      marginBottom: 20,
+    },
+    subtitle: {
+      fontSize: 18,
+      marginBottom: 50,
+    },
+    inputContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      width: 330,
+      height: 50,
+      borderColor: "gray",
+      borderWidth: 1,
+      paddingHorizontal: 10,
+      marginBottom: 20,
+      borderRadius: 10,
+    },
+    input: {
+      flex: 1,
+    },
+    inputIcon: {
+      width: 24,
+      height: 24,
+      marginRight: 8,
+    },
+    bannerImage: {
+      width: 400,
+      height: 200,
+      resizeMode: "contain",
+    },
+    loginButtonContainer: {
+      width: 330,
+      height: 50,
+      marginTop: 20,
+      marginBottom: 15,
+    },
+    loginButton: {
+      width: "100%",
+      height: "100%",
+      backgroundColor: "black",
+      justifyContent: "center",
+      borderRadius: 10,
+    },
+    loginButtonText: {
+      color: "white",
+      textAlign: "center",
+      fontSize: 18,
+    },
+    forgotPasswordButtonContainer: {
+      width: 330,
+      flexDirection: "row",
+      justifyContent: "flex-end",
+    },
+    forgotPasswordButtonText: {
+      color: "black",
+      textAlign: "right",
+      fontSize: 18,
+    },
+    signUpTextContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      position: "absolute",
+      bottom: 20,
+    },
+    signUpText: {
+      fontSize: 16,
+    },
+    signUpLink: {
+      color: "black",
+      fontWeight: "bold",
+      textDecorationLine: "underline",
+    },
+  };
+
   return (
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
       <View style={styles.container}>
         <Image
           source={{
@@ -107,8 +197,9 @@ const LoginScreen = () => {
           </TouchableOpacity>
         </View>
         <View style={styles.loginButtonContainer}>
+          {/* Use TouchableOpacity for custom button styling */}
           <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Login</Text>
+            <Text style={styles.loginButtonText}>LOGIN</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.forgotPasswordButtonContainer}>
@@ -123,97 +214,13 @@ const LoginScreen = () => {
         </View>
         <View style={styles.signUpTextContainer}>
           <Text style={styles.signUpText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+          <TouchableOpacity onPress={handleSignUp}>
             <Text style={styles.signUpLink}>Sign up</Text>
           </TouchableOpacity>
         </View>
       </View>
+    </KeyboardAvoidingView>
   );
-};
-
-const styles = {
-  container: {
-    flex: 1,
-    width: "100%",
-    alignItems: "center",
-    justifyContent: "flex-start",
-  },
-  title: {
-    fontSize: 24,
-    marginBottom: 20,
-  },
-  subtitle: {
-    fontSize: 18,
-    marginBottom: 50,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: 330,
-    height: 50,
-    borderColor: "gray",
-    borderWidth: 1,
-    paddingHorizontal: 10,
-    marginBottom: 20,
-    borderRadius: 10,
-  },
-  input: {
-    flex: 1,
-  },
-  inputIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 8,
-  },
-  bannerImage: {
-    width: 400,
-    height: 200,
-    resizeMode: "contain",
-  },
-  loginButtonContainer: {
-    width: 330,
-    height: 50,
-    marginTop: 20,
-    marginBottom: 15,
-  },
-  loginButton: {
-    width: "100%",
-    height: "100%",
-    backgroundColor: "black",
-    justifyContent: "center",
-    borderRadius: 10,
-  },
-  loginButtonText: {
-    color: "white",
-    textAlign: "center",
-    fontSize: 18,
-  },
-  forgotPasswordButtonContainer: {
-    width: 330,
-    flexDirection: "row",
-    justifyContent: "flex-end",
-  },
-  forgotPasswordText: {
-    color: "black",
-    textAlign: "right",
-    fontSize: 14,
-    fontWeight: "bold",
-  },
-  signUpTextContainer: {
-    height: "100%",
-    flexDirection: "row",
-    alignItems: "center",
-    position: "absolute",
-    marginTop: "77%",
-  },
-  signUpText: {
-    fontSize: 16,
-  },
-  signUpLink: {
-    color: "black",
-    fontWeight: "bold",
-    textDecorationLine: "underline",
-  },
 };
 
 export default LoginScreen;

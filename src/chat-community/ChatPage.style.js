@@ -1,15 +1,24 @@
 import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
-    container: {
+  container: {
     flex: 1,
     padding: 16,
     backgroundColor: "#F5F5F5",
     paddingTop: 70,
-    },
-    messageContainer: {
+  },
+  cardContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 8,
     marginBottom: 8,
-    },
+    borderColor: "#000",
+    borderWidth: 1,
+  },
+  messageContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
     sender: {
     fontWeight: "bold",
     marginBottom: 4,
@@ -34,6 +43,19 @@ const styles = StyleSheet.create({
     color: "#007BFF",
     fontWeight: "bold",
     },
+    avatar: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        marginRight: 8,
+      },
+      messageContent: {
+        flex: 1,
+      },
+      timestamp: {
+        color: "#888",
+        fontSize: 12,
+      },
 });
 
 export default styles;

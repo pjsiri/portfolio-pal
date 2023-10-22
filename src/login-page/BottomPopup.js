@@ -65,7 +65,7 @@ export class Bottompopup extends React.Component {
             // Password reset email sent successfully
             this.setState({ errorMessage: "" }); // Clear any previous error message
             Alert.alert('Success', 'A password reset email has been sent to your email address');
-            this.close(); // Close the popup
+            this.close();
         } catch (error) {
             // Handle any errors that occur during sending the reset email
             this.setState({ errorMessage: error.message });

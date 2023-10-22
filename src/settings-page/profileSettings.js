@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { getAuth, updateProfile } from "firebase/auth";
+import { getAuth, updateProfile, updateEmail } from "firebase/auth";
+import { ref, getDownloadURL, put } from 'firebase/storage';
+import { launchImageLibrary } from 'react-native-image-picker';
 
 const ProfileSettings = () => {
   const [newUsername, setNewUsername] = useState("");
+  const [newEmail, setNewEmail] = useState("");
+  const [profileImageUri, setProfileImageUri] = useState(null);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -12,6 +16,7 @@ const ProfileSettings = () => {
     const auth = getAuth();
     if (auth.currentUser) {
       setNewUsername(auth.currentUser.displayName || "");
+      setNewEmail(auth.currentUser.email || "");
     }
   }, []);
 
@@ -29,6 +34,13 @@ const ProfileSettings = () => {
       return;
     }
 
+    // Check if the email address is valid
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail) || !newEmail.endsWith(".com")) {
+      Alert.alert("Error", "Please enter a valid email address.");
+      return;
+    }
+
     // Update the user's profile using Firebase Auth
     const auth = getAuth();
     const user = auth.currentUser;
@@ -37,13 +49,36 @@ const ProfileSettings = () => {
       await updateProfile(user, {
         displayName: newUsername,
       });
-      navigation.goBack();
-      Alert.alert("Success", "Profile updated successfully");
 
+      // Update the email
+      await updateEmail(user, newEmail);
+
+      Alert.alert("Success", "Profile updated successfully");
+      navigation.goBack();
     } catch (error) {
       console.error("Error updating profile:", error);
       Alert.alert("Error", "Profile update failed. Please try again: " + error.message);
     }
+  };
+
+  const selectProfilePicture = () => {
+    const options = {
+      title: 'Select Profile Picture',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+
+    launchImageLibrary(options, (response) => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.error('ImagePicker Error: ', response.error);
+      } else if (response.uri) {
+        setProfileImageUri(response.uri);
+      }
+    });
   };
 
   return (
@@ -59,15 +94,17 @@ const ProfileSettings = () => {
         </TouchableOpacity>
       </View>
       <Text style={styles.title}>Edit Profile</Text>
-      <View style={styles.profileImageContainer}>
-        <Image
-          source={{
-            uri:
-              "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png",
-          }}
-          style={styles.profileImage}
-        />
-      </View>
+      <TouchableOpacity onPress={selectProfilePicture}>
+        <View style={styles.profileImageContainer}>
+          <Image
+            source={{
+              uri: profileImageUri || "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png",
+            }}
+            style={styles.profileImage}
+          />
+          <Text style={styles.plusSign}>+</Text>
+        </View>
+      </TouchableOpacity>
       <View style={styles.detailsContainer}>
         <View style={styles.labelContainer}>
           <Text style={styles.label}>Username: </Text>
@@ -77,6 +114,16 @@ const ProfileSettings = () => {
             style={styles.inputText}
             value={newUsername}
             onChangeText={setNewUsername}
+          />
+        </View>
+        <View style={styles.labelContainer}>
+          <Text style={styles.label}>Email: </Text>
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.inputText}
+            value={newEmail}
+            editable={false} // Non-editable for now
           />
         </View>
       </View>
@@ -99,13 +146,21 @@ const styles = StyleSheet.create({
     marginTop: 70,
   },
   profileImageContainer: {
+    position: "relative",
     width: 150,
     height: 150,
     borderRadius: 80,
     overflow: "hidden",
     alignSelf: "center",
     marginVertical: 10,
-    marginTop: 70,
+    marginTop: 40,
+  },
+  plusSign: {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    fontSize: 30,
+    transform: [{ translateX: -9 }, { translateY: -25 }],
   },
   profileImage: {
     width: "100%",
@@ -139,7 +194,7 @@ const styles = StyleSheet.create({
     width: "70%",
     height: "20%",
     alignItems: "center",
-    marginTop: 80,
+    marginTop: 70,
   },
   saveButton: {
     backgroundColor: "black",
@@ -156,7 +211,7 @@ const styles = StyleSheet.create({
   backButtonContainer: {
     position: 'absolute',
     top: 80,
-    left: 20,
+    left: 30,
   },
   backButton: {
     width: 30,

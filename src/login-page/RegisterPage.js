@@ -117,7 +117,7 @@ const RegisterScreen = () => {
           Password must:
         </Text>
         <Text style={styles.passwordRequirements}>
-          - Be at least 6 characters.
+          - Minimum of 6 characters.
         </Text>
         <Text style={styles.passwordRequirements}>
           - Match in both fields.
@@ -271,7 +271,7 @@ const styles = {
   backButtonContainer: {
     position: 'absolute',
     top: 80,
-    left: 20,
+    left: 30,
   },
   backButton: {
     width: 30,

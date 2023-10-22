@@ -1,83 +1,125 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
-import {
-    Text,
-    View,
-    TextInput,
-    TouchableOpacity,
-    Alert,
-    Image,
-} from "react-native";
-import { getAuth, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { Text, View, TextInput, TouchableOpacity, Alert, Image, TouchableWithoutFeedback } from "react-native";
+import { getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail } from "firebase/auth";
+
 
 const ChangePassword = () => {
     const [email, setEmail] = useState('');
-    const [username, setUsername] = useState('');
-    const [currentPass, setPass] = useState('');
-    const [confirmNewPass, setConfirmPass] = useState('');
+    const [currentPass, setCurrentPass] = useState('');
+    const [newPass, setNewPass] = useState('');
+    const [confirmNewPass, setConfirmNewPass] = useState('');
     const navigation = useNavigation();
-    const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-    const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] = useState(false);
+    const [isCurrentPasswordVisible, setIsCurrentPasswordVisible] = useState(false);
+    const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
+    const [isConfirmNewPasswordVisible, setIsConfirmNewPasswordVisible] = useState(false);
     const [imageSource, setImageSource] = useState(
         "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
     );
     const [imageSource2, setImageSource2] = useState(
         "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
     );
+    const [imageSource3, setImageSource3] = useState(
+        "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
+    );
 
-    const handleRegister = async () => {
-        if (currentPass && confirmNewPass) {
-            if (currentPass !== confirmNewPass) {
-                Alert.alert('Registration Failed', 'Password and confirmation password do not match.');
+    useEffect(() => {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (user) {
+            setEmail(user.email);
+        }
+    }, []);
+
+    const handleSave = async () => {
+        if (currentPass === newPass) {
+            Alert.alert('Save Failed', 'Current password and new password cannot be the same.');
+            return;
+        }
+        if (currentPass && newPass && confirmNewPass) {
+            if (newPass !== confirmNewPass) {
+                Alert.alert('Save Failed', 'New password and confirm new password do not match.');
                 return;
             }
 
             try {
                 const auth = getAuth();
-                await createUserWithEmailAndPassword(auth, email, currentPass);
-
                 const user = auth.currentUser;
-                await updateProfile(user, { displayName: username });
 
-                Alert.alert('Registration Successful', 'You have successfully registered!');
-                navigation.navigate('Login');
+                if (user) {
+                    // Reauthenticate the user with their current password
+                    const credential = EmailAuthProvider.credential(email, currentPass);
+                    await reauthenticateWithCredential(user, credential);
+
+                    // Change the password
+                    await updatePassword(user, newPass);
+
+                    Alert.alert('Password Updated', 'Your password has been updated successfully.');
+                    navigation.goBack();
+                } else {
+                    Alert.alert('Save Failed', 'User not found.');
+                }
             } catch (error) {
-                Alert.alert('Registration Failed', error.message);
+                if (error.code === 'auth/invalid-login-credentials') {
+                    Alert.alert('Save Failed', 'Current password is incorrect. Please try again.');
+                } else if (error.code === 'auth/too-many-requests') {
+                    // Log out the user and navigate to the Login screen
+                    navigation.navigate("Login")
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Login" }],
+                    });
+                    Alert.alert('Save Failed', error.message);
+                }
             }
         } else {
-
-            Alert.alert('Registration Failed', 'Please provide valid information.');
+            Alert.alert('Save Failed', 'Please provide valid information.');
         }
     };
 
-    const handleShowPassword = () => {
-        // Toggle the visibility of the password
-        setIsPasswordVisible(!isPasswordVisible);
+    const handleShowCurrentPassword = () => {
+        // Toggle the visibility of the current password
+        setIsCurrentPasswordVisible(!isCurrentPasswordVisible);
 
         // Toggle the image source
-        if (!isPasswordVisible) {
-            setImageSource("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_visible.png");
-        } else {
-            setImageSource(
-                "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
-            );
-        }
+        setImageSource(isCurrentPasswordVisible
+            ? "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
+            : "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_visible.png"
+        );
     };
 
-    const handleShowConfirmPassword = () => {
-        // Toggle the visibility of the password
-        setIsConfirmPasswordVisible(!isConfirmPasswordVisible);
+    const handleShowNewPassword = () => {
+        // Toggle the visibility of the new password
+        setIsNewPasswordVisible(!isNewPasswordVisible);
 
         // Toggle the image source
-        if (!isConfirmPasswordVisible) {
-            setImageSource2(
-                "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_visible.png"
-            );
-        } else {
-            setImageSource2(
-                "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
-            );
-        }
+        setImageSource2(isNewPasswordVisible
+            ? "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
+            : "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_visible.png"
+        );
+    };
+
+    const handleShowConfirmNewPassword = () => {
+        // Toggle the visibility of the confirmation new password
+        setIsConfirmNewPasswordVisible(!isConfirmNewPasswordVisible);
+
+        // Toggle the image source
+        setImageSource3(isConfirmNewPasswordVisible
+            ? "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
+            : "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_visible.png"
+        );
+    };
+
+    const handleForgotPassword = () => {
+        const auth = getAuth();
+        sendPasswordResetEmail(auth, email)
+            .then(() => {
+                navigation.goBack();
+                Alert.alert('Password Reset Email Sent', 'A password reset email has been sent to your email address.');
+            })
+            .catch((error) => {
+                Alert.alert('Password Reset Email Failed', error.message);
+            });
     };
 
     return (
@@ -93,91 +135,73 @@ const ChangePassword = () => {
                 </TouchableOpacity>
             </View>
             <View style={styles.detailsContainer}>
-                <Text style={[styles.title]}>Welcome to PortfolioPal!</Text>
+                <Text style={styles.title}>Password Reset</Text>
                 <Text style={styles.subtitle}>
-                    Fill in with your email, username, and password
+                    <Text style={{ fontWeight: 'bold' }}>WARNING:</Text> Too many failed attempts will result in your account being temporarily disabled
                 </Text>
                 <Text style={styles.passwordRequirements}>
-                    Password must:
+                    New password requirements:
                 </Text>
                 <Text style={styles.passwordRequirements}>
-                    - Be at least 6 characters.
+                    - Minimum of 6 characters.
                 </Text>
                 <Text style={styles.passwordRequirements}>
-                    - Match in both fields.
+                    - Must differ from your current password.
                 </Text>
+            </View>
+            <View style={styles.bottomContainer}>
                 <View style={styles.inputContainer}>
-                    <Image
-                        source={{
-                            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/email.png",
-                        }}
-                        style={styles.inputIcon}
-                    />
                     <TextInput
-                        placeholder="Email"
-                        onChangeText={(text) => setEmail(text)}
-                        value={email}
-                        style={styles.input}
-                    />
-                </View>
-                <View style={styles.inputContainer}>
-                    <Image
-                        source={{
-                            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/user.png",
-                        }}
-                        style={styles.inputIcon}
-                    />
-                    <TextInput
-                        placeholder="Username (At least 3 characters)"
-                        onChangeText={(text) => setUsername(text)}
-                        value={username}
-                        style={styles.input}
-                    />
-                </View>
-                <View style={styles.inputContainer}>
-                    <Image
-                        source={{
-                            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
-                        }}
-                        style={styles.inputIcon}
-                    />
-                    <TextInput
-                        placeholder="Password"
-                        onChangeText={(text) => setPass(text)}
+                        placeholder="Current Password"
+                        onChangeText={(text) => setCurrentPass(text)}
                         value={currentPass}
-                        secureTextEntry={!isPasswordVisible}
+                        secureTextEntry={!isCurrentPasswordVisible}
                         style={styles.input}
                     />
-                    <TouchableOpacity onPress={handleShowPassword}>
+                    <TouchableOpacity onPress={handleShowCurrentPassword}>
                         <Image
                             source={{ uri: imageSource }}
                             style={styles.inputIcon}
                         />
                     </TouchableOpacity>
                 </View>
+                <View style={styles.forgotPasswordButtonContainer}>
+                    <TouchableWithoutFeedback onPress={handleForgotPassword}>
+                        <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+                    </TouchableWithoutFeedback>
+                </View>
                 <View style={styles.inputContainer}>
-                    <Image
-                        source={{
-                            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
-                        }}
-                        style={styles.inputIcon}
-                    />
                     <TextInput
-                        placeholder="Confirm Password"
-                        onChangeText={(text) => setConfirmPass(text)}
-                        value={confirmNewPass}
-                        secureTextEntry={!isConfirmPasswordVisible}
+                        placeholder="New Password"
+                        onChangeText={(text) => setNewPass(text)}
+                        value={newPass}
+                        secureTextEntry={!isNewPasswordVisible}
                         style={styles.input}
                     />
-                    <TouchableOpacity onPress={handleShowConfirmPassword}>
+                    <TouchableOpacity onPress={handleShowNewPassword}>
                         <Image
                             source={{ uri: imageSource2 }}
                             style={styles.inputIcon}
                         />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
-                    <Text style={styles.registerButtonText}>Save</Text>
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        placeholder="Confirm New Password"
+                        onChangeText={(text) => setConfirmNewPass(text)}
+                        value={confirmNewPass}
+                        secureTextEntry={!isConfirmNewPasswordVisible}
+                        style={styles.input}
+                    />
+                    <TouchableOpacity onPress={handleShowConfirmNewPassword}>
+                        <Image
+                            source={{ uri: imageSource3 }}
+                            style={styles.inputIcon}
+                        />
+                    </TouchableOpacity>
+                </View>
+                <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
+                    <Text style={styles.saveButtonText}>Save</Text>
                 </TouchableOpacity>
             </View>
         </View>
@@ -192,24 +216,30 @@ const styles = {
         justifyContent: "flex-start",
     },
     detailsContainer: {
-        height: "80%",
+        height: "25%",
         width: "85%",
         justifyContent: "flex-start",
         marginTop: 110,
+    },
+    bottomContainer: {
+        height: "80%",
+        width: "85%",
+        justifyContent: "flex-start",
+        marginTop: 10,
     },
     title: {
         fontSize: 28,
         marginBottom: 20,
         fontWeight: "900",
+        marginTop: 20,
     },
     subtitle: {
         fontSize: 14,
         alignSelf: "flex-start",
-        marginBottom: 5,
+        marginBottom: 25,
     },
     passwordRequirements: {
         fontSize: 14,
-        marginBottom: 5,
         alignSelf: 'flex-start',
     },
     inputContainer: {
@@ -217,7 +247,6 @@ const styles = {
         alignItems: "center",
         width: "100%",
         height: 50,
-        borderColor: "gray",
         borderWidth: 1,
         paddingHorizontal: 10,
         borderRadius: 15,
@@ -231,7 +260,7 @@ const styles = {
         height: 24,
         marginRight: 8,
     },
-    registerButton: {
+    saveButton: {
         width: "100%",
         height: 50,
         backgroundColor: "black",
@@ -239,7 +268,7 @@ const styles = {
         borderRadius: 15,
         marginTop: 60,
     },
-    registerButtonText: {
+    saveButtonText: {
         color: "white",
         textAlign: "center",
         fontSize: 18,
@@ -247,11 +276,23 @@ const styles = {
     backButtonContainer: {
         position: 'absolute',
         top: 80,
-        left: 20,
+        left: 30,
     },
     backButton: {
         width: 30,
         height: 30,
+    },
+    forgotPasswordButtonContainer: {
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        marginTop: 5,
+    },
+    forgotPasswordText: {
+        color: "black",
+        textAlign: "right",
+        fontSize: 14,
+        fontWeight: "bold",
     },
 };
 

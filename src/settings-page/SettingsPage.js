@@ -37,7 +37,11 @@ const SettingsPage = () => {
         {
           text: "Logout",
           onPress: () => {
-            navigation.navigate("Login");
+            navigation.navigate("Login")
+            navigation.reset({
+              index: 0,
+              routes: [{ name: "Login" }],
+            });
           },
         },
       ],
@@ -68,7 +72,7 @@ const SettingsPage = () => {
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
         Security
       </Text>
-      <TouchableOpacity style={styles.optionBubble} onPress={() => navigation.navigate("ChangeEmail")}>
+      {/* <TouchableOpacity style={styles.optionBubble} onPress={() => navigation.navigate("ChangeEmail")}>
         <Image
           source={{
             uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/email.png",
@@ -76,7 +80,7 @@ const SettingsPage = () => {
           style={styles.bubbleIcon}
         />
         <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Change Email</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
       <TouchableOpacity style={styles.optionBubble} onPress={() => navigation.navigate("ChangePassword")}>
         <Image
           source={{
@@ -214,7 +218,7 @@ const styles = StyleSheet.create({
   logoutText: {
     color: "white",
     fontSize: 18,
-  },  
+  },
   optionBubble: {
     flexDirection: "row",
     alignItems: "center",

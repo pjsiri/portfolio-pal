@@ -12,6 +12,7 @@ import {
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
 import { CHAT_API_KEY } from "../apikey";
+import { useDarkMode } from '../src/common/darkmode/DarkModeContext';
 
 const Chat = () => {
   const navigation = useNavigation();
@@ -21,8 +22,13 @@ const Chat = () => {
   const openaiAPIKey = CHAT_API_KEY;
 
   const apiUrl = "https://api.openai.com/v1/chat/completions";
-
   const scrollViewRef = useRef();
+  const { isDarkMode } = useDarkMode(); // Get the isDarkMode state from your context
+
+  // Conditional styles based on dark mode
+  const containerStyle = isDarkMode ? styles.containerDark : styles.container;
+  const userMessageStyle = isDarkMode ? styles.userMessageDark : styles.userMessage;
+  const aiMessageStyle = isDarkMode ? styles.aiMessageDark : styles.aiMessage;
 
   const handleBack = () => {
     navigation.goBack();
@@ -92,7 +98,7 @@ const Chat = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={containerStyle}>
       <View style={styles.header}>
         <TouchableOpacity
           style={styles.backButtonContainer}
@@ -105,7 +111,7 @@ const Chat = () => {
             style={styles.backButtonIcon}
           />
         </TouchableOpacity>
-        <Text style={styles.title}>AIVestor</Text>
+        <Text style={[styles.title, isDarkMode && styles.titleDark]}>AIVestor</Text>
       </View>
 
       <ScrollView
@@ -116,14 +122,15 @@ const Chat = () => {
           <Text
             key={index}
             style={
-              message.role === "user" ? styles.userMessage : styles.aiMessage
+              message.role === "user" ? userMessageStyle : aiMessageStyle
             }
           >
             {message.content}
           </Text>
         ))}
-        {isTyping && <Text style={styles.aiMessage}>Typing...</Text>}
+        {isTyping && <Text style={aiMessageStyle}>Typing...</Text>}
       </ScrollView>
+
       <View style={styles.predefinedQuestionsContainer}>
         {predefinedQuestions.map((question, index) => (
           <TouchableOpacity
@@ -148,12 +155,47 @@ const Chat = () => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-start",
+  },
+  containerDark: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    backgroundColor: "#222", // Dark mode background color
+  },
+  userMessage: {
+    alignSelf: "flex-end",
+    backgroundColor: "#bfe4e2",
+    padding: 10,
+    margin: 5,
+    borderRadius: 10,
+  },
+  userMessageDark: {
+    alignSelf: "flex-end",
+    backgroundColor: "#333", // Dark mode user message background color
+    padding: 10,
+    margin: 5,
+    borderRadius: 10,
+    color: "white", // Text color in dark mode
+  },
+  aiMessage: {
+    alignSelf: "flex-start",
+    backgroundColor: "#d3d3d3",
+    padding: 10,
+    margin: 5,
+    borderRadius: 10,
+  },
+  aiMessageDark: {
+    alignSelf: "flex-start",
+    backgroundColor: "#444", // Dark mode AI message background color
+    padding: 10,
+    margin: 5,
+    borderRadius: 10,
+    color: "white", // Text color in dark mode
   },
   header: {
     flexDirection: "row",
@@ -161,6 +203,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     marginBottom: 20,
     marginTop: 100,
+    color: "black", // Default text color in light mode
   },
   backButtonContainer: {
     position: "absolute",
@@ -173,24 +216,16 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 28,
     fontWeight: "bold",
+    color: "black", // Default text color in light mode
+  },
+  titleDark: {
+    fontSize: 28,
+    fontWeight: "bold",
+    color: "white", // Text color in dark mode
   },
   chatContainer: {
     flexGrow: 1,
     justifyContent: "flex-end",
-  },
-  userMessage: {
-    alignSelf: "flex-end",
-    backgroundColor: "#bfe4e2",
-    padding: 10,
-    margin: 5,
-    borderRadius: 10,
-  },
-  aiMessage: {
-    alignSelf: "flex-start",
-    backgroundColor: "#d3d3d3",
-    padding: 10,
-    margin: 5,
-    borderRadius: 10,
   },
   inputContainer: {
     flexDirection: "row",
@@ -206,6 +241,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     height: 40,
+    color: "black", // Default text color in both light and dark mode
   },
   predefinedQuestionsContainer: {
     flexDirection: "row",
@@ -221,6 +257,7 @@ const styles = StyleSheet.create({
   },
   predefinedQuestionText: {
     fontSize: 12,
+    color: "black", // Default text color in both light and dark mode
   },
 });
 

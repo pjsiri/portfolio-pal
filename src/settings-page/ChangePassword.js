@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Text, View, TextInput, TouchableOpacity, Alert, Image, TouchableWithoutFeedback } from "react-native";
 import { getAuth, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail } from "firebase/auth";
-
+import { useDarkMode } from '../common/darkmode/DarkModeContext'; 
 
 const ChangePassword = () => {
     const [email, setEmail] = useState('');
@@ -10,6 +10,7 @@ const ChangePassword = () => {
     const [newPass, setNewPass] = useState('');
     const [confirmNewPass, setConfirmNewPass] = useState('');
     const navigation = useNavigation();
+    const { isDarkMode } = useDarkMode();
     const [isCurrentPasswordVisible, setIsCurrentPasswordVisible] = useState(false);
     const [isNewPasswordVisible, setIsNewPasswordVisible] = useState(false);
     const [isConfirmNewPasswordVisible, setIsConfirmNewPasswordVisible] = useState(false);
@@ -23,58 +24,96 @@ const ChangePassword = () => {
         "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password_hidden.png"
     );
 
-    useEffect(() => {
-        const auth = getAuth();
-        const user = auth.currentUser;
-        if (user) {
-            setEmail(user.email);
-        }
-    }, []);
-
-    const handleSave = async () => {
-        if (currentPass === newPass) {
-            Alert.alert('Save Failed', 'Current password and new password cannot be the same.');
-            return;
-        }
-        if (currentPass && newPass && confirmNewPass) {
-            if (newPass !== confirmNewPass) {
-                Alert.alert('Save Failed', 'New password and confirm new password do not match.');
-                return;
-            }
-
-            try {
-                const auth = getAuth();
-                const user = auth.currentUser;
-
-                if (user) {
-                    // Reauthenticate the user with their current password
-                    const credential = EmailAuthProvider.credential(email, currentPass);
-                    await reauthenticateWithCredential(user, credential);
-
-                    // Change the password
-                    await updatePassword(user, newPass);
-
-                    Alert.alert('Password Updated', 'Your password has been updated successfully.');
-                    navigation.goBack();
-                } else {
-                    Alert.alert('Save Failed', 'User not found.');
-                }
-            } catch (error) {
-                if (error.code === 'auth/invalid-login-credentials') {
-                    Alert.alert('Save Failed', 'Current password is incorrect. Please try again.');
-                } else if (error.code === 'auth/too-many-requests') {
-                    // Log out the user and navigate to the Login screen
-                    navigation.navigate("Login")
-                    navigation.reset({
-                        index: 0,
-                        routes: [{ name: "Login" }],
-                    });
-                    Alert.alert('Save Failed', error.message);
-                }
-            }
-        } else {
-            Alert.alert('Save Failed', 'Please provide valid information.');
-        }
+    // Define styles based on isDarkMode
+    const styles = {
+        container: {
+            flex: 1,
+            width: "100%",
+            alignItems: "center",
+            justifyContent: "flex-start",
+            backgroundColor: isDarkMode ? "#333" : "white",
+            color: isDarkMode ? "white" : "black",
+        },
+        backButtonContainer: {
+            position: 'absolute',
+            top: 80,
+            left: 30,
+        },
+        detailsContainer: {
+            height: "25%",
+            width: "85%",
+            justifyContent: "flex-start",
+            marginTop: 110,
+        },
+        bottomContainer: {
+            height: "80%",
+            width: "85%",
+            justifyContent: "flex-start",
+            marginTop: 10,
+        },
+        title: {
+            fontSize: 28,
+            marginBottom: 20,
+            fontWeight: "900",
+            marginTop: 20,
+            color: isDarkMode ? "white" : "black",
+        },
+        subtitle: {
+            fontSize: 14,
+            alignSelf: "flex-start",
+            marginBottom: 25,
+            color: isDarkMode ? "white" : "black",
+        },
+        passwordRequirements: {
+            fontSize: 14,
+            alignSelf: 'flex-start',
+            color: isDarkMode ? "white" : "black",
+        },
+        inputContainer: {
+            flexDirection: "row",
+            alignItems: "center",
+            width: "100%",
+            height: 50,
+            borderWidth: 1,
+            paddingHorizontal: 10,
+            borderRadius: 15,
+            marginTop: 25,
+            backgroundColor: isDarkMode ? "#444" : "white",
+        },
+        input: {
+            flex: 1,
+            color: isDarkMode ? "white" : "black",
+        },
+        saveButton: {
+            width: "100%",
+            height: 50,
+            backgroundColor: "black",
+            justifyContent: "center",
+            borderRadius: 15,
+            marginTop: 60,
+        },
+        saveButtonText: {
+            color: "white",
+            textAlign: "center",
+            fontSize: 18,
+        },
+        forgotPasswordButtonContainer: {
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            marginTop: 5,
+        },
+        forgotPasswordText: {
+            color: "black",
+            textAlign: "right",
+            fontSize: 14,
+            fontWeight: "bold",
+        },
+        inputIcon: {
+            width: 24,
+            height: 24,
+            marginRight: 8,
+        },
     };
 
     const handleShowCurrentPassword = () => {
@@ -122,6 +161,52 @@ const ChangePassword = () => {
             });
     };
 
+    const handleSave = async () => {
+        if (currentPass === newPass) {
+            Alert.alert('Save Failed', 'Current password and new password cannot be the same.');
+            return;
+        }
+        if (currentPass && newPass && confirmNewPass) {
+            if (newPass !== confirmNewPass) {
+                Alert.alert('Save Failed', 'New password and confirm new password do not match.');
+                return;
+            }
+
+            try {
+                const auth = getAuth();
+                const user = auth.currentUser;
+
+                if (user) {
+                    // Reauthenticate the user with their current password
+                    const credential = EmailAuthProvider.credential(email, currentPass);
+                    await reauthenticateWithCredential(user, credential);
+
+                    // Change the password
+                    await updatePassword(user, newPass);
+
+                    Alert.alert('Password Updated', 'Your password has been updated successfully.');
+                    navigation.goBack();
+                } else {
+                    Alert.alert('Save Failed', 'User not found.');
+                }
+            } catch (error) {
+                if (error.code === 'auth/invalid-login-credentials') {
+                    Alert.alert('Save Failed', 'Current password is incorrect. Please try again.');
+                } else if (error.code === 'auth/too-many-requests') {
+                    // Log out the user and navigate to the Login screen
+                    navigation.navigate("Login")
+                    navigation.reset({
+                        index: 0,
+                        routes: [{ name: "Login" }],
+                    });
+                    Alert.alert('Save Failed', error.message);
+                }
+            }
+        } else {
+            Alert.alert('Save Failed', 'Please provide valid information.');
+        }
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.backButtonContainer}>
@@ -130,7 +215,8 @@ const ChangePassword = () => {
                         source={{
                             uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",
                         }}
-                        style={styles.inputIcon}
+                        style={[styles.inputIcon, { tintColor: isDarkMode ? 'white' : 'black' }]
+                        }
                     />
                 </TouchableOpacity>
             </View>
@@ -157,19 +243,23 @@ const ChangePassword = () => {
                         value={currentPass}
                         secureTextEntry={!isCurrentPasswordVisible}
                         style={styles.input}
+                        placeholderTextColor={isDarkMode ? "white" : "black"} 
                     />
                     <TouchableOpacity onPress={handleShowCurrentPassword}>
                         <Image
                             source={{ uri: imageSource }}
                             style={styles.inputIcon}
+                            tintColor={isDarkMode ? 'white' : 'black'}
                         />
                     </TouchableOpacity>
                 </View>
-                <View style={styles.forgotPasswordButtonContainer}>
+                 <View style={styles.forgotPasswordButtonContainer}>
                     <TouchableWithoutFeedback onPress={handleForgotPassword}>
-                        <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+                            <Text style={[styles.forgotPasswordText, { color: isDarkMode ? 'white' : 'black' }]}>
+                            Forgot password?
+                        </Text>
                     </TouchableWithoutFeedback>
-                </View>
+                     </View>
                 <View style={styles.inputContainer}>
                     <TextInput
                         placeholder="New Password"
@@ -177,11 +267,13 @@ const ChangePassword = () => {
                         value={newPass}
                         secureTextEntry={!isNewPasswordVisible}
                         style={styles.input}
+                        placeholderTextColor={isDarkMode ? "white" : "black"} 
                     />
                     <TouchableOpacity onPress={handleShowNewPassword}>
                         <Image
                             source={{ uri: imageSource2 }}
                             style={styles.inputIcon}
+                            tintColor={isDarkMode ? 'white' : 'black'}
                         />
                     </TouchableOpacity>
                 </View>
@@ -192,11 +284,13 @@ const ChangePassword = () => {
                         value={confirmNewPass}
                         secureTextEntry={!isConfirmNewPasswordVisible}
                         style={styles.input}
+                        placeholderTextColor={isDarkMode ? "white" : "black"} 
                     />
                     <TouchableOpacity onPress={handleShowConfirmNewPassword}>
                         <Image
                             source={{ uri: imageSource3 }}
                             style={styles.inputIcon}
+                            tintColor={isDarkMode ? 'white' : 'black'}
                         />
                     </TouchableOpacity>
                 </View>
@@ -206,94 +300,6 @@ const ChangePassword = () => {
             </View>
         </View>
     );
-};
-
-const styles = {
-    container: {
-        flex: 1,
-        width: "100%",
-        alignItems: "center",
-        justifyContent: "flex-start",
-    },
-    detailsContainer: {
-        height: "25%",
-        width: "85%",
-        justifyContent: "flex-start",
-        marginTop: 110,
-    },
-    bottomContainer: {
-        height: "80%",
-        width: "85%",
-        justifyContent: "flex-start",
-        marginTop: 10,
-    },
-    title: {
-        fontSize: 28,
-        marginBottom: 20,
-        fontWeight: "900",
-        marginTop: 20,
-    },
-    subtitle: {
-        fontSize: 14,
-        alignSelf: "flex-start",
-        marginBottom: 25,
-    },
-    passwordRequirements: {
-        fontSize: 14,
-        alignSelf: 'flex-start',
-    },
-    inputContainer: {
-        flexDirection: "row",
-        alignItems: "center",
-        width: "100%",
-        height: 50,
-        borderWidth: 1,
-        paddingHorizontal: 10,
-        borderRadius: 15,
-        marginTop: 25,
-    },
-    input: {
-        flex: 1,
-    },
-    inputIcon: {
-        width: 24,
-        height: 24,
-        marginRight: 8,
-    },
-    saveButton: {
-        width: "100%",
-        height: 50,
-        backgroundColor: "black",
-        justifyContent: "center",
-        borderRadius: 15,
-        marginTop: 60,
-    },
-    saveButtonText: {
-        color: "white",
-        textAlign: "center",
-        fontSize: 18,
-    },
-    backButtonContainer: {
-        position: 'absolute',
-        top: 80,
-        left: 30,
-    },
-    backButton: {
-        width: 30,
-        height: 30,
-    },
-    forgotPasswordButtonContainer: {
-        width: "100%",
-        flexDirection: "row",
-        justifyContent: "flex-end",
-        marginTop: 5,
-    },
-    forgotPasswordText: {
-        color: "black",
-        textAlign: "right",
-        fontSize: 14,
-        fontWeight: "bold",
-    },
 };
 
 export default ChangePassword;

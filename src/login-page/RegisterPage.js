@@ -26,11 +26,23 @@ const RegisterScreen = () => {
   );
 
   const handleRegister = async () => {
-    if (email && pass && pass === confirmPass && username.length >= 3) {
+    if (email && pass && confirmPass && username && username.length >= 3) {
+      if (pass !== confirmPass) {
+        Alert.alert('Registration Failed', 'Password and confirmation password do not match.');
+        return;
+      }
+
+      // Check if the username contains only letters and numbers
+      const usernameRegex = /^[A-Za-z0-9]+$/;
+      if (!usernameRegex.test(username)) {
+        Alert.alert('Registration Failed', 'Username can only contain letters and numbers.');
+        return;
+      }
+
       try {
         const auth = getAuth();
         await createUserWithEmailAndPassword(auth, email, pass);
-        
+
         const user = auth.currentUser;
         await updateProfile(user, { displayName: username });
 
@@ -40,7 +52,11 @@ const RegisterScreen = () => {
         Alert.alert('Registration Failed', error.message);
       }
     } else {
-      Alert.alert('Registration Failed', 'Please provide valid information.');
+      if (username && username.length < 3) {
+        Alert.alert('Registration Failed', 'Username must be at least 3 characters long.');
+      } else {
+        Alert.alert('Registration Failed', 'Please provide valid information.');
+      }
     }
   };
 
@@ -74,84 +90,10 @@ const RegisterScreen = () => {
     }
   };
 
-  const handleBack = () => {
-    // Navigate back to the login screen
-    navigation.navigate('Login');
-  };
-
-  const styles = {
-    container: {
-      flex: 1,
-      width: "100%",
-      alignItems: "center",
-      justifyContent: "flex-start",
-    },
-    title: {
-      fontSize: 24,
-      marginBottom: 15,
-    },
-    subtitle: {
-      fontSize: 18,
-      marginBottom: 40,
-    },
-    inputContainer: {
-      flexDirection: "row",
-      alignItems: "center",
-      width: 330,
-      height: 50,
-      borderColor: "gray",
-      borderWidth: 1,
-      paddingHorizontal: 10,
-      borderRadius: 10,
-      marginBottom: 20,
-    },
-    input: {
-      flex: 1,
-    },
-    inputIcon: {
-      width: 24,
-      height: 24,
-      marginRight: 8,
-    },
-    appLogo: {
-      width: 100,
-      height: 100,
-      resizeMode: "contain",
-      alignItems: "flex-start",
-      marginBottom: 20,
-    },
-    registerButtonContainer: {
-      width: 330,
-      height: 50,
-      marginTop: 30,
-    },
-    registerButton: {
-      width: "100%",
-      height: "100%",
-      backgroundColor: "black",
-      justifyContent: "center",
-      borderRadius: 10,
-    },
-    registerButtonText: {
-      color: "white",
-      textAlign: "center",
-      fontSize: 18,
-    },
-    backButtonContainer: {
-      position: 'absolute',
-      top: 80,
-      left: 20,
-    },
-    backButton: {
-      width: 30,
-      height: 30,
-    },
-  };
-
   return (
     <View style={styles.container}>
       <View style={styles.backButtonContainer}>
-        <TouchableOpacity onPress={handleBack}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
             source={{
               uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",
@@ -164,88 +106,177 @@ const RegisterScreen = () => {
         source={{
           uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/app_logo.png",
         }}
-        style={[styles.appLogo, { marginTop: 120 }]}
+        style={[styles.appLogo]}
       />
-      <Text style={[styles.title, { fontSize: 28, fontWeight: "900" }]}>Welcome to PortfolioPal!</Text>
-      <Text style={[styles.subtitle, { fontSize: 15, opacity: 0.65 }]}>Fill in with your username, email, and password.</Text>
-      <View style={styles.inputContainer}>
-        <Image
-          source={{
-            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/email.png",
-          }}
-          style={styles.inputIcon}
-        />
-        <TextInput
-          placeholder="Email"
-          onChangeText={(text) => setEmail(text)}
-          value={email}
-          style={styles.input}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Image
-          source={{
-            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/user.png",
-          }}
-          style={styles.inputIcon}
-        />
-        <TextInput
-          placeholder="Username"
-          onChangeText={(text) => setUsername(text)}
-          value={username}
-          style={styles.input}
-        />
-      </View>
-      <View style={styles.inputContainer}>
-        <Image
-          source={{
-            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
-          }}
-          style={styles.inputIcon}
-        />
-        <TextInput
-          placeholder="Password"
-          onChangeText={(text) => setPass(text)}
-          value={pass}
-          secureTextEntry={!isPasswordVisible}
-          style={styles.input}
-        />
-        <TouchableOpacity onPress={handleShowPassword}>
+      <View style={styles.detailsContainer}>
+        <Text style={[styles.title]}>Welcome to PortfolioPal!</Text>
+        <Text style={styles.subtitle}>
+          Fill in with your email, username, and password
+        </Text>
+        <Text style={styles.passwordRequirements}>
+          Password must:
+        </Text>
+        <Text style={styles.passwordRequirements}>
+          - Minimum of 6 characters.
+        </Text>
+        <Text style={styles.passwordRequirements}>
+          - Match in both fields.
+        </Text>
+        <View style={styles.inputContainer}>
           <Image
-            source={{ uri: imageSource }}
+            source={{
+              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/email.png",
+            }}
             style={styles.inputIcon}
           />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.inputContainer}>
-        <Image
-          source={{
-            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
-          }}
-          style={styles.inputIcon}
-        />
-        <TextInput
-          placeholder="Confirm Password"
-          onChangeText={(text) => setConfirmPass(text)}
-          value={confirmPass}
-          secureTextEntry={!isConfirmPasswordVisible}
-          style={styles.input}
-        />
-        <TouchableOpacity onPress={handleShowConfirmPassword}>
+          <TextInput
+            placeholder="Email"
+            onChangeText={(text) => setEmail(text)}
+            value={email}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.inputContainer}>
           <Image
-            source={{ uri: imageSource2 }}
+            source={{
+              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/user.png",
+            }}
             style={styles.inputIcon}
           />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.registerButtonContainer}>
-        {/* Use TouchableOpacity for custom button styling */}
+          <TextInput
+            placeholder="Username (At least 3 characters)"
+            onChangeText={(text) => setUsername(text)}
+            value={username}
+            style={styles.input}
+          />
+        </View>
+        <View style={styles.inputContainer}>
+          <Image
+            source={{
+              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
+            }}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            placeholder="Password"
+            onChangeText={(text) => setPass(text)}
+            value={pass}
+            secureTextEntry={!isPasswordVisible}
+            style={styles.input}
+          />
+          <TouchableOpacity onPress={handleShowPassword}>
+            <Image
+              source={{ uri: imageSource }}
+              style={styles.inputIcon}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.inputContainer}>
+          <Image
+            source={{
+              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
+            }}
+            style={styles.inputIcon}
+          />
+          <TextInput
+            placeholder="Confirm Password"
+            onChangeText={(text) => setConfirmPass(text)}
+            value={confirmPass}
+            secureTextEntry={!isConfirmPasswordVisible}
+            style={styles.input}
+          />
+          <TouchableOpacity onPress={handleShowConfirmPassword}>
+            <Image
+              source={{ uri: imageSource2 }}
+              style={styles.inputIcon}
+            />
+          </TouchableOpacity>
+        </View>
         <TouchableOpacity onPress={handleRegister} style={styles.registerButton}>
-          <Text style={styles.registerButtonText}>REGISTER</Text>
+          <Text style={styles.registerButtonText}>Register</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
+};
+
+const styles = {
+  container: {
+    flex: 1,
+    width: "100%",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  detailsContainer: {
+    height: "70%",
+    width: "85%",
+    alignItems: "center",
+    justifyContent: "flex-start",
+  },
+  title: {
+    fontSize: 28,
+    marginBottom: 20,
+    fontWeight: "900",
+  },
+  subtitle: {
+    fontSize: 14,
+    alignSelf: "flex-start",
+    marginBottom: 5,
+  },
+  passwordRequirements: {
+    fontSize: 14,
+    marginBottom: 5,
+    alignSelf: 'flex-start',
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+    height: 50,
+    borderColor: "gray",
+    borderWidth: 1,
+    paddingHorizontal: 10,
+    borderRadius: 15,
+    marginTop: 25,
+  },
+  input: {
+    flex: 1,
+  },
+  inputIcon: {
+    width: 24,
+    height: 24,
+    marginRight: 8,
+  },
+  appLogo: {
+    width: 100,
+    height: 100,
+    resizeMode: "contain",
+    alignItems: "flex-start",
+    marginBottom: 20,
+    marginTop: 40,
+  },
+  registerButton: {
+    width: "100%",
+    height: 50,
+    backgroundColor: "black",
+    justifyContent: "center",
+    borderRadius: 15,
+    marginTop: 60,
+  },
+  registerButtonText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 18,
+  },
+  backButtonContainer: {
+    position: 'absolute',
+    top: 80,
+    left: 30,
+  },
+  backButton: {
+    width: 30,
+    height: 30,
+  },
 };
 
 export default RegisterScreen;

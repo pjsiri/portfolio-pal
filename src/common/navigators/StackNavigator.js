@@ -11,6 +11,7 @@ import Bookmark from "../../bookmark-page/BookmarkPage.js";
 import ProfilePage from "../../settings-page/profileSettings.js";
 import Chat from "../../Chat.js";
 import VideoDetail from "../../settings-page/VideoDetail.js";
+import ChangePassword from "../../settings-page/ChangePassword.js"
 import Wallet from "../../wallet-page/Wallet.js"
 import ExchangePage from "../../wallet-page/ExchangePage.js"
 
@@ -72,6 +73,11 @@ const StackNavigator = () => {
       <Stack.Screen
         name="VideoDetail"
         component={VideoDetail}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ChangePassword"
+        component={ChangePassword}
         options={{ headerShown: false }}
       />
       <Stack.Screen

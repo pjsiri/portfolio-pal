@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Text,
   View,
@@ -18,25 +18,28 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
   const [userProfileImage, setUserProfileImage] = useState(null);
-  const [page, setPage] = useState(1);
   const [messagesPerPage, setMessagesPerPage] = useState(10);
+  const [page, setPage] = useState(1);
   const firestore = getFirestore();
   const messagesRef = collection(firestore, "messages");
   const auth = getAuth();
   const user = auth.currentUser;
 
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // Set the user's profile image
-      if (user.photoURL) {
-        setUserProfileImage(user.photoURL);
+  useEffect(() => {
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+  
+        if (user.photoURL) {
+          setUserProfileImage(user.photoURL);
+        }
+        else
+        {
+          setUserProfileImage("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png");
+        }
       }
-      else
-      {
-        setUserProfileImage("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png");
-      }
-    }
-  });
+    });
+  }, [user]);
+
 
   const sendMessage = async () => {
     if (message.trim() !== "") {
@@ -55,8 +58,8 @@ const ChatPage = () => {
       (querySnapshot) => {
         const updatedMessages = querySnapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() }))
-          .sort((a, b) => b.timestamp - a.timestamp);
-  
+          .sort((a, b) => b.timestamp - a.timestamp); // Descending order
+
         // Apply pagination
         const startIndex = (page - 1) * messagesPerPage;
         const endIndex = startIndex + messagesPerPage;
@@ -65,7 +68,6 @@ const ChatPage = () => {
         setMessages(paginatedMessages);
       }
     );
-  
     return () => unsubscribe();
   }, [page]);
 
@@ -77,10 +79,15 @@ const ChatPage = () => {
         renderItem={({ item }) => (
           <View style={styles.cardContainer}>
             <View style={styles.messageContainer}>
+            <View style={styles.profileImageBorder}>
               <Image
-                source= {{url: userProfileImage}} 
-                style={styles.avatar}
-              />
+              source={{
+                uri: userProfileImage ||
+                  "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png",
+              }}
+              style={styles.profileImage}
+            />
+            </View>
               <View style={styles.messageContent}>
                 <Text style={styles.sender}>{item.sender}:</Text>
                 <Text style={styles.message}>{item.content}</Text>
@@ -91,17 +98,21 @@ const ChatPage = () => {
             </View>
           </View>
         )}
-      />  
+      />
 
-    <View style={styles.paginationContainer}>
-      <TouchableOpacity onPress={() => setPage(page - 1)} disabled={page === 1}>
-        <Ionicons name="arrow-back-outline" size={24} color="black" />
-      </TouchableOpacity>
+      <View style={styles.paginationContainer}>
+        {page !== 1 && (
+          <TouchableOpacity onPress={() => setPage(page - 1)}>
+            <Ionicons name="arrow-back-outline" size={24} color="black" />
+          </TouchableOpacity>
+        )}
 
-      <TouchableOpacity onPress={() => setPage(page + 1)} disabled={messages.length < messagesPerPage}>
-        <Ionicons name="arrow-forward-outline" size={24} color="black" />
-      </TouchableOpacity>
-    </View>
+        {messages.length >= messagesPerPage && (
+          <TouchableOpacity onPress={() => setPage(page + 1)}>
+            <Ionicons name="arrow-forward-outline" size={24} color="black" />
+          </TouchableOpacity>
+        )}
+      </View>  
 
       <View style={styles.inputContainer}>
         <TextInput

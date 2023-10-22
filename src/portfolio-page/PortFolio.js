@@ -38,65 +38,17 @@ const Portfolio = () => {
   const { isDarkMode } = useDarkMode();
   const [graphType, setGraphType] = useState("All"); //graph type
   const [userInvestments, setUserInvestments] = useState([]);
-  const [userAssets, setUserAssets] = useState([]);
-  const [coinAssets, setCoinAssets] = useState([]);
-  const [userCrypto, setUserCrypto] = useState([]);
-  const [crypto, setCrypto] = useState([]);
-  const [cryptoTotal, setCryptoTotal] = useState(0);
   const [assetsTotal, setAssetsTotal] = useState(0); // Use state for assetsTotal
   const screenWidth = Dimensions.get("window").width;
-  const [assetName, setAssetName] = useState("");
-  const [assetPrice, setAssetPrice] = useState("");
-  const [assetQuantity, setAssetQuantity] = useState("");
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [sortType, setSortType] = useState(0);
   const [ascendOrder, setAscendOrder] = useState(true);
-  const [companyData, setCompanyData] = useState([]);
   const isFocused = useIsFocused();
-
-  const showModal = () => {
-    // console.log("Add button pressed");
-    setIsModalVisible(true);
-  };
-
-  const hideModal = () => {
-    setIsModalVisible(false);
-  };
-
-  const handleSave = async () => {
-    const newAsset = {
-      name: assetName,
-      price: parseFloat(assetPrice),
-      quantity: parseInt(assetQuantity),
-    };
-
-    newAsset.totalPrice = calculateTotalPrice(
-      newAsset.price,
-      newAsset.quantity
-    );
-
-    const db = getFirestore();
-    const auth = getAuth();
-    const user = auth.currentUser;
-
-    if (user) {
-      let userCryptoRef = collection(db, `users/${user.uid}/Crypto`); // Change the collection name to "Crypto"
-      try {
-        // Use addDoc to add a document to the "Crypto" collection
-        await addDoc(userCryptoRef, newAsset);
-      } catch (error) {
-        console.error("Error adding asset to Firestore:", error);
-      }
-    } else {
-      console.log("No authenticated user found");
-    }
-
-    setUserCrypto([...userCrypto, newAsset]); // Update userCrypto state
-    setAssetName("");
-    setAssetPrice("");
-    setAssetQuantity("");
-    hideModal();
-  };
+  const [userStocks, setUserStocks] = useState([]);
+  const [userCryptos, setUserCryptos] = useState([]);
+  const [assets, setAssets] = useState([]); // Declare the 'assets' state variable
+  let cryptos = []; // Declare 'cryptos' outside of the useEffect
+  const [totalStocks, setTotalStocks] = useState(0);
+  const [totalCryptos, setTotalCryptos] = useState(0);
 
   //Stocks
   useEffect(() => {
@@ -108,39 +60,53 @@ const Portfolio = () => {
 
         if (user) {
           try {
-            const holdingsRef = collection(db, `users/${user.uid}/holdings`); // Change collection to "holdings"
+            const holdingsRef = collection(db, `users/${user.uid}/holdings`);
             const q = query(holdingsRef);
             const querySnapshot = await getDocs(q);
             const companies = {};
-            const assets = [];
-            let total = 0;
-            let investments = [];
+            const stocks = [];
+            const cryptos = [];
+            let totalStocks = 0;
+            let totalCryptos = 0;
 
             querySnapshot.forEach((doc) => {
-              const asset = doc.data();
-              const companyName = asset.symbol; // Assuming there's a 'name' field for company names
-              const totalValue = asset.totalPrice;
-              investments.push(asset);
-
-              if (companies[companyName]) {
-                companies[companyName] += totalValue;
+              const assetData = doc.data();
+              if (assetData.isStocks) {
+                stocks.push({
+                  price: assetData.totalPrice,
+                  name: assetData.name,
+                });
+                totalStocks += assetData.totalPrice;
               } else {
-                companies[companyName] = totalValue;
+                cryptos.push({
+                  price: assetData.totalPrice,
+                  name: assetData.name,
+                });
+                totalCryptos += assetData.totalPrice;
               }
-              total += asset.totalPrice;
+
+              if (companies[assetData.name]) {
+                companies[assetData.name] += assetData.totalPrice;
+              } else {
+                companies[assetData.name] = assetData.totalPrice;
+              }
             });
 
             const companyChartData = Object.entries(companies).map(
               ([name, price], index) => ({
                 name,
                 price,
-                color: getRandomColor(index), // Assuming you have a function to generate colors
+                color: getRandomColor(index),
               })
             );
-
-            setAssetsTotal(total);
-            setCompanyData(companyChartData);
-            setUserInvestments(investments);
+            
+            setUserInvestments(stocks);
+            setTotalCryptos(totalCryptos);
+            setTotalStocks(totalStocks);
+            setAssetsTotal(totalStocks + totalCryptos);
+            setAssets(companyChartData); // Update the 'assets' state variable
+            setUserStocks(stocks);
+            setUserCryptos(cryptos);
           } catch (error) {
             console.error("Error fetching user assets from Firestore:", error);
           }
@@ -153,102 +119,38 @@ const Portfolio = () => {
     }
   }, [isFocused]);
 
-  //Cryptos
-  useEffect(() => {
-    const fetchUserAssets = async () => {
-      const db = getFirestore(); // Initialize Firestore
-      const auth = getAuth();
-      const user = auth.currentUser;
-
-      if (user) {
-        try {
-          const cryptoRef = collection(db, `users/${user.uid}/Crypto`);
-          const q = query(cryptoRef);
-          const querySnapshot = await getDocs(q);
-          const cts = [];
-          let total = 0; // Initialize a total variable
-
-          querySnapshot.forEach((doc) => {
-            const cryptoData = doc.data();
-            cts.push({
-              price: cryptoData.totalPrice,
-              name: cryptoData.name,
-            });
-            total += cryptoData.totalPrice; // Accumulate the total
-          });
-
-          setCryptoTotal(total); // Update assetsTotal state
-          setCoinAssets(cts);
-        } catch (error) {
-          console.error("Error fetching user assets from Firestore: ", error);
-        }
-      } else {
-        console.log("No authenticated user found");
-      }
-    };
-
-    fetchUserAssets();
-  }, []);
-
-  // Define data sources based on graphType
+  const userTotalAssets = totalStocks + totalCryptos;
+  const percentageStocks = ((totalStocks / userTotalAssets) * 100).toFixed(2);
+  const percentageCryptos = ((totalCryptos / userTotalAssets) * 100).toFixed(2);
+  
+  // Modify the data sources based on graphType
   let data = [];
-  let stocksList = [];
   let graphTypeText = "";
+
   if (graphType === "All") {
-    data = [
-      ...companyData.map((company) => ({
-        name: company.name,
-        price: company.price,
-        color: company.color,
-      })),
-      ...coinAssets.map((crypto) => ({
-        name: crypto.name,
-        price: crypto.price,
-        color: getRandomColor(),
-      })),
-    ];
-    stocksList = [
-      ...companyData.map((company) => company.name),
-      ...coinAssets.map((crypto) => crypto.name),
-    ];
+    data = assets.concat(cryptos),
+    color = getRandomColor(),
     graphTypeText = "All";
   } else if (graphType === "Stock") {
-    data = companyData.map((company) => ({
-      name: company.name,
-      price: company.price,
-      color: company.color,
-    }));
-    stocksList = companyData.map((company) => company.name);
+    data = userStocks;
     graphTypeText = "Stock";
   } else if (graphType === "Crypto") {
-    data = coinAssets.map((crypto) => ({
-      name: crypto.name,
-      price: crypto.price,
-      color: getRandomColor(),
-    }));
-    stocksList = coinAssets.map((crypto) => crypto.name);
+    data = userCryptos;
     graphTypeText = "Crypto";
-  } else if (graphType === "S:C") {
-    const percentageStocks = (
-      (assetsTotal / (assetsTotal + cryptoTotal)) *
-      100
-    ).toFixed(2);
-    const percentageCryptos = (
-      (cryptoTotal / (assetsTotal + cryptoTotal)) *
-      100
-    ).toFixed(2);
+  } // Inside the useEffect where you set the data for the pie chart
+  if (graphType === "S:C") {
     data = [
-      { name: "Stocks", price: assetsTotal, color: "#FFD700" },
-      { name: "Cryptos", price: cryptoTotal, color: "#008000" },
+      { name: "Stocks", price: totalStocks, color: getRandomColor() },
+      { name: "Cryptos", price: totalCryptos, color: getRandomColor() },
     ];
-    stocksList = companyData.map((company) => company.name);
     graphTypeText = "S:C";
   }
+  
 
   const chartConfig = {
     backgroundGradientFrom: "#fff",
     backgroundGradientTo: "#fff",
-    color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+    color: (opacity = 1) => color,
   };
 
   const handleSort = (selectedSortType) => {
@@ -260,9 +162,6 @@ const Portfolio = () => {
     }
   };
 
-  const percentageStocks = (assetsTotal / (assetsTotal + cryptoTotal)) * 100;
-  const percentageCryptos = (cryptoTotal / (assetsTotal + cryptoTotal)) * 100;
-  const userTotalAssets = assetsTotal + cryptoTotal;
   return (
     <SafeAreaView
       style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}
@@ -345,14 +244,14 @@ const Portfolio = () => {
           {graphType === "Stock" && (
             <View style={styles.sectionContainer}>
               <Text style={styles.valueText}>Total Stock Assets Value</Text>
-              <Text style={styles.valueText}>${assetsTotal.toFixed(2)}</Text>
+              <Text style={styles.valueText}>${totalStocks.toFixed(2)}</Text>
             </View>
           )}
 
           {graphType === "Crypto" && (
             <View style={styles.sectionContainer}>
               <Text style={styles.valueText}>Total Crypto Assets Value</Text>
-              <Text style={styles.valueText}>${cryptoTotal.toFixed(2)}</Text>
+              <Text style={styles.valueText}>${totalCryptos.toFixed(2)}</Text>
             </View>
           )}
 
@@ -362,26 +261,14 @@ const Portfolio = () => {
                 Total Stock and Crypto Assets Value
               </Text>
               <Text style={styles.valueText}>
-                ${userTotalAssets.toFixed(2)}
+                Stocks: {percentageStocks}%
+              </Text>
+              <Text style={styles.valueText}>
+                Cryptos: {percentageCryptos}%
               </Text>
             </View>
           )}
         </View>
-
-        <View style={styles.pieChartContainer}>
-          <Text style={styles.pieChartHeaderText}>Asset Distribution</Text>
-          <PieChart
-            data={data}
-            width={screenWidth - 20}
-            height={220}
-            chartConfig={chartConfig}
-            accessor="price"
-            backgroundColor="transparent"
-            paddingLeft="15"
-            absolute
-          />
-        </View>
-
         <View style={styles.investmentCardsContainer}>
           <Text style={styles.headerText}>Current Investments</Text>
           <PortfolioStocks investments={userInvestments} />

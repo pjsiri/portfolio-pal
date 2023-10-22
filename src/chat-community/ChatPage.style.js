@@ -56,6 +56,24 @@ const styles = StyleSheet.create({
         color: "#888",
         fontSize: 12,
       },
+      paginationContainer: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+        marginTop: 16,
+      },
+      paginationButton: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: "#007BFF",
+        backgroundColor: "#007BFF",
+      },
+      paginationButtonText: {
+        color: "#fff",
+        fontWeight: "bold",
+        textAlign: "center",
+      },
 });
 
 export default styles;

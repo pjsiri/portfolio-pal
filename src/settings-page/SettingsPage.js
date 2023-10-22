@@ -58,6 +58,10 @@ const SettingsPage = () => {
     navigation.navigate("Profile");
   };
 
+    const handleChatNavigation = () => {
+    navigation.navigate("Chat");
+  };
+
   return (
     <View style={[styles.container, isDarkMode && styles.darkModeContainer]}>
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>
@@ -113,18 +117,26 @@ const SettingsPage = () => {
         Tutorials
       </Text>
       <View style={[styles.appearanceContainer, isDarkMode && styles.darkModeContainer]}>
-        <TouchableOpacity onPress={handleEducationNavigation}>
-          <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>
-            Educational Videos
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <TouchableOpacity onPress={handleEducationNavigation}>
+        <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>
+          Educational Videos
+        </Text>
+      </TouchableOpacity>
+      {}
+      <TouchableOpacity onPress={handleChatNavigation}>
+        <Text style={[styles.educationLink, isDarkMode && styles.darkModeText]}>
+          AIVestor
+        </Text>
+      </TouchableOpacity>
+    </View>
+    <View style={{ marginTop: 30 }}>
       <TouchableOpacity onPress={handleLogout}>
         <Text style={styles.logoutButton}>
           Logout
         </Text>
       </TouchableOpacity>
     </View>
+  </View>
   );
 };
 

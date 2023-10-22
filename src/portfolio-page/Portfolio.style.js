@@ -14,20 +14,24 @@ const styles = StyleSheet.create({
   },
 
   walletButton: {
-    backgroundColor: "black",
+    backgroundColor: "#0096FF",
     borderRadius: 50,
-    padding: 15,
+    paddingHorizontal: 30,
+    paddingVertical: 15,
     alignSelf: "center",
     alignItems: "center",
-    width: 190,
     justifyContent: "space-evenly",
     marginBottom: 20,
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderLeftWidth: 5,
+    borderRightWidth: 5,
   },
 
   walletButtonText: {
     color: "white",
     fontSize: 18,
-    fontWeight: "500",
+    fontWeight: "700",
   },
 
   portfolioTitleContainer: {
@@ -37,6 +41,11 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     marginBottom: 20,
+    borderColor: "black",
+    borderTopWidth: 1,
+    borderBottomWidth: 1,
+    borderLeftWidth: 10,
+    borderRightWidth: 10,
   },
 
   graphContainer: {

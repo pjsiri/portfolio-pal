@@ -8,6 +8,7 @@ import {
   Image,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons } from "@expo/vector-icons";
 import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import styles from "./ChatPage.style";
@@ -17,6 +18,8 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
   const [userProfileImage, setUserProfileImage] = useState(null);
+  const [page, setPage] = useState(1);
+  const [messagesPerPage, setMessagesPerPage] = useState(10);
   const firestore = getFirestore();
   const messagesRef = collection(firestore, "messages");
   const auth = getAuth();
@@ -52,13 +55,19 @@ const ChatPage = () => {
       (querySnapshot) => {
         const updatedMessages = querySnapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() }))
-          .sort((a, b) => b.timestamp - a.timestamp); // Sort by timestamp in descending order
-        setMessages(updatedMessages);
+          .sort((a, b) => b.timestamp - a.timestamp);
+  
+        // Apply pagination
+        const startIndex = (page - 1) * messagesPerPage;
+        const endIndex = startIndex + messagesPerPage;
+        const paginatedMessages = updatedMessages.slice(startIndex, endIndex);
+  
+        setMessages(paginatedMessages);
       }
     );
-
+  
     return () => unsubscribe();
-  }, []);
+  }, [page]);
 
   return (
     <View style={styles.container}>
@@ -76,13 +85,24 @@ const ChatPage = () => {
                 <Text style={styles.sender}>{item.sender}:</Text>
                 <Text style={styles.message}>{item.content}</Text>
                 <Text style={styles.timestamp}>
-                  {new Date(item.timestamp.toDate()).toLocaleString()}
-                </Text>
+                {item.timestamp && new Date(item.timestamp.toDate()).toLocaleString()}
+              </Text>
               </View>
             </View>
           </View>
         )}
-      />
+      />  
+
+    <View style={styles.paginationContainer}>
+      <TouchableOpacity onPress={() => setPage(page - 1)} disabled={page === 1}>
+        <Ionicons name="arrow-back-outline" size={24} color="black" />
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={() => setPage(page + 1)} disabled={messages.length < messagesPerPage}>
+        <Ionicons name="arrow-forward-outline" size={24} color="black" />
+      </TouchableOpacity>
+    </View>
+
       <View style={styles.inputContainer}>
         <TextInput
           value={message}

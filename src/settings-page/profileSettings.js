@@ -9,9 +9,11 @@ import {
   Image,
   Modal,
   TouchableWithoutFeedback,
+  ScrollView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
+import { useDarkMode } from "../common/darkmode/DarkModeContext";
 
 const presetProfilePictures = [
   "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PP_1.jpg",
@@ -30,6 +32,7 @@ const ProfileSettings = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // To control the visibility of the profile picture options modal
   const [selectedProfilePictureIndex, setSelectedProfilePictureIndex] = useState(null);
   const navigation = useNavigation();
+  const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
     // Fetch the current user's profile data and set it as the initial values
@@ -78,7 +81,7 @@ const ProfileSettings = () => {
   };
 
   const openProfilePictureOptions = () => {
-    setIsModalVisible(true); 
+    setIsModalVisible(true);
   };
 
   const closeProfilePictureOptions = () => {
@@ -96,19 +99,45 @@ const ProfileSettings = () => {
     setProfileImageUri("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png");
   };
 
+  const containerStyle = {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "flex-start",
+    backgroundColor: isDarkMode ? "#333" : "white",
+  };
+
+  const titleStyle = {
+    fontSize: 30,
+    fontWeight: "bold",
+    marginTop: 70,
+    color: isDarkMode ? "white" : "black",
+  };
+
+  const labelStyle = {
+    fontSize: 18,
+    marginRight: 10,
+    marginBottom: 10,
+    color: isDarkMode ? "white" : "black",
+  };
+
+  const inputTextStyle = {
+    flex: 1,
+    color: isDarkMode ? "white" : "black",
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={containerStyle}>
       <View style={styles.backButtonContainer}>
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Image
             source={{
               uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",
             }}
-            style={styles.backButton}
+            style={[styles.backButton, { tintColor: isDarkMode ? styles.backButtonColor.dark : styles.backButtonColor.light }]}
           />
         </TouchableOpacity>
       </View>
-      <Text style={styles.title}>Edit Profile</Text>
+      <Text style={titleStyle}>Edit Profile</Text>
       <TouchableOpacity onPress={openProfilePictureOptions}>
         <View style={styles.profileImageContainer}>
           <Image
@@ -154,21 +183,21 @@ const ProfileSettings = () => {
       </Modal>
       <View style={styles.detailsContainer}>
         <View style={styles.labelContainer}>
-          <Text style={styles.label}>Username: </Text>
+          <Text style={labelStyle}>Username: </Text>
         </View>
         <View style={styles.inputContainer}>
           <TextInput
-            style={styles.inputText}
+            style={inputTextStyle}
             value={newUsername}
             onChangeText={setNewUsername}
           />
         </View>
         <View style={styles.labelContainer}>
-          <Text style={styles.label}>Email: </Text>
+          <Text style={labelStyle}>Email: </Text>
         </View>
         <View style={styles.inputContainer}>
           <TextInput
-            style={styles.inputText}
+            style={inputTextStyle}
             value={newEmail}
             editable={false}
           />
@@ -239,21 +268,25 @@ const styles = StyleSheet.create({
   },
   detailsContainer: {
     width: "70%",
-    height: "20%",
+    height: "25%",
     alignItems: "center",
-    marginTop: 70,
+    marginTop: 40,
   },
   saveButton: {
     backgroundColor: "black",
     padding: 10,
     borderRadius: 20,
-    marginTop: 100,
+    marginTop: 40,
     width: "70%",
   },
   saveButtonText: {
     color: "white",
     fontSize: 16,
     textAlign: "center",
+  },
+  backButtonColor: {
+    light: 'black',
+    dark: 'white',
   },
   backButtonContainer: {
     position: 'absolute',
@@ -311,7 +344,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     width: "35%",
   },
-
 });
 
 export default ProfileSettings;

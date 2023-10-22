@@ -27,16 +27,6 @@ const BottomTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Portfolio"
-        component={PortfolioPage}
-        options={{
-          headerShown: false,
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon name="briefcase-outline" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tab.Screen
         name="SearchPage"
         component={SearchPage}
         options={{
@@ -47,12 +37,12 @@ const BottomTabNavigator = () => {
         }}
       />
       <Tab.Screen
-        name="Settings"
-        component={SettingsPage}
+        name="Portfolio"
+        component={PortfolioPage}
         options={{
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
-            <TabIcon name="cog-outline" color={color} size={size} />
+            <TabIcon name="briefcase-outline" color={color} size={size} />
           ),
         }}
       />
@@ -63,6 +53,16 @@ const BottomTabNavigator = () => {
           headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <TabIcon name="wallet-outline" color={color} size={size} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Settings"
+        component={SettingsPage}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color, size }) => (
+            <TabIcon name="cog-outline" color={color} size={size} />
           ),
         }}
       />

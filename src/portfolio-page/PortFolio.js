@@ -12,7 +12,7 @@ import {
 } from "react-native";
 import { PieChart } from "react-native-chart-kit";
 import { StatusBar } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
 import randomcolor from "randomcolor";
 import { Picker } from "@react-native-picker/picker";
@@ -42,6 +42,7 @@ const Portfolio = () => {
   const screenWidth = Dimensions.get("window").width;
   const [sortType, setSortType] = useState(0);
   const [ascendOrder, setAscendOrder] = useState(true);
+  const navigation = useNavigation();
   const isFocused = useIsFocused();
   const [userStocks, setUserStocks] = useState([]);
   const [userCryptos, setUserCryptos] = useState([]);
@@ -49,6 +50,10 @@ const Portfolio = () => {
   let cryptos = []; // Declare 'cryptos' outside of the useEffect
   const [totalStocks, setTotalStocks] = useState(0);
   const [totalCryptos, setTotalCryptos] = useState(0);
+
+  const handleNavigateToWallet = () => {
+    navigation.navigate("Wallet");
+  };
 
   //Stocks
   useEffect(() => {
@@ -167,7 +172,7 @@ const Portfolio = () => {
       style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
-        <TouchableOpacity style={styles.walletButton}>
+        <TouchableOpacity style={styles.walletButton} onPress={handleNavigateToWallet} >
           <Text style={styles.walletButtonText}>My Wallet</Text>
           <Text style={styles.walletButtonText}>$50,000</Text>
         </TouchableOpacity>

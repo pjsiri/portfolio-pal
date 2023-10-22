@@ -1,7 +1,7 @@
 import { getFirestore, collection, addDoc, updateDoc, doc, getDocs, getDoc, query, where } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
 
-export const fakeBuyStock = async (userId, symbol, quantity, price, google_mid, name, currency, type) => {
+export const fakeBuyStock = async (userId, symbol, quantity, price, google_mid, name, currency, isStocks) => {
     try {
         const firestore = getFirestore();
         const userRef = doc(firestore, 'users', userId);
@@ -26,7 +26,7 @@ export const fakeBuyStock = async (userId, symbol, quantity, price, google_mid, 
             google_mid,
             name,
             currency,
-            type
+            isStocks
           });
         }
       
@@ -74,7 +74,6 @@ export const fakeSellStock = async (userId, symbol, quantity, price) => {
                 price,
                 timestamp: new Date(),
             });
-
           
             return true; // Success
         } else {

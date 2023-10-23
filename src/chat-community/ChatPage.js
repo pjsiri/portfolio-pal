@@ -20,7 +20,6 @@ const ChatPage = () => {
   const navigation = useNavigation();
   const [messagesPerPage, setMessagesPerPage] = useState(10);
   const [page, setPage] = useState(1);
-  const [messagesPerPage, setMessagesPerPage] = useState(10);
   const firestore = getFirestore();
   const messagesRef = collection(firestore, "messages");
   const auth = getAuth();
@@ -75,14 +74,15 @@ const ChatPage = () => {
         renderItem={({ item }) => (
           <View style={[styles.cardContainer, isDarkMode ? { backgroundColor: "#404040" } : null]}>
             <View style={styles.messageContainer}>
+            <View style={styles.profileImageBorder}>
               <Image
                 source={{
                   uri: item.avatar || 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png',
                 }}
-              style={styles.profileImage}
+                style={styles.avatar}
               />
             </View>
-              <View style={styles.messageContent}>
+            <View style={styles.messageContent}>
               <Text style={[styles.sender, isDarkMode ? { color: "#fff" } : null]}>{item.sender}:</Text>
                 <Text style={[styles.message, isDarkMode ? { color: "#fff" } : null]}>{item.content}</Text>
                 <Text style={[styles.timestamp, isDarkMode ? { color: "#fff" } : null]}> {item.timestamp && new Date(item.timestamp.toDate()).toLocaleString()}
@@ -91,22 +91,20 @@ const ChatPage = () => {
             </View>
           </View>
         )}
-      />  
+      />
 
-    <View style={styles.paginationContainer}>
-      <TouchableOpacity onPress={() => setPage(page - 1)} disabled={page === 1}>
-        <Ionicons name="arrow-back-outline" size={24} color={isDarkMode ? "#fff" : "black"} />
-      </TouchableOpacity>
+      <View style={styles.paginationContainer}>
+        <TouchableOpacity onPress={() => setPage(page - 1)} disabled={page === 1}>
+          <Ionicons name="arrow-back-outline" size={24} color={isDarkMode ? "#fff" : "black"} />
+        </TouchableOpacity>
 
-        {messages.length >= messagesPerPage && page !== totalPages && (
-          <TouchableOpacity onPress={() => setPage(page + 1)}>
-            <Ionicons name="arrow-forward-outline" size={24} color="black" />
-          </TouchableOpacity>
-        )}
-      </View>  
+        <TouchableOpacity onPress={() => setPage(page + 1)} disabled={messages.length < messagesPerPage}>
+          <Ionicons name="arrow-forward-outline" size={24} color={isDarkMode ? "#fff" : "black"} />
+        </TouchableOpacity>
+      </View>
 
-    <View style={styles.inputContainer}>
-        <TextInput
+      <View style={styles.inputContainer}>
+      <TextInput
           value={message}
           onChangeText={setMessage}
           placeholder="Type your message..."

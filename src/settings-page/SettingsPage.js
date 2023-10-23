@@ -83,20 +83,20 @@ const SettingsPage = () => {
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>Security</Text>
       <TouchableOpacity style={styles.optionBubble} onPress={() => navigation.navigate("ChangePassword")}>
         <Image
-          source={{
-            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
-          }}
-          style={styles.bubbleIcon}
+            source={{
+                uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
+            }}
+            style={[styles.bubbleIcon, { tintColor: isDarkMode ? 'white' : 'black' }]}
         />
         <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Change Password</Text>
       </TouchableOpacity>
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>Appearance</Text>
       <View style={styles.optionBubble}>
         <Image
-          source={{
-            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/dark-mode-icon.png",
-          }}
-          style={styles.bubbleIcon}
+            source={{
+                uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/dark-mode-icon.png",
+            }}
+            style={[styles.bubbleIcon, { tintColor: isDarkMode ? 'white' : 'black' }]}
         />
         <TouchableOpacity onPress={toggleDarkMode} style={styles.toggleButton}>
           <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Dark Mode</Text>
@@ -113,22 +113,22 @@ const SettingsPage = () => {
       <TouchableOpacity onPress={() => navigation.navigate("Education")}>
         <View style={styles.optionBubble}>
           <Image
-            source={{
-              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/Video_icon.png",
-            }}
-            style={styles.bubbleIcon}
+              source={{
+                  uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/Video_icon.png",
+              }}
+              style={[styles.bubbleIcon, { tintColor: isDarkMode ? 'white' : 'black' }]}
           />
           <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>Educational Videos</Text>
         </View>
       </TouchableOpacity>
       <Text style={[styles.title, isDarkMode && styles.darkModeText]}>Support</Text>
-      <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
+      <TouchableOpacity onPress={() => navigation.navigate("Bot")}>
         <View style={styles.optionBubble}>
           <Image
-            source={{
-              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/Bot_icon.png",
-            }}
-            style={styles.bubbleIcon}
+              source={{
+                  uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/Bot_icon.png",
+              }}
+              style={[styles.bubbleIcon, { tintColor: isDarkMode ? 'white' : 'black' }]}
           />
           <Text style={[styles.bubbleText, isDarkMode && styles.darkModeText]}>AIVestor Chat Bot</Text>
         </View>

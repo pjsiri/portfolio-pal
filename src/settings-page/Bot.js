@@ -11,10 +11,10 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
-import { CHAT_API_KEY } from "../apikey";
-import { useDarkMode } from '../src/common/darkmode/DarkModeContext';
+import { CHAT_API_KEY } from "../../apikey";
+import { useDarkMode } from "../common/darkmode/DarkModeContext";
 
-const Chat = () => {
+const Bot = () => {
   const navigation = useNavigation();
   const [inputText, setInputText] = useState("");
   const [chatHistory, setChatHistory] = useState([]);
@@ -149,6 +149,8 @@ const Chat = () => {
           placeholder="Send a message..."
           value={inputText}
           onChangeText={setInputText}
+          placeholderTextColor={isDarkMode ? "#fff" : "black"} // Set the placeholder text color
+
         />
         <Button title="Send" onPress={() => sendMessage(inputText)} />
       </View>
@@ -271,4 +273,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Chat;
+export default Bot;

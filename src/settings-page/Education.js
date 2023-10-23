@@ -146,7 +146,8 @@ const Education = () => {
             source={{
               uri: 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png',
             }}
-            style={styles.inputIcon}
+            style={[styles.inputIcon, { tintColor: isDarkMode ? 'white' : 'black' }]
+            }
           />
         </TouchableOpacity>
         <Image

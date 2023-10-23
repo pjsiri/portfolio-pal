@@ -18,7 +18,7 @@ import StockCard from "../common/cards/StockCard";
 import CryptoCard from "../common/cards/CryptoCard";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth } from "firebase/auth";
-// import { useDarkMode } from '../common/darkmode/DarkModeContext';
+import { useDarkMode } from '../common/darkmode/DarkModeContext';
 import styles from "./BookmarkPage.style";
 import { onSnapshot } from "firebase/firestore";
 
@@ -26,6 +26,7 @@ const BookmarkedStocksPage = () => {
   const [bookmarkedItems, setBookmarkedItems] = useState([]);
   const navigation = useNavigation();
   const [activeTab, setActiveTab] = useState("stock");
+  const { isDarkMode } = useDarkMode();
   const filteredItems = bookmarkedItems.filter(
     (item) => item.type === activeTab
   );
@@ -98,9 +99,9 @@ const BookmarkedStocksPage = () => {
   }, []);
 
   return (
-    <SafeAreaView style={[styles.appContainer]}>
+    <SafeAreaView style={[styles.appContainer, { backgroundColor: isDarkMode ? '#333' : 'white' }]}>
       <View style={styles.container}>
-        <Text style={[styles.title, { fontSize: 28, fontWeight: "900" }]}>
+        <Text style={[styles.title, { fontSize: 28, fontWeight: "900", color: isDarkMode ? 'white' : 'black' }]}>
           Bookmark Page
         </Text>
       </View>
@@ -109,19 +110,21 @@ const BookmarkedStocksPage = () => {
           style={[
             styles.tabButton,
             activeTab === "stock" && styles.activeTabButton,
+            { backgroundColor: isDarkMode ? "#404040" : "transparent" },
           ]}
           onPress={() => setActiveTab("stock")}
         >
-          <Text style={styles.tabButtonText}>Stocks</Text>
+          <Text style={[styles.tabButtonText, { color: isDarkMode ? "white" : "#333" }]}>Stocks</Text> 
         </TouchableOpacity>
         <TouchableOpacity
           style={[
             styles.tabButton,
             activeTab === "crypto" && styles.activeTabButton,
+            { backgroundColor: isDarkMode ? "#404040" : "transparent" }, // Set background color conditionally
           ]}
           onPress={() => setActiveTab("crypto")}
         >
-          <Text style={styles.tabButtonText}>Cryptos</Text>
+          <Text style={[styles.tabButtonText, { color: isDarkMode ? "white" : "#333" }]}>Cryptos</Text>
         </TouchableOpacity>
       </View>
       <View>

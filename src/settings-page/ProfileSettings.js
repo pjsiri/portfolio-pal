@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { getAuth, updateProfile, updateEmail } from "firebase/auth";
+import { setDoc, collection, getFirestore, doc } from "firebase/firestore";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
 
 const presetProfilePictures = [
@@ -32,6 +33,8 @@ const ProfileSettings = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // To control the visibility of the profile picture options modal
   const [selectedProfilePictureIndex, setSelectedProfilePictureIndex] = useState(null);
   const navigation = useNavigation();
+  const firestore = getFirestore();
+  const profilesRef = collection(firestore, "profiles");
   const { isDarkMode } = useDarkMode();
 
   useEffect(() => {
@@ -66,6 +69,12 @@ const ProfileSettings = () => {
     const user = auth.currentUser;
     try {
       await updateProfile(user, {
+        displayName: newUsername,
+        photoURL: profileImageUri,
+      });
+
+      // Save profile information to Firestore
+      await setDoc(doc(firestore, "profiles", user.uid), {
         displayName: newUsername,
         photoURL: profileImageUri,
       });

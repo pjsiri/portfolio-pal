@@ -5,7 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import StackNavigator from "./src/common/navigators/StackNavigator.js";
 import { DarkModeProvider } from "./src/common/darkmode/DarkModeContext.js";
-import { getAuth } from "firebase/auth";
+import { getAuth  } from "firebase/auth";
 import { LogBox } from 'react-native';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
@@ -21,26 +21,26 @@ const firebaseConfig = {
   appId: "1:618772004937:web:232b6e98ee7c284b917f98"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-// auth = getAuth(app);
-const auth = initializeAuth(app, {
-  persistence: getReactNativePersistence(ReactNativeAsyncStorage)
-});
-const db = getFirestore();
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  // auth = getAuth(app);
+  const auth = initializeAuth(app, {
+    persistence: getReactNativePersistence(ReactNativeAsyncStorage)
+  });
+  const db = getFirestore();
 
-export { auth, db };
+  export { auth, db };
 
-const Stack = createStackNavigator();
-LogBox.ignoreAllLogs();
-export default function App() {
-  return (
-    <DarkModeProvider>
-      <NavigationContainer>
-        <StackNavigator />
-      </NavigationContainer>
-    </DarkModeProvider>
-  );
+  const Stack = createStackNavigator();
+  LogBox.ignoreAllLogs();
+  export default function App() {
+    return (
+      <DarkModeProvider>
+        <NavigationContainer>
+          <StackNavigator />
+        </NavigationContainer>
+      </DarkModeProvider>
+    );
 }
 
 const styles = StyleSheet.create({

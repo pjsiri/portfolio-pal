@@ -68,6 +68,12 @@ const ChatPage = () => {
 
   return (
     <View style={[styles.container, isDarkMode ? { backgroundColor: "#333" } : null]}>
+      <Text style={styles.communityName}>PortfolioPal Community</Text> 
+      <View style={styles.groupIconsContainer}>
+        <TouchableOpacity style={styles.groupIcon}>
+          <Ionicons name="people" size={24} color="black" />
+        </TouchableOpacity>
+      </View>
       <FlatList
         data={messages}
         keyExtractor={(item) => item.id}

@@ -102,14 +102,16 @@ const RegisterScreen = () => {
           />
         </TouchableOpacity>
       </View>
-      <Image
-        source={{
-          uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/app_logo.png",
-        }}
-        style={[styles.appLogo]}
-      />
       <View style={styles.detailsContainer}>
-        <Text style={[styles.title]}>Welcome to PortfolioPal!</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>Welcome to PortfolioPal!</Text>
+          <Image
+            source={{
+              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/app_logo.png",
+            }}
+            style={styles.appLogo}
+          />
+        </View>
         <Text style={styles.subtitle}>
           Fill in with your email, username, and password
         </Text>
@@ -213,10 +215,17 @@ const styles = {
     alignItems: "center",
     justifyContent: "flex-start",
   },
+  titleContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "100%",
+  },
   title: {
-    fontSize: 28,
-    marginBottom: 20,
+    marginTop: 130,
+    fontSize: 30,
     fontWeight: "900",
+    marginBottom: 15,
   },
   subtitle: {
     fontSize: 14,
@@ -247,21 +256,13 @@ const styles = {
     height: 24,
     marginRight: 8,
   },
-  appLogo: {
-    width: 100,
-    height: 100,
-    resizeMode: "contain",
-    alignItems: "flex-start",
-    marginBottom: 20,
-    marginTop: 40,
-  },
   registerButton: {
     width: "100%",
     height: 50,
     backgroundColor: "black",
     justifyContent: "center",
     borderRadius: 15,
-    marginTop: 60,
+    marginTop: 65,
   },
   registerButtonText: {
     color: "white",

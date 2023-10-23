@@ -8,7 +8,6 @@ import {
   TouchableWithoutFeedback,
   Alert,
   Image,
-  KeyboardAvoidingView,
 } from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Bottompopup } from "./BottomPopup";
@@ -62,7 +61,7 @@ const LoginScreen = () => {
   };
 
   return (
-      <View style={styles.container}>
+    <View style={styles.container}>
         <Image
           source={{
             uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png",
@@ -135,6 +134,7 @@ const styles = {
   container: {
     flex: 1,
     width: "100%",
+    height: "100%",
     alignItems: "center",
     justifyContent: "flex-start",
   },

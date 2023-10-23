@@ -84,7 +84,36 @@ const styles = StyleSheet.create({
   profileImage: {
     width: "100%",
     height: "100%",
-  }
+  },
+  communityName: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 16,
+    textAlign: "center",
+  },
+  groupIconsContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  groupIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#007BFF",
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 8,
+  },
+  addGroupIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#28A745",
+    justifyContent: "center",
+    alignItems: "center",
+    marginHorizontal: 8,
+  },
 });
 
 export default styles;

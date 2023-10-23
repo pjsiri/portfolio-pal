@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, doc } from "firebase/firestore";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import DirectMessagePage from './DirectMessagePage'; 
 import styles from "./ChatPage.style";
 
 const ChatPage = () => {
@@ -68,6 +69,12 @@ const ChatPage = () => {
 
   return (
     <View style={[styles.container, isDarkMode ? { backgroundColor: "#333" } : null]}>
+      <Text style={styles.communityName}>PortfolioPal Community</Text> 
+      <View style={styles.groupIconsContainer}>
+        <View style={styles.groupIcon}>
+          <Ionicons name="people" size={24} color="black" />
+        </View>
+      </View>
       <FlatList
         data={messages}
         keyExtractor={(item) => item.id}
@@ -75,12 +82,22 @@ const ChatPage = () => {
           <View style={[styles.cardContainer, isDarkMode ? { backgroundColor: "#404040" } : null]}>
             <View style={styles.messageContainer}>
             <View style={styles.profileImageBorder}>
-              <Image
-                source={{
-                  uri: item.avatar || 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png',
+              <TouchableOpacity
+                onPress={() => {
+                  navigation.navigate('DirectMessage', {
+                    uid: item.uid,
+                    username: item.sender,
+                    avatar: item.avatar || 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png',
+                  });
                 }}
-                style={styles.avatar}
-              />
+              >
+                <Image
+                  source={{
+                    uri: item.avatar || 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png',
+                  }}
+                  style={styles.avatar}
+                />
+              </TouchableOpacity>
             </View>
             <View style={styles.messageContent}>
               <Text style={[styles.sender, isDarkMode ? { color: "#fff" } : null]}>{item.sender}:</Text>

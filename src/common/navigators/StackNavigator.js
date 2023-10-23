@@ -14,6 +14,8 @@ import VideoDetail from "../../settings-page/VideoDetail.js";
 import ChangePassword from "../../settings-page/ChangePassword.js";
 import Wallet from "../../wallet-page/Wallet.js";
 import ExchangePage from "../../wallet-page/ExchangePage.js";
+import DirectMessage from "../../chat-community/DirectMessagePage.js";
+import ChatCom from "../../chat-community/ChatPage.js";
 
 const Stack = createStackNavigator();
 
@@ -88,6 +90,16 @@ const StackNavigator = () => {
       <Stack.Screen
         name="ExchangePage"
         component={ExchangePage}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="DirectMessage"
+        component={DirectMessage}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="ChatCom"
+        component={ChatCom}
         options={{ headerShown: false }}
       />
     </Stack.Navigator>

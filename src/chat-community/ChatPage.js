@@ -9,8 +9,8 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, doc } from "firebase/firestore";
 import { useDarkMode } from "../common/darkmode/DarkModeContext";
-import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import styles from "./ChatPage.style";
 
@@ -18,33 +18,23 @@ const ChatPage = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
-  const [userProfileImage, setUserProfileImage] = useState(null);
+  const [messagesPerPage, setMessagesPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const [messagesPerPage, setMessagesPerPage] = useState(10);
   const firestore = getFirestore();
   const messagesRef = collection(firestore, "messages");
   const auth = getAuth();
   const user = auth.currentUser;
+  const [totalPages, settotalPages] = useState(null);
   const { isDarkMode } = useDarkMode();
-
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      // Set the user's profile image
-      if (user.photoURL) {
-        setUserProfileImage(user.photoURL);
-      }
-      else
-      {
-        setUserProfileImage("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png");
-      }
-    }
-  });
 
   const sendMessage = async () => {
     if (message.trim() !== "") {
       await addDoc(messagesRef, {
         content: message,
         sender: user.displayName, // Username for the user.
+        uid: user.uid,
+        avatar: user.photoURL,  
         timestamp: serverTimestamp(),
       });
       setMessage("");
@@ -57,14 +47,20 @@ const ChatPage = () => {
       (querySnapshot) => {
         const updatedMessages = querySnapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() }))
-          .sort((a, b) => b.timestamp - a.timestamp);
-  
+          .sort((a, b) => b.timestamp - a.timestamp) // Descending order
+          
         // Apply pagination
         const startIndex = (page - 1) * messagesPerPage;
         const endIndex = startIndex + messagesPerPage;
         const paginatedMessages = updatedMessages.slice(startIndex, endIndex);
-  
+
         setMessages(paginatedMessages);
+
+        // Calculate total pages once
+        if (page === 1) {
+          const total = Math.ceil(updatedMessages.length / messagesPerPage);
+          settotalPages(total);
+        }
       }
     );
   
@@ -80,9 +76,12 @@ const ChatPage = () => {
           <View style={[styles.cardContainer, isDarkMode ? { backgroundColor: "#404040" } : null]}>
             <View style={styles.messageContainer}>
               <Image
-                source= {{url: userProfileImage}} 
-                style={styles.avatar}
+                source={{
+                  uri: item.avatar || 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png',
+                }}
+              style={styles.profileImage}
               />
+            </View>
               <View style={styles.messageContent}>
               <Text style={[styles.sender, isDarkMode ? { color: "#fff" } : null]}>{item.sender}:</Text>
                 <Text style={[styles.message, isDarkMode ? { color: "#fff" } : null]}>{item.content}</Text>
@@ -99,10 +98,12 @@ const ChatPage = () => {
         <Ionicons name="arrow-back-outline" size={24} color={isDarkMode ? "#fff" : "black"} />
       </TouchableOpacity>
 
-      <TouchableOpacity onPress={() => setPage(page + 1)} disabled={messages.length < messagesPerPage}>
-        <Ionicons name="arrow-forward-outline" size={24} color={isDarkMode ? "#fff" : "black"} />
-      </TouchableOpacity>
-    </View>
+        {messages.length >= messagesPerPage && page !== totalPages && (
+          <TouchableOpacity onPress={() => setPage(page + 1)}>
+            <Ionicons name="arrow-forward-outline" size={24} color="black" />
+          </TouchableOpacity>
+        )}
+      </View>  
 
     <View style={styles.inputContainer}>
         <TextInput

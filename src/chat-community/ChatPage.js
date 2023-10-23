@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
+import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot, doc } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import styles from "./ChatPage.style";
 
@@ -17,35 +17,21 @@ const ChatPage = () => {
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
-  const [userProfileImage, setUserProfileImage] = useState(null);
   const [messagesPerPage, setMessagesPerPage] = useState(10);
   const [page, setPage] = useState(1);
   const firestore = getFirestore();
   const messagesRef = collection(firestore, "messages");
   const auth = getAuth();
   const user = auth.currentUser;
-
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-  
-        if (user.photoURL) {
-          setUserProfileImage(user.photoURL);
-        }
-        else
-        {
-          setUserProfileImage("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png");
-        }
-      }
-    });
-  }, [user]);
-
+  const [totalPages, settotalPages] = useState(null);
 
   const sendMessage = async () => {
     if (message.trim() !== "") {
       await addDoc(messagesRef, {
         content: message,
         sender: user.displayName, // Username for the user.
+        uid: user.uid,
+        avatar: user.photoURL,  
         timestamp: serverTimestamp(),
       });
       setMessage("");
@@ -58,14 +44,20 @@ const ChatPage = () => {
       (querySnapshot) => {
         const updatedMessages = querySnapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() }))
-          .sort((a, b) => b.timestamp - a.timestamp); // Descending order
-
+          .sort((a, b) => b.timestamp - a.timestamp) // Descending order
+          
         // Apply pagination
         const startIndex = (page - 1) * messagesPerPage;
         const endIndex = startIndex + messagesPerPage;
         const paginatedMessages = updatedMessages.slice(startIndex, endIndex);
-  
+
         setMessages(paginatedMessages);
+
+        // Calculate total pages once
+        if (page === 1) {
+          const total = Math.ceil(updatedMessages.length / messagesPerPage);
+          settotalPages(total);
+        }
       }
     );
     return () => unsubscribe();
@@ -81,12 +73,11 @@ const ChatPage = () => {
             <View style={styles.messageContainer}>
             <View style={styles.profileImageBorder}>
               <Image
-              source={{
-                uri: userProfileImage ||
-                  "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png",
-              }}
+                source={{
+                  uri: item.avatar || 'https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png',
+                }}
               style={styles.profileImage}
-            />
+              />
             </View>
               <View style={styles.messageContent}>
                 <Text style={styles.sender}>{item.sender}:</Text>
@@ -107,7 +98,7 @@ const ChatPage = () => {
           </TouchableOpacity>
         )}
 
-        {messages.length >= messagesPerPage && (
+        {messages.length >= messagesPerPage && page !== totalPages && (
           <TouchableOpacity onPress={() => setPage(page + 1)}>
             <Ionicons name="arrow-forward-outline" size={24} color="black" />
           </TouchableOpacity>

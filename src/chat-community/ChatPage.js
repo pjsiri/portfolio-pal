@@ -94,13 +94,17 @@ const ChatPage = () => {
       />
 
       <View style={styles.paginationContainer}>
-        <TouchableOpacity onPress={() => setPage(page - 1)} disabled={page === 1}>
-          <Ionicons name="arrow-back-outline" size={24} color={isDarkMode ? "#fff" : "black"} />
-        </TouchableOpacity>
+        {page !== 1 && (
+          <TouchableOpacity onPress={() => setPage(page - 1)}>
+            <Ionicons name="arrow-back-outline" size={24} color="black" />
+          </TouchableOpacity>
+        )}
 
-        <TouchableOpacity onPress={() => setPage(page + 1)} disabled={messages.length < messagesPerPage}>
-          <Ionicons name="arrow-forward-outline" size={24} color={isDarkMode ? "#fff" : "black"} />
-        </TouchableOpacity>
+        {messages.length >= messagesPerPage && page !== totalPages && (
+          <TouchableOpacity onPress={() => setPage(page + 1)}>
+            <Ionicons name="arrow-forward-outline" size={24} color="black" />
+          </TouchableOpacity>
+        )}
       </View>
 
       <View style={styles.inputContainer}>

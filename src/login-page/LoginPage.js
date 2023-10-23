@@ -62,71 +62,71 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
+      <Image
+        source={{
+          uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png",
+        }}
+        style={[styles.bannerImage, { marginTop: 50 }]}
+      />
+      <Text style={[styles.title, { fontSize: 28, fontWeight: "900" }]}>Glad to have you back!</Text>
+      <Text style={[styles.subtitle, { fontSize: 16, opacity: 0.65 }]}>Fill in with your username and password.</Text>
+      <View style={styles.inputContainer}>
         <Image
           source={{
-            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/PortfolioPal_banner.png",
+            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/email.png",
           }}
-          style={[styles.bannerImage, { marginTop: 50 }]}
+          style={styles.inputIcon}
         />
-        <Text style={[styles.title, { fontSize: 28, fontWeight: "900" }]}>Glad to have you back!</Text>
-        <Text style={[styles.subtitle, { fontSize: 16, opacity: 0.65 }]}>Fill in with your username and password.</Text>
-        <View style={styles.inputContainer}>
-          <Image
-            source={{
-              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/email.png",
-            }}
-            style={styles.inputIcon}
-          />
-          <TextInput
-            placeholder="Email"
-            onChangeText={(text) => setUser(text)}
-            value={user}
-            style={styles.input}
-          />
-        </View>
-        <View style={styles.inputContainer}>
-          <Image
-            source={{
-              uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
-            }}
-            style={styles.inputIcon}
-          />
-          <TextInput
-            placeholder="Password"
-            onChangeText={(text) => setPass(text)}
-            value={pass}
-            secureTextEntry={!isPasswordVisible}
-            style={styles.input}
-          />
-          <TouchableOpacity onPress={handleShowPassword}>
-            <Image
-              source={{ uri: imageSource }}
-              style={styles.inputIcon}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={styles.loginButtonContainer}>
-          <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.forgotPasswordButtonContainer}>
-          <TouchableWithoutFeedback onPress={onShowPopup}>
-            <Text style={styles.forgotPasswordText}>Forgot password?</Text>
-          </TouchableWithoutFeedback>
-          <Bottompopup
-            title="Forgot Password?"
-            ref={(target) => (popupRef = target)}
-            onTouchOutside={onClosePopup}
-          />
-        </View>
-        <View style={styles.signUpTextContainer}>
-          <Text style={styles.signUpText}>Don't have an account? </Text>
-          <TouchableOpacity onPress={() => navigation.navigate("Register")}>
-            <Text style={styles.signUpLink}>Sign up</Text>
-          </TouchableOpacity>
-        </View>
+        <TextInput
+          placeholder="Email"
+          onChangeText={(text) => setUser(text)}
+          value={user}
+          style={styles.input}
+        />
       </View>
+      <View style={styles.inputContainer}>
+        <Image
+          source={{
+            uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/password.png",
+          }}
+          style={styles.inputIcon}
+        />
+        <TextInput
+          placeholder="Password"
+          onChangeText={(text) => setPass(text)}
+          value={pass}
+          secureTextEntry={!isPasswordVisible}
+          style={styles.input}
+        />
+        <TouchableOpacity onPress={handleShowPassword}>
+          <Image
+            source={{ uri: imageSource }}
+            style={styles.inputIcon}
+          />
+        </TouchableOpacity>
+      </View>
+      <View style={styles.loginButtonContainer}>
+        <TouchableOpacity onPress={handleLogin} style={styles.loginButton}>
+          <Text style={styles.loginButtonText}>Login</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={styles.forgotPasswordButtonContainer}>
+        <TouchableWithoutFeedback onPress={onShowPopup}>
+          <Text style={styles.forgotPasswordText}>Forgot password?</Text>
+        </TouchableWithoutFeedback>
+        <Bottompopup
+          title="Forgot Password?"
+          ref={(target) => (popupRef = target)}
+          onTouchOutside={onClosePopup}
+        />
+      </View>
+      <View style={styles.signUpTextContainer}>
+        <Text style={styles.signUpText}>Don't have an account? </Text>
+        <TouchableOpacity onPress={() => navigation.navigate("Register")}>
+          <Text style={styles.signUpLink}>Sign up</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
   );
 };
 
@@ -200,11 +200,10 @@ const styles = {
     fontWeight: "bold",
   },
   signUpTextContainer: {
-    height: "100%",
-    flexDirection: "row",
+    flex: 1,
     alignItems: "center",
-    position: "absolute",
-    marginTop: "77%",
+    justifyContent: "flex-end",
+    marginBottom: 10,
   },
   signUpText: {
     fontSize: 16,

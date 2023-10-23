@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -9,6 +9,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
+import { useDarkMode } from "../common/darkmode/DarkModeContext";
 import { getFirestore, collection, addDoc, serverTimestamp, onSnapshot } from "firebase/firestore";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import styles from "./ChatPage.style";
@@ -18,28 +19,26 @@ const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const navigation = useNavigation();
   const [userProfileImage, setUserProfileImage] = useState(null);
-  const [messagesPerPage, setMessagesPerPage] = useState(10);
   const [page, setPage] = useState(1);
+  const [messagesPerPage, setMessagesPerPage] = useState(10);
   const firestore = getFirestore();
   const messagesRef = collection(firestore, "messages");
   const auth = getAuth();
   const user = auth.currentUser;
+  const { isDarkMode } = useDarkMode();
 
-  useEffect(() => {
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-  
-        if (user.photoURL) {
-          setUserProfileImage(user.photoURL);
-        }
-        else
-        {
-          setUserProfileImage("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png");
-        }
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      // Set the user's profile image
+      if (user.photoURL) {
+        setUserProfileImage(user.photoURL);
       }
-    });
-  }, [user]);
-
+      else
+      {
+        setUserProfileImage("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png");
+      }
+    }
+  });
 
   const sendMessage = async () => {
     if (message.trim() !== "") {
@@ -58,8 +57,8 @@ const ChatPage = () => {
       (querySnapshot) => {
         const updatedMessages = querySnapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() }))
-          .sort((a, b) => b.timestamp - a.timestamp); // Descending order
-
+          .sort((a, b) => b.timestamp - a.timestamp);
+  
         // Apply pagination
         const startIndex = (page - 1) * messagesPerPage;
         const endIndex = startIndex + messagesPerPage;
@@ -68,58 +67,53 @@ const ChatPage = () => {
         setMessages(paginatedMessages);
       }
     );
+  
     return () => unsubscribe();
   }, [page]);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, isDarkMode ? { backgroundColor: "#333" } : null]}>
       <FlatList
         data={messages}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.cardContainer}>
+          <View style={[styles.cardContainer, isDarkMode ? { backgroundColor: "#404040" } : null]}>
             <View style={styles.messageContainer}>
-            <View style={styles.profileImageBorder}>
               <Image
-              source={{
-                uri: userProfileImage ||
-                  "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png",
-              }}
-              style={styles.profileImage}
-            />
-            </View>
+                source= {{url: userProfileImage}} 
+                style={styles.avatar}
+              />
               <View style={styles.messageContent}>
-                <Text style={styles.sender}>{item.sender}:</Text>
-                <Text style={styles.message}>{item.content}</Text>
-                <Text style={styles.timestamp}>
-                {item.timestamp && new Date(item.timestamp.toDate()).toLocaleString()}
+              <Text style={[styles.sender, isDarkMode ? { color: "#fff" } : null]}>{item.sender}:</Text>
+                <Text style={[styles.message, isDarkMode ? { color: "#fff" } : null]}>{item.content}</Text>
+                <Text style={[styles.timestamp, isDarkMode ? { color: "#fff" } : null]}> {item.timestamp && new Date(item.timestamp.toDate()).toLocaleString()}
               </Text>
               </View>
             </View>
           </View>
         )}
-      />
+      />  
 
-      <View style={styles.paginationContainer}>
-        {page !== 1 && (
-          <TouchableOpacity onPress={() => setPage(page - 1)}>
-            <Ionicons name="arrow-back-outline" size={24} color="black" />
-          </TouchableOpacity>
-        )}
+    <View style={styles.paginationContainer}>
+      <TouchableOpacity onPress={() => setPage(page - 1)} disabled={page === 1}>
+        <Ionicons name="arrow-back-outline" size={24} color={isDarkMode ? "#fff" : "black"} />
+      </TouchableOpacity>
 
-        {messages.length >= messagesPerPage && (
-          <TouchableOpacity onPress={() => setPage(page + 1)}>
-            <Ionicons name="arrow-forward-outline" size={24} color="black" />
-          </TouchableOpacity>
-        )}
-      </View>  
+      <TouchableOpacity onPress={() => setPage(page + 1)} disabled={messages.length < messagesPerPage}>
+        <Ionicons name="arrow-forward-outline" size={24} color={isDarkMode ? "#fff" : "black"} />
+      </TouchableOpacity>
+    </View>
 
-      <View style={styles.inputContainer}>
+    <View style={styles.inputContainer}>
         <TextInput
           value={message}
           onChangeText={setMessage}
           placeholder="Type your message..."
-          style={styles.input}
+          style={[
+            styles.input,
+            isDarkMode ? { borderColor: "#fff", color: "#fff" } : null
+          ]}
+          placeholderTextColor={isDarkMode ? "#fff" : "black"} 
         />
         <TouchableOpacity onPress={sendMessage}>
           <Text style={styles.sendButton}>Send</Text>

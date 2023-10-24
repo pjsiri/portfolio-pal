@@ -71,7 +71,7 @@ const ChatPage = () => {
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
     <View style={[styles.container, isDarkMode ? { backgroundColor: "#333" } : null]}>
-      <Text style={styles.communityName}>PortfolioPal Community</Text> 
+    <Text style={[styles.communityName, isDarkMode ? { color: "#fff" } : null]}>PortfolioPal Community</Text>
       <View style={styles.groupIconsContainer}>
         <View style={styles.groupIcon}>
           <Ionicons name="people" size={24} color="black" />

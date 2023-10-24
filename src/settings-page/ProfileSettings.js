@@ -31,7 +31,8 @@ const ProfileSettings = () => {
   const [newEmail, setNewEmail] = useState("");
   const [profileImageUri, setProfileImageUri] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false); // To control the visibility of the profile picture options modal
-  const [selectedProfilePictureIndex, setSelectedProfilePictureIndex] = useState(null);
+  const [selectedProfilePictureIndex, setSelectedProfilePictureIndex] =
+    useState(null);
   const navigation = useNavigation();
   const firestore = getFirestore();
   const profilesRef = collection(firestore, "profiles");
@@ -85,7 +86,10 @@ const ProfileSettings = () => {
       navigation.goBack();
     } catch (error) {
       console.error("Error updating profile:", error);
-      Alert.alert("Error", "Profile update failed. Please try again: " + error.message);
+      Alert.alert(
+        "Error",
+        "Profile update failed. Please try again: " + error.message
+      );
     }
   };
 
@@ -105,7 +109,9 @@ const ProfileSettings = () => {
   };
 
   const handleRemoveProfilePicture = () => {
-    setProfileImageUri("https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png");
+    setProfileImageUri(
+      "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png"
+    );
   };
 
   const containerStyle = {
@@ -142,16 +148,29 @@ const ProfileSettings = () => {
             source={{
               uri: "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/back.png",
             }}
-            style={[styles.backButton, { tintColor: isDarkMode ? styles.backButtonColor.dark : styles.backButtonColor.light }]}
+            style={[
+              styles.backButton,
+              {
+                tintColor: isDarkMode
+                  ? styles.backButtonColor.dark
+                  : styles.backButtonColor.light,
+              },
+            ]}
           />
         </TouchableOpacity>
       </View>
       <Text style={titleStyle}>Edit Profile</Text>
-      <TouchableOpacity onPress={openProfilePictureOptions}>
+      <TouchableOpacity
+        onPress={openProfilePictureOptions}
+        testID="openProfile"
+      >
         <View style={styles.profileImageContainer}>
           <Image
+            testID="profileImage"
             source={{
-              uri: profileImageUri || "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png",
+              uri:
+                profileImageUri ||
+                "https://github.com/ErickLao123/2023-S2-51-AIVestor/raw/main/assets/default_profile.png",
             }}
             style={styles.profileImage}
           />
@@ -165,6 +184,7 @@ const ProfileSettings = () => {
         <Text style={styles.saveButtonText}>Remove</Text>
       </TouchableOpacity>
       <Modal
+        testID="profileWindow"
         animationType="slide"
         transparent={true}
         visible={isModalVisible}
@@ -179,12 +199,19 @@ const ProfileSettings = () => {
                   key={index}
                   style={styles.profilePictureOption}
                   onPress={() => selectProfilePicture(index)}
+                  testID={`profilePictureOption-${index}`}
                 >
-                  <Image source={{ uri }} style={styles.profilePictureOptionImage} />
+                  <Image
+                    source={{ uri }}
+                    style={styles.profilePictureOptionImage}
+                  />
                 </TouchableOpacity>
               ))}
             </View>
-            <TouchableOpacity style={styles.profilePictureOption} onPress={closeProfilePictureOptions}>
+            <TouchableOpacity
+              style={styles.profilePictureOption}
+              onPress={closeProfilePictureOptions}
+            >
               <Text style={styles.profilePictureOptionText}>Cancel</Text>
             </TouchableOpacity>
           </View>
@@ -205,11 +232,7 @@ const ProfileSettings = () => {
           <Text style={labelStyle}>Email: </Text>
         </View>
         <View style={styles.inputContainer}>
-          <TextInput
-            style={inputTextStyle}
-            value={newEmail}
-            editable={false}
-          />
+          <TextInput style={inputTextStyle} value={newEmail} editable={false} />
         </View>
       </View>
       <TouchableOpacity style={styles.saveButton} onPress={handleSave}>
@@ -294,11 +317,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   backButtonColor: {
-    light: 'black',
-    dark: 'white',
+    light: "black",
+    dark: "white",
   },
   backButtonContainer: {
-    position: 'absolute',
+    position: "absolute",
     top: 80,
     left: 30,
   },
@@ -337,9 +360,9 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   profilePictureOptionsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
   },
   modalTitle: {
     fontSize: 20,

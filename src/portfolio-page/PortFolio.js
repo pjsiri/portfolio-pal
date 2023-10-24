@@ -35,6 +35,28 @@ function calculateTotalPrice(price, quantity) {
   return price * quantity;
 }
 
+// getPortfolioData() tester function
+export function testGetPortfolioData(graphType, userStocks, userCryptos) {
+  // Modify the data sources based on graphType
+  let data = [];
+
+  if (graphType === "All") {
+    data = userStocks.concat(userCryptos);
+  } else if (graphType === "Stock") {
+    data = userStocks;
+  } else if (graphType === "Crypto") {
+    data = userCryptos;
+  } // Inside the useEffect where you set the data for the pie chart
+  if (graphType === "S:C") {
+    data = [
+      { name: "Stocks", price: userStocks[0].totalStocks, color: "red" },
+      { name: "Cryptos", price: userCryptos[0].totalCryptos, color: "blue" },
+    ];
+  }
+
+  return data;
+}
+
 const Portfolio = () => {
   const { isDarkMode } = useDarkMode();
   const [graphType, setGraphType] = useState("All"); //graph type
@@ -161,21 +183,25 @@ const Portfolio = () => {
   const percentageStocks = ((totalStocks / userTotalAssets) * 100).toFixed(2);
   const percentageCryptos = ((totalCryptos / userTotalAssets) * 100).toFixed(2);
 
-  // Modify the data sources based on graphType
-  let data = [];
+  function getPortfolioData() {
+    // Modify the data sources based on graphType
+    let data = [];
 
-  if (graphType === "All") {
-    data = assets.concat(cryptos);
-  } else if (graphType === "Stock") {
-    data = userStocks;
-  } else if (graphType === "Crypto") {
-    data = userCryptos;
-  } // Inside the useEffect where you set the data for the pie chart
-  if (graphType === "S:C") {
-    data = [
-      { name: "Stocks", price: totalStocks, color: getRandomColor() },
-      { name: "Cryptos", price: totalCryptos, color: getRandomColor() },
-    ];
+    if (graphType === "All") {
+      data = assets.concat(cryptos);
+    } else if (graphType === "Stock") {
+      data = userStocks;
+    } else if (graphType === "Crypto") {
+      data = userCryptos;
+    } // Inside the useEffect where you set the data for the pie chart
+    if (graphType === "S:C") {
+      data = [
+        { name: "Stocks", price: totalStocks, color: getRandomColor() },
+        { name: "Cryptos", price: totalCryptos, color: getRandomColor() },
+      ];
+    }
+
+    return data;
   }
 
   const chartConfig = {
@@ -217,7 +243,7 @@ const Portfolio = () => {
 
         <View style={styles.graphContainer}>
           <PieChart
-            data={data}
+            data={getPortfolioData()}
             width={screenWidth - 20}
             height={220}
             chartConfig={chartConfig}

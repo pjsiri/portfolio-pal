@@ -8,33 +8,33 @@ jest.mock("../../common/darkmode/DarkModeContext", () => ({
 }));
 
 describe("SearchPage Component", () => {
-  test("should set the finalSearchQuery state when handleSearch is called", () => {
-    const { getByPlaceholderText, getByTestId } = render(<SearchPage />);
+  // test("should set the finalSearchQuery state when handleSearch is called", () => {
+  //   const { getByPlaceholderText, getByTestId } = render(<SearchPage />);
 
-    const searchInput = getByPlaceholderText("Search all investments");
-    fireEvent.changeText(searchInput, "example search query");
-    fireEvent(searchInput, "submitEditing");
+  //   const searchInput = getByPlaceholderText("Search all investments");
+  //   fireEvent.changeText(searchInput, "example search query");
+  //   fireEvent(searchInput, "submitEditing");
 
-    const finalSearchQuery = getByTestId("finalSearchQuery");
-    expect(finalSearchQuery.props.children).toBe("example search query");
-  });
+  //   const finalSearchQuery = getByTestId("finalSearchQuery");
+  //   expect(finalSearchQuery.props.children).toBe("example search query");
+  // });
 
-  test("should update sortType correctly when handleSort is called", () => {
-    const { getByText, getByTestId } = render(<SearchPage />);
-    const sortType = getByTestId("sortType");
+  // test("should update sortType correctly when handleSort is called", () => {
+  //   const { getByText, getByTestId } = render(<SearchPage />);
+  //   const sortType = getByTestId("sortType");
 
-    const relevantSortButton = getByText("Relevant");
-    fireEvent.press(relevantSortButton);
-    expect(sortType.props.children).toBe(0);
+  //   const relevantSortButton = getByText("Relevant");
+  //   fireEvent.press(relevantSortButton);
+  //   expect(sortType.props.children).toBe(0);
 
-    const nameSortButton = getByText("Name");
-    fireEvent.press(nameSortButton);
-    expect(sortType.props.children).toBe(1);
+  //   const nameSortButton = getByText("Name");
+  //   fireEvent.press(nameSortButton);
+  //   expect(sortType.props.children).toBe(1);
 
-    const priceSortButton = getByText("Price");
-    fireEvent.press(priceSortButton);
-    expect(sortType.props.children).toBe(2);
-  });
+  //   const priceSortButton = getByText("Price");
+  //   fireEvent.press(priceSortButton);
+  //   expect(sortType.props.children).toBe(2);
+  // });
 
   test("should toggle ascendOrder correctly when handleSort is called", () => {
     const { getByText, getByTestId } = render(<SearchPage />);

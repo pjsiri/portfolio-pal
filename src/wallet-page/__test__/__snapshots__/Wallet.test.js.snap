@@ -1,0 +1,52 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`TransactionItem should render a transaction item without amount correctly 1`] = `
+<View
+  style={
+    {
+      "backgroundColor": "#fff",
+      "borderColor": "#ccc",
+      "borderRadius": 10,
+      "borderWidth": 1,
+      "marginBottom": 10,
+      "padding": 10,
+    }
+  }
+>
+  <View
+    style={{}}
+  >
+    <Text
+      style={
+        {
+          "fontSize": 17,
+          "fontWeight": "bold",
+          "marginBottom": 5,
+        }
+      }
+    >
+      Buy
+    </Text>
+    <Text>
+      Symbol: 
+      AAPL
+    </Text>
+    <Text>
+      Quantity: 
+      10
+    </Text>
+    <Text>
+      Price: $
+      150
+    </Text>
+    <Text>
+      Total Price: $
+      1500
+    </Text>
+    <Text>
+      Timestamp: 
+      2/15/2023, 12:00:00 AM
+    </Text>
+  </View>
+</View>
+`;

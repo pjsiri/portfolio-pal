@@ -212,6 +212,13 @@ const StockOverview = () => {
 
   const handleConfirmQuantity = async (quantity) => {
     setIsQuantityModalVisible(false);
+
+    const defaultGoogleMid = 'DEFAULT_VALUE'; 
+
+    if (!item.google_mid) {
+      item.google_mid = defaultGoogleMid;
+    }
+    
     if (quantity > 0) {
       if (isBuying) {
         const success = await fakeBuyStock(

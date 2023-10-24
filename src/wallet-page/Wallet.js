@@ -25,10 +25,12 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import ExchangePage from "./ExchangePage";
 
+// Component for displaying each transaction item
 export class TransactionItem extends PureComponent {
   render() {
     const { item } = this.props;
     if (item.hasOwnProperty("amount")) {
+      // Rendering for top-up transactions
       return (
         <View style={styles.transactionItem}>
           <Ionicons name="push-outline" size={24} color="black" />
@@ -37,6 +39,7 @@ export class TransactionItem extends PureComponent {
         </View>
       );
     } else {
+      // Rendering for buy/sell transactions
       return (
         <View style={styles.transactionCard}>
           <View style={styles.transactionDetails}>
@@ -53,7 +56,9 @@ export class TransactionItem extends PureComponent {
   }
 }
 
+// Main Wallet component
 const Wallet = () => {
+  // State variables and constants
   const [topUpAmount, setTopUpAmount] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
   const [transactions, setTransactions] = useState([]);
@@ -67,14 +72,17 @@ const Wallet = () => {
   const firestore = getFirestore();
   const walletActivityRef = collection(firestore, "wallet-activity");
 
+  // Navigation handler to ExchangePage
   const handleNavigateToExchange = () => {
     navigation.navigate("ExchangePage");
   };
 
+  // Navigation handler to go back
   const handleGoBack = () => {
     navigation.goBack();
   };
 
+  // Function to fetch wallet activity data from Firestore
   const fetchWalletActivity = async () => {
     try {
       const q = query(walletActivityRef, where("userId", "==", userId));
@@ -89,6 +97,7 @@ const Wallet = () => {
     }
   };
 
+  // Function to fetch transaction data from Firestore
   const fetchTransactions = async () => {
     try {
       const userRef = doc(firestore, "users", userId);
@@ -105,6 +114,7 @@ const Wallet = () => {
   };
 
   useEffect(() => {
+    // Function to fetch user balance from Firestore
     const fetchUserBalance = async (userId) => {
       try {
         const userDocRef = doc(firestore, "users", userId);
@@ -134,6 +144,7 @@ const Wallet = () => {
     fetchTransactions();
   }, [userId]);
 
+  // Function to handle top-up
   const handleTopUp = async () => {
     try {
       if (topUpAmount === "" || parseFloat(topUpAmount) <= 0) {
@@ -182,6 +193,7 @@ const Wallet = () => {
     }
   };
 
+  // Function to handle withdrawal
   const handleWithdraw = async () => {
     try {
       if (withdrawAmount === "" || parseFloat(withdrawAmount) <= 0) {
@@ -268,7 +280,6 @@ const Wallet = () => {
         style={styles.button}
         onPress={handleNavigateToExchange}
       >
-        <Text style={styles.buttonText}>Exchange Currency</Text>
       </TouchableOpacity>
       <Text style={styles.transactionHistory}>Transactions History:</Text>
       <FlatList

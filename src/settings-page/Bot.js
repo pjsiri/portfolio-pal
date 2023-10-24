@@ -8,6 +8,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Image,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
@@ -98,6 +99,7 @@ const Bot = () => {
   };
 
   return (
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
     <View style={containerStyle}>
       <View style={styles.header}>
         <TouchableOpacity
@@ -155,6 +157,7 @@ const Bot = () => {
         <Button title="Send" onPress={() => sendMessage(inputText)} />
       </View>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

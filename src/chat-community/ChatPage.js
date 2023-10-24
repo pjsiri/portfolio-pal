@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   FlatList,
   Image,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -68,6 +69,7 @@ const ChatPage = () => {
   }, [page]);
 
   return (
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
     <View style={[styles.container, isDarkMode ? { backgroundColor: "#333" } : null]}>
       <Text style={styles.communityName}>PortfolioPal Community</Text> 
       <View style={styles.groupIconsContainer}>
@@ -140,6 +142,7 @@ const ChatPage = () => {
         </TouchableOpacity>
       </View>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

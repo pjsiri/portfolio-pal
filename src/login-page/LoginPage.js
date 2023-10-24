@@ -203,7 +203,7 @@ const styles = {
     flex: 1,
     alignItems: "center",
     justifyContent: "flex-end",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   signUpText: {
     fontSize: 16,

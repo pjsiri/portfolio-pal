@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Image, Text, TextInput, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
+import { View, Image, Text, TextInput, TouchableOpacity, FlatList, KeyboardAvoidingView } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./DirectMessagePage.style";
@@ -63,6 +63,7 @@ const DirectMessagePage = ({ route }) => {
   }, []);
 
   return (
+    <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
     <View style={styles.container}>
       <View style={styles.topRow}>
           <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
@@ -109,6 +110,7 @@ const DirectMessagePage = ({ route }) => {
         <Text style={styles.sendButtonText}>Send</Text>
       </TouchableOpacity>
     </View>
+    </KeyboardAvoidingView>
   );
 };
 

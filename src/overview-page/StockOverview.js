@@ -311,7 +311,7 @@ const StockOverview = () => {
         {isLoading ? (
           <ActivityIndicator size="large" />
         ) : error ? (
-          <Text style={textStyles}>Something went wrong</Text>
+          <Text>Something went wrong</Text>
         ) : (
           <View style={styles.container}>
             <View style={styles.container}>

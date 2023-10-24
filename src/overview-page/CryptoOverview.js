@@ -291,12 +291,12 @@ const CryptoOverview = () => {
 
   const containerStyle = [
     styles.appContainer,
-    isDarkMode && styles.darkModeContainer,
+    isDarkMode && { backgroundColor: "#333" },
   ];
 
   return (
     <SafeAreaView
-      style={[styles.appContainer, isDarkMode && styles.darkModeContainer]}
+      style={containerStyle}
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         <TouchableOpacity

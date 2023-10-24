@@ -23,7 +23,7 @@ const StockChart = ({ endpoint, query }) => {
       {isLoading || priceData.length === 0 ? (
         <ActivityIndicator size="large" />
       ) : error ? (
-        <Text style={textStyles}>Something went wrong</Text>
+        <Text>Something went wrong</Text>
       ) : (
         <LineChart
           data={{

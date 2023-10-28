@@ -43,7 +43,7 @@ Portfoliopal is a mobile application developed by Team AIVestor that empowers us
   npm start 
 ```
 
-4. Run on Emulator or Device.
+4. Run on Emulator or Personal Device.
 
 Note: Make sure you have Node.js installed on your system before proceeding with the installation. If not, you can download it from [here](https://nodejs.org/en).
     

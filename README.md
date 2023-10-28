@@ -1,4 +1,4 @@
-<img src="https://github.com/pjsiri/portfolio-pal/assets/104670311/40005fa9-690e-4cb7-9bae-ed29c71c5ed7" alt="Logo1" width="310">
+<img src="https://github.com/pjsiri/portfolio-pal/assets/104670311/25f4f631-7e9d-425a-a2c1-e5aa2583c5cb" alt="Logo1" width="310">
 
 # PortfolioPal by AIVestor
 
@@ -26,11 +26,7 @@ Portfoliopal is a mobile application developed by Team AIVestor that empowers us
 
 ## Demo
 
-<img src="https://github.com/pjsiri/portfolio-pal/assets/104670311/85500b5c-7a57-4212-a80e-ccb44874d41b" alt="appDemo" width="300">
-
-
-
-
+<img src="https://github.com/pjsiri/portfolio-pal/assets/104670311/1bb9d820-fa9c-4381-a174-df168f9cffa4" alt="appDemo" width="300">
 
 ## Installation
 

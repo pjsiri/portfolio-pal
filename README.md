@@ -1,3 +1,5 @@
+<img src="https://github.com/pjsiri/portfolio-pal/assets/104670311/40005fa9-690e-4cb7-9bae-ed29c71c5ed7" alt="Logo1" width="310">
+
 # PortfolioPal by AIVestor
 
 Portfoliopal is a mobile application developed by Team AIVestor that empowers users to effortlessly explore stocks and cryptocurrencies. With the power of Firebase as our backend, users can bookmark their favorite assets, simulate buy/sell transactions, engage in community discussions, and connect with other users through direct messaging. The app also offers a sleek dark mode for a personalised experience.
@@ -22,12 +24,9 @@ Portfoliopal is a mobile application developed by Team AIVestor that empowers us
 - **User Profiles:** Customise your profile with your name, picture, and other personal details.
 - **Real-Time Data:** Utilise the power of the Real-Time Finance API for up-to-the-minute data on stocks and cryptocurrencies.
 
-## Screenshots
+## Demo
 
-<div align="center">
-  <img src="https://github.com/ErickLao123/2023-S2-51-AIVestor/assets/104670311/af619405-ce91-42a7-993d-5dc109e22870" alt="Login Page" width="300" height="550"/>
-  <img src="https://github.com/ErickLao123/2023-S2-51-AIVestor/assets/104670311/733a7fb6-e7c2-4d2a-a186-7d866d32cfa8" alt="Home Page" width="300" height="550"/>
-</div>
+<img src="https://github.com/pjsiri/portfolio-pal/assets/104670311/85500b5c-7a57-4212-a80e-ccb44874d41b" alt="appDemo" width="300">
 
 
 
